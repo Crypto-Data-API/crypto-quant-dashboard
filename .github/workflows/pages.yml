@@ -1,0 +1,59 @@
+# Static demo on GitHub Pages: https://crypto-data-api.github.io/crypto-quant-dashboard/
+# Builds apps/web as a static export that reads the committed samples in docs/samples/
+# (no server, no API keys) and deploys it with GitHub Pages (Settings > Pages > Source:
+# GitHub Actions).
+name: Deploy static demo to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4 # version from package.json "packageManager"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Fails if any registry dataset lacks a demo sample.
+      - run: pnpm --filter @cqd/schemas check-samples
+
+      - name: Build static export
+        run: pnpm --filter @cqd/web build:static
+        env:
+          NEXT_PUBLIC_DATA_MODE: static
+          GITHUB_PAGES: "true"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -18,7 +18,7 @@ interface Stat {
 
 function StatTile({ stat, now }: { stat: Stat; now: number }) {
   const env = stat.env;
-  const stale = env?.fetchedAt ? isStale(env, now || Date.now()) : false;
+  const stale = env?.fetchedAt && !env.demo ? isStale(env, now || Date.now()) : false;
   const missing = stat.value === "—";
   const lockIcon = env?.status === "no_api_key" ? KeyRound : env?.status === "pro_required" ? Lock : null;
   const LockIcon = lockIcon;
