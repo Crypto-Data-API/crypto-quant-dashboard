@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Dark-first trading palette.
+ * Data colours follow the dataviz reference palette's dark steps (validated against this
+ * surface with the palette validator): categorical slots for identity, a blue<->red diverging
+ * pair with a grey midpoint, and four fixed status colours that are never reused as series.
+ * Long/short use aqua/red and always ship with an L/S label, because that pair sits in the
+ * colour-vision-deficiency warn band (dE 6.5) without secondary encoding.
+ */
+:root {
+  color-scheme: dark;
+  --radius: 0.5rem;
+
+  --background: #0b0c0e;
+  --foreground: #ecebe7;
+  --card: #121316;
+  --card-foreground: #ecebe7;
+  --popover: #17181b;
+  --popover-foreground: #ecebe7;
+  --primary: #3987e5;
+  --primary-foreground: #0b0c0e;
+  --secondary: #1b1c20;
+  --secondary-foreground: #ecebe7;
+  --muted: #1b1c20;
+  --muted-foreground: #9a9992;
+  --accent: #202227;
+  --accent-foreground: #ecebe7;
+  --destructive: #d03b3b;
+  --border: rgb(255 255 255 / 0.08);
+  --input: rgb(255 255 255 / 0.12);
+  --ring: #3987e5;
+
+  /* chart chrome */
+  --grid: #26272b;
+  --axis: #3a3b40;
+
+  /* polarity */
+  --long: #199e70;
+  --short: #e66767;
+  --neutral: #4a4a47;
+
+  /* status (fixed, never themed, always paired with icon + label) */
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+
+  /* categorical (dark steps, fixed order) */
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+}
+
+@theme inline {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-grid: var(--grid);
+  --color-axis: var(--axis);
+  --color-long: var(--long);
+  --color-short: var(--short);
+  --color-neutral: var(--neutral);
+  --color-good: var(--good);
+  --color-warning: var(--warning);
+  --color-serious: var(--serious);
+  --color-critical: var(--critical);
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-series-5: var(--series-5);
+  --color-series-6: var(--series-6);
+  --color-series-7: var(--series-7);
+  --color-series-8: var(--series-8);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    background: var(--background);
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  ::selection {
+    background: rgb(57 135 229 / 0.35);
+  }
+}
+
+@layer utilities {
+  /* Columns of numbers align; standalone hero figures keep proportional digits. */
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #2a2b30 transparent;
+  }
+}
+
+@keyframes tape-in {
+  from {
+    background-color: rgb(255 255 255 / 0.06);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+.tape-in {
+  animation: tape-in 1.2s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tape-in {
+    animation: none;
+  }
+}
