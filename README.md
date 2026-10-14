@@ -1,46 +1,56 @@
 # Crypto Quant Dashboard
 
 A real-time quant dashboard for Hyperliquid perps and the wider crypto market, powered by
-[CryptoDataApi](https://cryptodataapi.com) (CDA). Market regimes, cycle phases, dealer gamma,
-order-book depth, liquidations and market-moving news on one screen, with a second opinion from
-TypeSafe's Jev classifier. Every number comes from the CDA REST API or its live event stream; the
-app does not model anything CDA already computes.
+[CryptoDataApi](https://cryptodataapi.com) (CDA). Market regimes as a 3D galaxy, the 10-phase
+cycle ring, dealer gamma, order-book terrain, volume anomalies, liquidations as they print and the
+catalyst calendar, with a quiet second opinion from TypeSafe's Jev classifier. Every number comes
+from the CDA REST API or its live event stream; the app does not model anything CDA already
+computes.
 
 **[Open the live demo](https://crypto-data-api.github.io/crypto-quant-dashboard/)** (no key needed) ·
 [Set up with your agent](#set-up-with-your-agent) · [Quick start](#quick-start) ·
 [Demo mode](#demo-mode)
 
-[![Overview: market regime, Jev verdict, market health, cycle phase, liquidations and the live liquidation tape](docs/screenshots/overview.png)](docs/screenshots/overview.png)
+[![Overview: nine live views, from the regime galaxy and Monte Carlo fan to the gamma landscape, liquidity terrain and event horizon](docs/screenshots/overview.png)](docs/screenshots/overview.png)
 
 <table>
   <tr>
     <td width="50%" valign="top">
       <a href="docs/screenshots/market-regimes.png"><img src="docs/screenshots/market-regimes.png" alt="Market Regimes page"></a><br>
-      <b>Market Regimes.</b> The short-term HMM regime with its 24h outcome distribution, the model card, and every perp grouped by regime.
+      <b>Market Regimes.</b> Every perp clustered by its short-term regime, with the market's odds of each regime in 24h flowing out of the current one, and the Monte Carlo fan below.
     </td>
     <td width="50%" valign="top">
-      <a href="docs/screenshots/quant-gamma.png"><img src="docs/screenshots/quant-gamma.png" alt="Quant Gamma page"></a><br>
-      <b>Quant Gamma.</b> A dealer GEX analog per coin with gamma flip levels, funding and positioning, plus the gamma profile around the mark.
+      <a href="docs/screenshots/cycle-regimes.png"><img src="docs/screenshots/cycle-regimes.png" alt="Cycle Regimes page"></a><br>
+      <b>Cycle Regimes.</b> The 10-phase cycle ring in 3D, the current phase with CDA's bias and rationale, market health and the recent phase durations.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="docs/screenshots/liquidations.png"><img src="docs/screenshots/liquidations.png" alt="Liquidations page"></a><br>
-      <b>Liquidations.</b> Rolling 1h to 24h totals split long and short, a heatmap of the most liquidated coins, and the live tape.
+      <a href="docs/screenshots/quant-gamma.png"><img src="docs/screenshots/quant-gamma.png" alt="Quant Gamma page"></a><br>
+      <b>Quant Gamma.</b> Market-maker liquidation notional by distance from mark for each coin, gamma flip lines, today vs 30 days and the nearest clusters.
     </td>
     <td width="50%" valign="top">
-      <a href="docs/screenshots/news.png"><img src="docs/screenshots/news.png" alt="News page"></a><br>
-      <b>News.</b> The market-moving catalyst tape with CDA's bias beside Jev's read. A badge flags every event where the two disagree.
+      <a href="docs/screenshots/volume-scanner.png"><img src="docs/screenshots/volume-scanner.png" alt="Volume Scanner page"></a><br>
+      <b>Volume Scanner.</b> Every perp as a sphere: 24h price change across, multiplier vs its 30-day mean up, open interest in depth. Anything above the orange plane trades 2× normal.
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
       <a href="docs/screenshots/order-books.png"><img src="docs/screenshots/order-books.png" alt="Order Books page"></a><br>
-      <b>Order Books.</b> Depth across the top 25 perps, then the focused coin's live L2 ladder and its 6-hour ±50 bps depth heatmap.
+      <b>Order Books.</b> The focused coin's live L2 ladder beside six hours of ±50 bps depth as a terrain, then depth across the top 25 perps.
     </td>
     <td width="50%" valign="top">
-      <b>Also in the app:</b> Cycle Regimes (the 10-phase cycle ring and playbook), Volume Scanner, Calendar
-      (event regime, macro calendar and token unlocks) and a Setup page with a copyable agent prompt.<br><br>
+      <a href="docs/screenshots/liquidations.png"><img src="docs/screenshots/liquidations.png" alt="Liquidations page"></a><br>
+      <b>Liquidations.</b> The last six minutes of forced closes as they print, rolling totals, the 24h heatmap and the live tape.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="docs/screenshots/calendar.png"><img src="docs/screenshots/calendar.png" alt="Calendar page"></a><br>
+      <b>Calendar.</b> Thirty days of unlocks, macro prints and depegs as a runway toward now, with the event risk score and the catalyst table.
+    </td>
+    <td width="50%" valign="top">
+      <b>Also in the app:</b> Perp Regimes (the regime grid for every perp), News (the catalyst tape with CDA's bias and Jev's read), Setup (keys and a copyable agent prompt) and Settings.<br><br>
       Screenshots are from a local instance with a Pro Plus key, 14 Oct 2026.
     </td>
   </tr>
@@ -50,32 +60,49 @@ app does not model anything CDA already computes.
 
 | Route | Page | Main CDA sources |
 |---|---|---|
-| `/` | Overview | `/quant/market`, `/market-health`, `/regimes`, `/market-intelligence/liquidations`, `/squeeze-alerts`, live stream |
-| `/market-regimes` | Market Regimes (short-term HMM) | `/quant/market`, `/quant/coins/risk`, `/quant/coins/{symbol}`, `/quant/model` |
-| `/regimes` | Cycle Regimes (10 phases) | `/regimes`, `/market-health`, six `/…/score` endpoints |
+| `/` | Overview (nine live views) | `/quant/market`, `/quant/coins/risk`, `/regimes`, `/quant/gex`, `/volume/scanner`, `/liquidity/depth/{coin}`, `/market-health`, `/squeeze-alerts`, `/event/calendar` |
+| `/market-regimes` | Market Regimes (short-term HMM) | `/quant/market`, `/quant/coins/risk`, `/quant/model` |
+| `/perp-regimes` | Perp Regimes (regime grid) | `/quant/coins/risk`, `/quant/coins/{symbol}` |
+| `/regimes` | Cycle Regimes (10 phases) | `/regimes`, `/regimes/history`, `/market-health`, six `/…/score` endpoints |
 | `/quant-gamma` | Quant Gamma (dealer GEX analog) | `/quant/gex`, `/quant/gex/history`, `/quant/positioning` |
 | `/volume-scanner` | Volume Scanner | `/volume/scanner`, `/volume/scanner/{symbol}` |
-| `/quant-order-books` | Order Books | `/liquidity/depth`, `/liquidity/depth/{coin}`, `/hyperliquid/l2-book`, `/liquidity/regime`, `/liquidity/oi-divergence` |
-| `/liquidations` | Liquidations | `/market-intelligence/liquidations`, `/liquidations/by-exchange`, `/squeeze-alerts`, live stream |
-| `/calendar` | Calendar | `/event/regime/score`, `/event/calendar`, `/event/regime/{symbol}`, `/supply/unlocks` |
+| `/quant-order-books` | Order Books | `/hyperliquid/l2-book`, `/liquidity/depth`, `/liquidity/depth/{coin}`, `/liquidity/regime`, `/liquidity/oi-divergence` |
+| `/liquidations` | Liquidations | live stream, `/market-intelligence/liquidations`, `/liquidations/by-exchange`, `/squeeze-alerts` |
+| `/calendar` | Calendar | `/event/calendar`, `/event/regime/score`, `/event/regime/{symbol}`, `/supply/unlocks` |
 | `/news` | Market-moving news | `/news/market-moving`, `/news/pulse`, `/news/sources`, `/news/coin/{symbol}` |
 | `/setup` | Setup | none: keys, demo status and the agent prompt below |
+| `/settings` | Settings | none: display, live feed, Jev, data mode and key status |
 
-A second opinion from TypeSafe's Jev classifier runs in the worker over the cached data: its read
-of each news catalyst, a cascade probability on squeeze alerts, and a market verdict card on the
-overview (see [Jev classifier](#jev-classifier-typesafe-system-one)). The news tape also appears as
-a compact panel beside the liquidation tape on `/liquidations`, and per-coin news appears in the
-Market Regimes coin drawer.
+Every page shares the sidebar (live badges per page: current regime, perps tracked, cycle phase,
+hot perps, liquidations per minute, today's macro print; the stream-rate graph and a one-line Jev
+read in its footer), the status pills (worker and cache, plan, daily budget, stream rate, UTC
+clock, Jev) and the KPI row, whose sparklines show history the worker records every 5 minutes.
+Every panel shows a "data as of" time, a stale tag, and an explicit state when there is no data:
+waiting for the first poll, Pro plan required, key rejected, rate limited, daily budget reached,
+fetch failed, worker offline, or not in the demo data.
 
-Every page shares the header stat strip and the system status pills (worker, API key, daily
-budget meter, Jev, stream source). Every panel shows a "data as of" time, a stale badge, and an
-explicit state when there is no data: waiting for the first poll, Pro plan required, key rejected,
-rate limited, daily budget reached, fetch failed, worker offline, or not in the demo data.
+**Status:** Phase 0 (foundation), Phase 1 (the pages), the market-moving news page, the Jev
+classifier, demo mode and the Crypto QuantDesk redesign from [docs/PLAN.md](docs/PLAN.md) and
+[docs/design](docs/design) are built and verified against live data with a Pro Plus key. Phase 2
+(history and backtesting) is unblocked by the Pro Plus key; its first datasets are registered.
 
-**Status:** Phase 0 (foundation), Phase 1 (the seven pages), the market-moving news page, the Jev
-classifier and demo mode from [docs/PLAN.md](docs/PLAN.md) are built and verified against live
-data with a Pro Plus key. Phase 2 (history and backtesting) is unblocked by the Pro Plus key; its
-first three datasets are already registered.
+## Design
+
+The UI follows the Claude Design prototype in [docs/design](docs/design) ("Crypto QuantDesk"):
+Geist and Geist Mono, a near-black palette with six accents, a collapsible 224/64px sidebar, and
+one card language for every page. The prototype's canvas charts and three.js scenes are ported to
+TypeScript in [apps/web/src/cq](apps/web/src/cq) with the same drawing code, fed by real data
+through small adapters instead of the prototype's mock engine. three.js loads on demand, so pages
+without 3D never download it.
+
+- Every 3D view orbits by drag and has a fullscreen button; auto-rotate follows the setting.
+- Display settings live in the browser under `cq.ui`: sidebar, live feed (off freezes the tape
+  and pauses the L2 ladder), auto-rotate, tape rows, default focus coin, Jev reads and KPI
+  sparklines. The sidebar's Settings button opens the quick toggles; `/settings` has all of them
+  plus data mode and key status (never the keys).
+- Where the prototype shows a number CDA does not publish, the app shows the nearest real field
+  or nothing. The Monte Carlo fan's animated paths are illustrative draws inside CDA's own p5,
+  median and p95; every labelled number is CDA's.
 
 ## Set up with your agent
 
@@ -182,11 +209,15 @@ The dashboard runs without any key, from real responses saved in [docs/samples](
   reads. While CDA itself is in demo, Jev is not called even with a key, because it would only
   classify saved samples.
 - **Live tape.** The tape plays CDA's free `/api/v1/stream/delayed` preview at its original pace
-  (about 30 minutes behind, labelled DELAYED PREVIEW). If the preview fails twice, the worker
-  replays the saved stream captures instead (labelled DEMO REPLAY) and retries the preview every
+  (about 30 minutes behind; the stream pill reads Delayed). If the preview fails twice, the worker
+  replays the saved stream captures instead (the pill reads Replay) and retries the preview every
   10 minutes. `STREAM_SOURCE=replay` forces the replay.
 - **Banner.** Every page shows a demo banner with the capture window and links to `/setup`, and
   `/api/status` reports `worker.demo`.
+- **KPI sparklines.** The keyless worker serves the KPI history a live worker recorded, saved in
+  `docs/samples/kpi-history.json` with `pnpm --filter @cqd/worker kpi:sample`; it records nothing
+  new from static samples. That recording was made after the panel snapshots, so each headline
+  value comes from the snapshot while its sparkline and change describe the recording window.
 - **Going live.** Set `CDA_API_KEY` (and optionally `TYPESAFE_API_KEY`) and restart the worker.
   Scheduled datasets are replaced by live data on the first poll.
 
@@ -198,7 +229,8 @@ python -m http.server 8080 -d apps/web/out   # or any static file server
 ```
 
 `build:static` turns `docs/samples` into `apps/web/public/samples` (one demo envelope per dataset
-and symbol, a manifest, the stream replay timeline and a status document), then runs `next build`
+and symbol, a manifest, the stream replay timeline, the replay's per-minute rate, the saved KPI
+history and a status document), then runs `next build`
 with `NEXT_PUBLIC_DATA_MODE=static` and `output: "export"`. The `/api` route handlers are named
 `route.api.ts`, and `api.ts` is a page extension only in server mode, so the export leaves them out.
 `GITHUB_PAGES=true` serves the site under `/crypto-quant-dashboard`.
@@ -260,16 +292,18 @@ Build-time only, for the static export: `NEXT_PUBLIC_DATA_MODE=static` (set by `
   | poller: dataset registry -> fetch -> Zod drift check -> envelope          |
   | stream relay: 1 SSE connection to CDA -> ring buffer (5,000 events)       |
   | demo: docs/samples -> seeded envelopes and stream replay when keyless     |
-  | HTTP :4100  /healthz  /status  /data/:dataset  /stream                    |
+  | KPI recorder: header KPIs from the cache every 5 min, 24h kept            |
+  | HTTP :4100  /healthz  /status  /data/:dataset  /kpi-history  /stream      |
   ---------------------------------------------------------------------------
           | envelopes, heartbeat, call counters        ^ on-demand interest
           v                                            |
-        Redis (cqd:data:*, cqd:demand, cqd:calls:*, cqd:worker:*)
+        Redis (cqd:data:*, cqd:demand, cqd:calls:*, cqd:worker:*, cqd:kpi:history)
           |
           v
   apps/web (Next.js 15) ------------------------------------------------------
   | /api/data/[dataset]  reads Redis; falls back to the worker's /data        |
-  | /api/status          worker heartbeat, budget, stream state               |
+  | /api/status          worker heartbeat, budget, stream state and rate      |
+  | /api/kpi-history     recorded header KPIs (Redis, then the worker)        |
   | /api/stream          same-origin SSE proxy to the worker's /stream        |
   | pages: TanStack Query on /api/data, EventSource on /api/stream            |
   ---------------------------------------------------------------------------
@@ -292,6 +326,10 @@ Build-time only, for the static export: `NEXT_PUBLIC_DATA_MODE=static` (set by `
 - **Redis fallback.** If Redis is unset or down, the worker keeps an in-memory cache and the
   web app reads through the worker's `/data` route. If neither is reachable the UI shows
   "Worker offline".
+- **Recorded history.** CDA has no intraday history for the header KPIs, so the worker samples
+  them from its own cache every 5 minutes (no extra calls) and keeps 24 hours, in memory and in
+  Redis. The stream hub reports events per minute for the last 40 minutes. Both start empty on a
+  fresh install and fill in as the worker runs.
 
 ### Stream fan-out decision
 
@@ -334,7 +372,7 @@ enforced in four layers.
    key is within 1% of its daily limit, it pauses keyed polling until 00:00 UTC and panels show
    "Daily budget reached". The Budget pill shows the dashboard's calls and the whole key's usage.
 
-Scheduled load at the registry's intervals is **326 calls/hour (7,824/day)**, about a quarter of the
+Scheduled load at the registry's intervals is **327 calls/hour (7,848/day)**, about a quarter of the
 dashboard's budget. The L2 ladder is the most expensive on-demand dataset at 240 calls/hour while
 the order-book page is open. Intervals follow CDA's own refresh cadences, so the extra Pro Plus
 headroom is left for on-demand reads and Phase 2 rather than spent on faster polling.
@@ -345,6 +383,7 @@ headroom is left for on-demand reads and Phase 2 rather than spent on faster pol
 | quant-coins-risk | `/quant/coins/risk` | 5 min | 12 |
 | quant-model | `/quant/model` | 60 min | 1 |
 | regimes | `/regimes` | 15 min | 4 |
+| regimes-history | `/regimes/history?from=…` (60 days) | 60 min | 1 |
 | market-health | `/market-health` | 5 min | 12 |
 | score-volatility, -policy, -security, -event, -meme | `/…/regime/score` | 15 min each | 20 |
 | derivatives-summary | `/derivatives/summary?coin=BTC` | 5 min | 12 |
@@ -401,10 +440,12 @@ caches the answers as three datasets. The web app reads them like any other data
 | `jev-squeeze` | Each active squeeze alert, with the coin's regime probabilities and liquidity regime | `cascade` noul: a genuine cascade likely to continue over the next hour | Every minute; one call per symbol, direction and UTC hour |
 | `jev-market-verdict` | Market regime, market health, cycle regime, news pulse top 10, squeeze summary, event risk | `stance` choice (risk_on, risk_off, neutral), `vol_expansion_24h` noul, `conviction` score 0 to 4 | Every 15 minutes |
 
-Where it shows: a Jev column beside CDA's bias in the `/news` tape (with a "Jev disagrees" badge
-when the direction differs from the sign of CDA's bias, and an agree/disagree filter), the same read
-in the liquidations news panel and coin drawers, a cascade pill on squeeze alerts, and a verdict
-card next to the hero regime card on the overview with a "what Jev saw" list of input as-of times.
+Where it shows, kept quiet: a muted "Jev · risk-off 62%" pill in the status row that opens the
+market read (stance, 24h vol expansion, conviction and a "what Jev saw" list of input as-of
+times), a one-line read in the sidebar footer, a small mark beside CDA's bias on each `/news` row
+(with "≠ CDA" when the direction differs from the sign of CDA's bias, and an agree/disagree
+filter), the same mark in coin drawers, and a cascade mark on squeeze alerts. Settings can hide
+all of it.
 
 **Costs.** TypeSafe bills input tokens only. Measured per call: about 600 input tokens for a news
 event, 1,100 for a squeeze alert and 2,700 for the market verdict. A quiet day is roughly
@@ -437,10 +478,12 @@ crypto-quant-dashboard/
   apps/
     web/                    Next.js 15 App Router, Tailwind v4, shadcn-style UI, TanStack Query
       src/app/              pages and /api routes (route.api.ts: data, status, stream)
-      src/components/       app shell (demo banner, status pills), Panel (freshness + states), charts, ui
-      src/features/         one folder per page area (market, regimes, gamma, volume, books,
-                            liquidations, calendar, news, setup)
-      src/lib/              hooks (datasets, stream, clock), mode.ts (server or static), formatting
+      src/cq/               ported prototype views: canvas charts, three.js scenes, adapters, theme
+      src/components/       app shell (sidebar, status pills, KPI row, settings popover, demo
+                            banner), Panel (freshness + states), ui primitives
+      src/features/         one folder per page area (overview, market, regimes, gamma, volume,
+                            books, liquidations, calendar, news, jev, setup, settings)
+      src/lib/              hooks (datasets, stream, clock), live tape, settings (cq.ui), mode.ts
       src/server/store.ts   Redis reader with worker fallback
       scripts/build-static.ts   static export for GitHub Pages
     worker/                 long-lived Node process
@@ -448,6 +491,7 @@ crypto-quant-dashboard/
       src/budget.ts         daily budget governor
       src/cache.ts          memory cache with Redis mirror, demand set, call counters
       src/demo.ts           keyless demo: loads docs/samples, seeds envelopes, stream replay events
+      src/kpi-history.ts    header KPI recorder (every 5 minutes, 24 hours kept)
       src/stream/           CDA SSE relay, delayed preview, demo replay, fan-out hub
       src/jev/              TypeSafe Jev client (SDK wrapper), question sets, state builders, classifier
       src/http.ts           /healthz, /status, /data/:dataset, /stream
@@ -459,7 +503,7 @@ crypto-quant-dashboard/
     samples/                verbatim Pro Plus responses for every endpoint used, with index.json;
                             also the data behind both demo modes
     screenshots/            README images
-    design/                 Claude Design reference export for the redesign
+    design/                 Claude Design prototype the UI follows (HTML, charts, scenes, engine)
   .github/workflows/        ci.yml (typecheck, lint, samples, build), pages.yml (static demo)
   docker-compose.yml        local Redis
 ```
@@ -476,6 +520,7 @@ crypto-quant-dashboard/
 | `pnpm --filter @cqd/schemas check-samples` | Validates every file in `docs/samples/` against the schemas (stream samples event by event) and fails if a dataset or the stream has no demo sample. |
 | `pnpm --filter @cqd/web build:static` | Static demo export to `apps/web/out` (add `GITHUB_PAGES=true` for the Pages base path). |
 | `pnpm --filter @cqd/web samples:static` | Regenerates only `apps/web/public/samples` from `docs/samples`. |
+| `pnpm --filter @cqd/worker kpi:sample` | Saves a running worker's recorded KPI history as the demo sample (no CDA calls). |
 | `pnpm redis:up` / `pnpm redis:down` | Starts or stops the local Redis container. |
 
 ## Decisions that differ from PLAN.md
@@ -491,8 +536,8 @@ crypto-quant-dashboard/
 - **Depth heatmap from CDA's own history.** The ±50 bps heatmap uses
   `/liquidity/depth/{coin}?minutes=360` instead of snapshots we would have to accumulate, so it is
   complete the moment a coin is focused.
-- **Header stat strip.** None of the Phase 1 endpoints exposes total crypto market cap or total
-  24h volume. The strip shows stablecoin market cap and Hyperliquid 24h volume in their place,
+- **Header KPI row.** None of the Phase 1 endpoints exposes total crypto market cap or total
+  24h volume. The row shows stablecoin market cap and Hyperliquid 24h volume in their place,
   plus BTC dominance and 24h liquidations from `/regimes` signals, BTC OI across venues, Hyperliquid
   OI, the BTC long/short ratio, whale short share and Fear & Greed.
 - **Playbook leverage.** `/regimes` publishes directional bias and typical duration but no leverage
@@ -503,6 +548,13 @@ crypto-quant-dashboard/
   automatically from `/auth/keys/me` if the key's tier changes.
 - **Demo from saved responses.** Keyless runs and the static site show real captured data with a
   badge, rather than empty "API key not configured" panels.
+- **Status pills in the header.** The exported prototype moves worker, plan, budget and clock into
+  a sidebar block and leaves its KPI row empty; the app keeps the status pill row and the KPI row
+  with sparklines shown in the prototype's reference screenshots.
+- **Prototype numbers CDA lacks.** The squeeze radar plots only the coins CDA lists (those at or
+  above the alert severity); the cycle view shows stability instead of "progress through phase"
+  and CDA's bias, horizon, description and rationale instead of a written playbook; the liquidity
+  terrain spreads CDA's 0-10, 10-25 and 25-50 bps bands over 2 bps rows.
 
 ## Known gaps
 
