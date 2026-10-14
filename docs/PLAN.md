@@ -15,7 +15,7 @@ Updated 2026-10-14: the key is **Pro Plus** (confirmed via `GET /api/v1/auth/key
 
 | Constraint | Value (Pro Plus tier) | Consequence |
 |---|---|---|
-| Rate limit | 120 req/min, 50,000 req/day, per key and shared with other tooling on the same key | Browsers must never call CDA directly. One server-side poller fetches each dataset on a schedule and caches it. All users read from our cache. The poller runs a 100/min token bucket and targets under 30,000 calls/day for the dashboard (default budget 28,000), leaving headroom for other tooling. |
+| Rate limit | 120 req/min, 50,000 req/day, per key and shared with other tooling on the same key | Browsers must never call CDA directly. One server-side poller fetches each dataset on a schedule and caches it. All users read from our cache. The poller runs a 100/min token bucket and a 30,000 calls/day budget for the dashboard, leaving 20,000/day of headroom for other tooling. |
 | API key | Single `X-API-Key` header, `cdk_live_...` | Key lives only on the server (env var, read by the worker only). Never shipped to the client. |
 | Key introspection | `GET /api/v1/auth/keys/me` reports tier, per-minute and daily limits, and account-wide `requests_today` | The worker reads it every 10 minutes: it caps the limiter at the key's per-minute limit minus 2, caps our daily budget at 95% of the key's daily limit, pauses if the whole account nears its limit, and skips endpoints above the key's tier without spending a call. |
 | Live stream | `GET /api/v1/stream` (SSE), Pro and Pro Plus, max 3 concurrent streams per key | Server opens one SSE connection to CDA and fans out to all browser clients over our own SSE endpoint. |
@@ -50,7 +50,7 @@ Updated 2026-10-14: the key is **Pro Plus** (confirmed via `GET /api/v1/auth/key
 The table above was the original Pro estimate (~350/hour). As built, the scheduled registry is
 298 calls/hour (7,152/day) because GEX and positioning use one comma-list call each and several
 endpoints were merged. Against the Pro Plus key that is about 14% of the 50,000/day allowance and
-about a quarter of the dashboard's 28,000/day budget, so on-demand reads (L2 book, drawers, depth
+about a quarter of the dashboard's 30,000/day budget, so on-demand reads (L2 book, drawers, depth
 history, and the Phase 3 history endpoints) have ample room. The header's budget meter shows both
 the dashboard's calls today and the whole key's usage. Liquidation fills arrive live over SSE
 anyway, so the REST poll for liquidations only refreshes the rolling-window totals.
@@ -167,6 +167,12 @@ aggregates everything for one symbol (regime, GEX, whales, depth, liquidations, 
 news). Watchlist in localStorage. Mobile layout pass.
 
 ### Phase 3: History and backtesting (requires Pro Plus)
+**Unblocked (2026-10-14):** the key is Pro Plus, so every endpoint below is available today.
+`quant-history`, `quant-whales-history` and `positioning-ladder` are already registered as
+on-demand datasets with schemas checked against real responses (docs/samples/), so the first
+Phase 3 pages only need UI. The ladder's bins share the GEX profile-bin shape, so the existing
+gamma profile chart can render it.
+
 Regime timeline since 2020, GEX/whale history charts, positioning ladder, liquidation density
 archives, and a "what the model said vs what happened" scorecard from `/quant/history`.
 

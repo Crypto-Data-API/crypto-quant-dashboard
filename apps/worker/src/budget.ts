@@ -17,7 +17,7 @@ export interface AccountInfo {
 /**
  * Daily budget governor. The day rolls over at 00:00 UTC.
  *
- * Our budget is CDA_DAILY_BUDGET (default 28,000), capped at 95% of the key's reported daily
+ * Our budget is CDA_DAILY_BUDGET (default 30,000), capped at 95% of the key's reported daily
  * limit, so a Pro key (10,000/day) is automatically held to 9,500.
  *
  *  - normal:    calls so far are within the pace line (budget spread evenly over the day,

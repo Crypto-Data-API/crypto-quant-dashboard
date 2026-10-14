@@ -7,7 +7,7 @@
  * viewer has asked for them within `demandTtlMs`, at a higher limiter priority.
  *
  * Steady-state budget (scheduled only) is 298 calls/hour = 7,152/day. The worker's default
- * daily budget is 28,000 (the key is Pro Plus: 50,000/day, shared with other tooling), so
+ * daily budget is 30,000 (the key is Pro Plus: 50,000/day, shared with other tooling), so
  * on-demand reads have ample room; the L2 book alone is 240/hour while the order-book page is
  * open. Run `budgetPerHour()` to recompute after editing intervals.
  *

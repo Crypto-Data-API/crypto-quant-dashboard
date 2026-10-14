@@ -89,9 +89,9 @@ fixed at 3001 in `apps/web/package.json` (`next dev -p 3001`, `next start -p 300
 | `WORKER_URL` | `http://localhost:4100` | web | Where the web app reaches the worker (fallback reads, stream proxy). |
 | `WORKER_TOKEN` | empty | both | Optional bearer token for the worker's `/status` and `/data` routes. |
 | `CDA_RATE_PER_MIN` | `100` | worker | Token bucket rate (max 115). Lowered automatically to the key's per-minute limit minus 2. |
-| `CDA_DAILY_BUDGET` | `28000` | worker | The dashboard's daily keyed-call budget. Capped automatically at 95% of the key's daily limit. |
+| `CDA_DAILY_BUDGET` | `30000` | worker | The dashboard's daily keyed-call budget. Capped automatically at 95% of the key's daily limit. |
 | `ON_DEMAND_MAX` | `16` | worker | Maximum on-demand datasets polled at once; extra requests wait as pending. |
-| `WORKER_CORS_ORIGIN` | `*` | worker | CORS origin for the public `/stream` endpoint. |
+| `WORKER_CORS_ORIGIN` | `*` | worker | CORS origin for the public `/stream` endpoint (for example `http://localhost:3001`). |
 | `STREAM_SOURCE` | `auto` | worker | `auto`, `live`, `delayed` or `off`. |
 | `GEX_SYMBOLS` | `BTC,ETH,SOL,HYPE` | worker | Coins polled on a schedule for GEX and positioning. |
 | `LOG_LEVEL` | `info` | worker | `debug`, `info`, `warn`, `error`. Set `LOG_FORMAT=pretty` for terminal output. |
@@ -159,7 +159,8 @@ connection no matter how many browsers are open.
 
 The key is **Pro Plus**: 120 requests per minute and 50,000 per day, counted per key and shared with
 any other tooling that uses the same key. The dashboard targets well under that: 100 requests per
-minute and a 28,000-call daily budget. The budget is enforced in four layers.
+minute and a 30,000-call daily budget, leaving 20,000 calls a day for other tooling. The budget is
+enforced in four layers.
 
 0. **Key introspection.** At startup and every 10 minutes the worker reads `GET /api/v1/auth/keys/me`
    (about 144 calls/day). It sets the limiter to `min(CDA_RATE_PER_MIN, per_minute_limit - 2)`,
@@ -287,7 +288,7 @@ crypto-quant-dashboard/
   guidance, so the playbook shows what CDA publishes.
 - **Fan-out from the worker** with a same-origin proxy in the web app (see above).
 - **Port 3001** for the web app (`next dev -p 3001`), to avoid clashing with other local apps on 3000.
-- **Budget sized for Pro Plus.** 100/min and 28,000/day instead of the plan's Pro numbers, adapted
+- **Budget sized for Pro Plus.** 100/min and 30,000/day instead of the plan's Pro numbers, adapted
   automatically from `/auth/keys/me` if the key's tier changes.
 
 ## Known gaps
