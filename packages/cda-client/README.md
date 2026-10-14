@@ -34,8 +34,10 @@ We chose **openapi-typescript + openapi-fetch** over openapi-zod-client.
 
 ## Rate limiting and retries
 
-- **Token bucket:** 28 requests/minute, burst 1. A bucket admits at most `burst + rate` requests
-  in any rolling minute, so the worst case is 29, one under the Pro limit of 30.
+- **Token bucket:** a bucket admits at most `burst + rate` requests in any rolling minute. The
+  client default is 28/min with burst 1 (29 worst case, safe for a Pro key at 30/min). The worker
+  runs 100/min for the Pro Plus key (120/min) and calls `limiter.setRate()` with the key's real
+  per-minute limit minus 2 after reading `/auth/keys/me`.
 - **Priorities:** on-demand reads (a viewer has a drawer or page open) jump ahead of scheduled
   polls; the stream connection jumps ahead of both.
 - **429:** the whole bucket pauses until `Retry-After` (or an exponential backoff with jitter),

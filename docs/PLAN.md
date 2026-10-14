@@ -10,14 +10,18 @@ Researched 2026-10-14 against the live OpenAPI spec (`https://cryptodataapi.com/
 
 ## 1. Key constraints that shape the design
 
-| Constraint | Value (Pro tier) | Consequence |
+Updated 2026-10-14: the key is **Pro Plus** (confirmed via `GET /api/v1/auth/keys/me`, tier
+`pro_plus`), not Pro.
+
+| Constraint | Value (Pro Plus tier) | Consequence |
 |---|---|---|
-| Rate limit | 30 req/min, 10,000 req/day | Browsers must never call CDA directly. One server-side poller fetches each dataset on a schedule and caches it. All users read from our cache. |
-| API key | Single `X-API-Key` header, `cdk_live_...` | Key lives only on the server (env var). Never shipped to the client. |
-| Live stream | `GET /api/v1/stream` (SSE), Pro, max 3 concurrent streams per key | Server opens one SSE connection to CDA and fans out to all browser clients over our own SSE endpoint. |
-| Pro-gated endpoints | regimes, GEX, whales, depth, positioning return 403 on Free | Poller handles 403 gracefully and shows a "Pro required" state rather than retry-spamming. |
-| Pro Plus only | `/quant/history`, `/quant/regimes/history`, `/quant/whales/history`, `/positioning/ladder`, `/backtesting/*` | Phases 1 and 2 use Pro only. History/backtest panels are Phase 3 if the key is upgraded. |
-| Refresh cadences | Regimes 15 min, GEX/whales/depth ~5 min, liquidations rolling, calendar daily | Poll each dataset at its native cadence. |
+| Rate limit | 120 req/min, 50,000 req/day, per key and shared with other tooling on the same key | Browsers must never call CDA directly. One server-side poller fetches each dataset on a schedule and caches it. All users read from our cache. The poller runs a 100/min token bucket and targets under 30,000 calls/day for the dashboard (default budget 28,000), leaving headroom for other tooling. |
+| API key | Single `X-API-Key` header, `cdk_live_...` | Key lives only on the server (env var, read by the worker only). Never shipped to the client. |
+| Key introspection | `GET /api/v1/auth/keys/me` reports tier, per-minute and daily limits, and account-wide `requests_today` | The worker reads it every 10 minutes: it caps the limiter at the key's per-minute limit minus 2, caps our daily budget at 95% of the key's daily limit, pauses if the whole account nears its limit, and skips endpoints above the key's tier without spending a call. |
+| Live stream | `GET /api/v1/stream` (SSE), Pro and Pro Plus, max 3 concurrent streams per key | Server opens one SSE connection to CDA and fans out to all browser clients over our own SSE endpoint. |
+| Pro-gated endpoints | regimes, GEX, whales, depth, positioning return 403 on Free | Poller handles 403 gracefully and shows a "Higher plan required" state rather than retry-spamming. |
+| Pro Plus only | `/quant/history`, `/quant/regimes/history`, `/quant/whales/history`, `/quant/positioning/ladder`, `/backtesting/*` | **Available on this key, so Phase 3 is unblocked.** `quant-history`, `quant-whales-history` and `positioning-ladder` are already in the dataset registry as on-demand datasets (no polling cost until a page reads them). |
+| Refresh cadences | Regimes 15 min, GEX/whales/depth ~5 min, liquidations rolling, calendar daily | Poll each dataset at its native cadence; faster polling buys nothing. |
 
 ### Polling budget (Pro key, steady state)
 
@@ -43,9 +47,13 @@ Researched 2026-10-14 against the live OpenAPI spec (`https://cryptodataapi.com/
 | Policy / security / meme scores | `/policy/regime/score` etc. | 15 min | 12 |
 | **Total** | | | **~350/hour idle, ~600/hour with order book open** |
 
-That is roughly 8k to 9k calls/day, under the 10k Pro cap but not by much. The poller will expose a
-"calls used today" meter so intervals can be tuned against real usage. Liquidation fills arrive live
-over SSE anyway, so the REST poll for liquidations only refreshes the rolling-window totals.
+The table above was the original Pro estimate (~350/hour). As built, the scheduled registry is
+298 calls/hour (7,152/day) because GEX and positioning use one comma-list call each and several
+endpoints were merged. Against the Pro Plus key that is about 14% of the 50,000/day allowance and
+about a quarter of the dashboard's 28,000/day budget, so on-demand reads (L2 book, drawers, depth
+history, and the Phase 3 history endpoints) have ample room. The header's budget meter shows both
+the dashboard's calls today and the whole key's usage. Liquidation fills arrive live over SSE
+anyway, so the REST poll for liquidations only refreshes the rolling-window totals.
 
 ---
 
@@ -166,7 +174,9 @@ archives, and a "what the model said vs what happened" scorecard from `/quant/hi
 
 ## 5. Open questions
 
-1. **Tier**: the key is Pro, so Phase 3 is parked. If it is Pro Plus, Phase 3 moves up.
+1. **Tier**: resolved. The key is Pro Plus, so Phase 3 (history and backtesting) is unblocked and
+   can move up. Three Pro Plus endpoints are already registered as on-demand datasets; open
+   question is only ordering versus the Phase 2 extras.
 2. **Audience**: private tool or public? Public changes nothing in the data layer (the cache already
    isolates CDA from user count) but adds auth, abuse protection and attribution to CDA.
 3. **Hosting**: Vercel + Fly.io as proposed, or a single VPS running everything?

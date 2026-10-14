@@ -5,7 +5,9 @@ A real-time quant dashboard for Hyperliquid perps and the wider crypto market, p
 API or its live event stream; the app does not model anything CDA already computes.
 
 **Status:** Phase 0 (foundation) and Phase 1 (the seven pages) from [docs/PLAN.md](docs/PLAN.md)
-are built. Phase 2 extras and Phase 3 history panels are not started.
+are built and verified against live data with a Pro Plus key. Phase 2 extras are not started.
+Phase 3 (history and backtesting) is unblocked by the Pro Plus key; its first three datasets are
+already registered.
 
 | Route | Page | Main CDA sources |
 |---|---|---|
@@ -31,7 +33,7 @@ plan required, key rejected, rate limited, daily budget reached, fetch failed, o
 - **pnpm 10.** Run `corepack enable`, or `npm i -g pnpm@10` if corepack cannot write to your
   Node install directory.
 - **Docker** for the local Redis (optional: without Redis everything still runs in memory).
-- **A CDA Pro key** for live data (optional: without it the app runs in keyless mode).
+- **A CDA Pro or Pro Plus key** for live data (optional: without it the app runs in keyless mode).
 
 ### Setup
 
@@ -41,22 +43,27 @@ cd crypto-quant-dashboard
 pnpm install
 cp .env.example .env          # then set CDA_API_KEY=cdk_live_...
 docker compose up -d redis    # local Redis on 6379
-pnpm dev                      # worker (port 4100) + web (port 3100) together
+pnpm dev                      # worker (port 4100) + web (port 3001) together
 ```
 
-Open <http://localhost:3100>. To run the two processes in separate terminals instead:
+Open <http://localhost:3001>. To run the two processes in separate terminals instead:
 
 ```bash
 pnpm dev:worker   # poller + stream relay, http://localhost:4100
-pnpm dev:web      # Next.js, http://localhost:3100
+pnpm dev:web      # Next.js, http://localhost:3001
 ```
+
+There is one `.env`, at the repo root; no `.env.local` copies are needed. The worker loads the whole
+file (real environment variables win). The web app's `next.config.ts` loads the same file but takes
+only `REDIS_URL`, `WORKER_URL`, `WORKER_TOKEN` and `NEXT_PUBLIC_STREAM_URL`: it never calls CDA, so
+the key stays out of the Next.js process entirely.
 
 Production build and start:
 
 ```bash
 pnpm build
 pnpm start:worker   # node apps/worker/dist/index.js
-pnpm start:web      # next start on port 3100
+pnpm start:web      # next start on port 3001
 ```
 
 ### Keyless mode
@@ -70,7 +77,8 @@ its original pace (about 31 minutes behind real time, labelled DELAYED PREVIEW).
 
 All variables live in the repo-root `.env` (see [.env.example](.env.example)). The worker loads the
 whole file; the web app loads only `REDIS_URL`, `WORKER_URL`, `WORKER_TOKEN` and
-`NEXT_PUBLIC_STREAM_URL`, so the CDA key never enters the Next.js process.
+`NEXT_PUBLIC_STREAM_URL`, so the CDA key never enters the Next.js process. The web app's port is
+fixed at 3001 in `apps/web/package.json` (`next dev -p 3001`, `next start -p 3001`).
 
 | Variable | Default | Used by | Purpose |
 |---|---|---|---|
@@ -80,8 +88,10 @@ whole file; the web app loads only `REDIS_URL`, `WORKER_URL`, `WORKER_TOKEN` and
 | `WORKER_PORT` | `4100` | worker | Worker HTTP port. |
 | `WORKER_URL` | `http://localhost:4100` | web | Where the web app reaches the worker (fallback reads, stream proxy). |
 | `WORKER_TOKEN` | empty | both | Optional bearer token for the worker's `/status` and `/data` routes. |
-| `CDA_RATE_PER_MIN` | `28` | worker | Token bucket rate (capped at 28). |
-| `CDA_DAILY_BUDGET` | `10000` | worker | Daily keyed-call budget for the governor. |
+| `CDA_RATE_PER_MIN` | `100` | worker | Token bucket rate (max 115). Lowered automatically to the key's per-minute limit minus 2. |
+| `CDA_DAILY_BUDGET` | `28000` | worker | The dashboard's daily keyed-call budget. Capped automatically at 95% of the key's daily limit. |
+| `ON_DEMAND_MAX` | `16` | worker | Maximum on-demand datasets polled at once; extra requests wait as pending. |
+| `WORKER_CORS_ORIGIN` | `*` | worker | CORS origin for the public `/stream` endpoint. |
 | `STREAM_SOURCE` | `auto` | worker | `auto`, `live`, `delayed` or `off`. |
 | `GEX_SYMBOLS` | `BTC,ETH,SOL,HYPE` | worker | Coins polled on a schedule for GEX and positioning. |
 | `LOG_LEVEL` | `info` | worker | `debug`, `info`, `warn`, `error`. Set `LOG_FORMAT=pretty` for terminal output. |
@@ -147,24 +157,33 @@ connection no matter how many browsers are open.
 
 ## Rate-limit budget
 
-CDA Pro allows 30 requests per minute and 10,000 per day. The budget is enforced in three layers.
+The key is **Pro Plus**: 120 requests per minute and 50,000 per day, counted per key and shared with
+any other tooling that uses the same key. The dashboard targets well under that: 100 requests per
+minute and a 28,000-call daily budget. The budget is enforced in four layers.
 
-1. **Token bucket (per minute).** 28 requests/minute with burst 1, so at most 29 requests start in
-   any rolling minute. Scheduled polls, on-demand reads and stream reconnects share it; on-demand
-   reads have priority. A 429 pauses the whole bucket for `Retry-After` (or exponential backoff)
-   and retries up to 3 times. 401, 402 and 403 are never retried: the envelope records
-   `unauthorized` or `pro_required` and the worker re-checks hourly.
+0. **Key introspection.** At startup and every 10 minutes the worker reads `GET /api/v1/auth/keys/me`
+   (about 144 calls/day). It sets the limiter to `min(CDA_RATE_PER_MIN, per_minute_limit - 2)`,
+   caps the daily budget at 95% of `daily_limit`, tracks the whole key's `requests_today`, and
+   skips any dataset whose `tier` is above the key's tier without spending a call. A Pro key is
+   therefore held to 28/min and 9,500/day automatically.
+1. **Token bucket (per minute).** 100 requests/minute with burst 1, so at most 101 requests start in
+   any rolling minute against the 120 limit. Scheduled polls, on-demand reads and stream
+   reconnects share it; on-demand reads have priority. A 429 pauses the whole bucket for
+   `Retry-After` (or exponential backoff) and retries up to 3 times. 401, 402 and 403 are never
+   retried: the envelope records `unauthorized` or `pro_required` and the worker re-checks hourly.
 2. **Daily counter.** Every keyed HTTP attempt increments `cqd:calls:<UTC date>` plus per-dataset
    and per-status hashes (kept 3 days). A restarted worker reads today's count back from Redis.
    The header's Budget pill shows calls used today.
 3. **Governor (per day).** The worker compares calls used with a pace line (the daily budget spread
-   evenly over the UTC day, plus 400 calls of slack for startup). Ahead of the line it stretches
-   every interval by 2x (4x past 95% of the budget). Within 25 calls of the budget it pauses keyed
-   polling until 00:00 UTC and panels show "Daily budget reached".
+   evenly over the UTC day, plus 4% slack for startup). Ahead of the line it stretches every
+   interval by 2x (4x past 95% of the budget). Within 25 calls of the budget, or when the whole
+   key is within 1% of its daily limit, it pauses keyed polling until 00:00 UTC and panels show
+   "Daily budget reached". The Budget pill shows the dashboard's calls and the whole key's usage.
 
-Scheduled load at the registry's intervals is **298 calls/hour (7,152/day)**, leaving roughly 2,800
-calls/day for on-demand reads. The L2 ladder is the most expensive on-demand dataset at 240
-calls/hour while the order-book page is open.
+Scheduled load at the registry's intervals is **298 calls/hour (7,152/day)**, about a quarter of the
+dashboard's budget. The L2 ladder is the most expensive on-demand dataset at 240 calls/hour while
+the order-book page is open. Intervals follow CDA's own refresh cadences, so the extra Pro Plus
+headroom is left for on-demand reads and Phase 3 rather than spent on faster polling.
 
 | Dataset | Endpoint | Interval | Calls/hour |
 |---|---|---|---|
@@ -189,10 +208,24 @@ calls/hour while the order-book page is open.
 | supply-unlocks | `/supply/unlocks?window_days=30` | 60 min | 1 |
 
 On-demand datasets: `quant-coin` (5 min), `quant-gex-coin` (5 min), `gex-history` (30 min),
-`volume-detail` (10 min), `l2-book` (15 s), `depth-history` (2 min), `event-symbol` (30 min).
-At most 8 run at once (`ON_DEMAND_MAX`). Tune intervals in
+`volume-detail` (10 min), `l2-book` (15 s), `depth-history` (2 min), `event-symbol` (30 min), and the
+Pro Plus `quant-history`, `quant-whales-history` and `positioning-ladder` (registered for Phase 3,
+not yet used by a page). At most 16 run at once (`ON_DEMAND_MAX`). Tune intervals in
 [packages/schemas/src/datasets.ts](packages/schemas/src/datasets.ts); `budgetPerHour()` recomputes
 the scheduled total.
+
+### Adding a dataset
+
+1. Add an entry to `DATASETS` in [packages/schemas/src/datasets.ts](packages/schemas/src/datasets.ts).
+   The `path` is type-checked against the OpenAPI spec. Set `tier` (`free`, `pro`, `pro_plus`),
+   an `intervalMs`, and either nothing (scheduled), a `param` (on-demand per symbol) or
+   `onDemand: true`. Query values may be functions, for example
+   `start: (now) => new Date(now - 7 * DAY).toISOString()`.
+2. Add its payload type to `DatasetDataMap` and its Zod schema to `validators.ts` (run `pnpm gen`
+   if the schema comes from the spec).
+3. Read it from a page with `useDataset("<id>", { param })` inside a `Panel`.
+
+The worker, cache, proxy route, panel states, tier gating and budget accounting need no changes.
 
 ## Project structure
 
@@ -217,7 +250,7 @@ crypto-quant-dashboard/
     schemas/                generated Zod schemas, permissive schemas, dataset registry, envelope
   docs/
     PLAN.md                 development plan
-    samples/                trimmed real CDA responses used to verify the schemas
+    samples/                verbatim Pro Plus responses for every endpoint used, with index.json
   docker-compose.yml        local Redis
 ```
 
@@ -230,7 +263,7 @@ crypto-quant-dashboard/
 | `pnpm typecheck` | `tsc --noEmit` in every package. |
 | `pnpm lint` | ESLint in every package (Next.js rules in `apps/web`). |
 | `pnpm gen` | Regenerates types from `openapi.json`, then the Zod schemas. |
-| `pnpm --filter @cqd/schemas check-samples` | Validates `docs/samples/*.json` against the schemas. |
+| `pnpm --filter @cqd/schemas check-samples` | Validates every file in `docs/samples/` against the schemas (stream samples event by event). |
 | `pnpm redis:up` / `pnpm redis:down` | Starts or stops the local Redis container. |
 
 ## Decisions that differ from PLAN.md
@@ -253,17 +286,19 @@ crypto-quant-dashboard/
 - **Playbook leverage.** `/regimes` publishes directional bias and typical duration but no leverage
   guidance, so the playbook shows what CDA publishes.
 - **Fan-out from the worker** with a same-origin proxy in the web app (see above).
-- **Port 3100** for the web app, to avoid clashing with other local apps on 3000.
+- **Port 3001** for the web app (`next dev -p 3001`), to avoid clashing with other local apps on 3000.
+- **Budget sized for Pro Plus.** 100/min and 28,000/day instead of the plan's Pro numbers, adapted
+  automatically from `/auth/keys/me` if the key's tier changes.
 
 ## Known gaps
 
-- Field shapes for `/quant/gex`, `/quant/positioning`, `/quant/whales` and the liquidation
-  endpoints were checked against one day of real samples; their schemas stay loose until more
-  samples (warming coins, thin coverage) are collected.
-- The stream's `whale_transfer` and `whale_position` event shapes come from the endpoint
-  description; no sample has been captured yet.
+- Schemas for the untyped endpoints were tightened from one capture
+  ([docs/samples](docs/samples/README.md)). Fields the descriptions say can be null for warming or
+  thin-coverage coins stay nullable; a mismatch is logged as drift, never dropped.
+- No `whale_position` stream event was captured yet, so its schema follows the endpoint
+  description.
 - Phase 2 (whale radar, stream page, funding/OI, volatility, sentiment, news, watchlist, mobile
-  pass) and Phase 3 (Pro Plus history and backtesting) are not built.
+  pass) is not built. Phase 3 is unblocked by the Pro Plus key; no Phase 3 page exists yet.
 
 ## License
 
