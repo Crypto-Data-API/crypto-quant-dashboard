@@ -3,6 +3,7 @@ import {
   DATASETS,
   DATASET_IDS,
   emptyEnvelope,
+  extractAsOf,
   isJevDef,
   isOnDemandDef,
   keys,
@@ -18,6 +19,7 @@ import {
 } from "@cqd/schemas";
 import { validateDataset } from "@cqd/schemas/validators";
 import type { BudgetGovernor } from "./budget";
+import { DEMO_TTL_MS, type DemoSamples } from "./demo";
 import type { WorkerCache } from "./cache";
 import type { Logger } from "./log";
 
@@ -53,6 +55,8 @@ export interface PollerOptions {
   keyTier: () => string | null;
   /** Whether the Jev classifier is configured (for Jev datasets not yet written). */
   jevConfigured: () => boolean;
+  /** Demo samples, used for keyed datasets when CDA_API_KEY is empty. */
+  demo: DemoSamples | null;
 }
 
 /** Demand-set member for a dataset (paramless on-demand datasets use an empty param). */
@@ -109,7 +113,10 @@ export class Poller {
       const def = slot.def;
       const existing = cache.getEnvelope(slot.key);
       if (def.tier !== "keyless" && !client.hasKey) {
-        this.write(slot, "no_api_key", null, { kind: "no_api_key", message: "CDA_API_KEY is not configured on the worker." });
+        // Demo mode: the samples were seeded already; never overwrite them with "no API key".
+        if (!this.o.demo || !this.o.cache.getEnvelope(slot.key)?.demo) {
+          this.write(slot, "no_api_key", null, { kind: "no_api_key", message: "CDA_API_KEY is not configured on the worker." });
+        }
         slot.nextDueAt = Number.POSITIVE_INFINITY;
         return;
       }
@@ -149,6 +156,9 @@ export class Poller {
     const def = DATASETS[id] as DatasetDef;
     const env = this.o.cache.getEnvelope(keys.data(id, param));
     if (env) return env;
+    if (this.o.demo && !isJevDef(def) && def.tier !== "keyless" && !this.o.client.hasKey) {
+      return this.o.demo.envelope(id, param) ?? this.o.demo.unavailable(id, param);
+    }
     if (isJevDef(def)) {
       return this.o.jevConfigured()
         ? emptyEnvelope(id, "pending", { param, intervalMs: def.intervalMs, staleAfterMs: staleAfter(def) })
@@ -186,7 +196,12 @@ export class Poller {
         // Claim the slot so the tick loop does not fetch while we look for a cached copy.
         slot.nextDueAt = Number.POSITIVE_INFINITY;
         if (!this.o.client.hasKey && def.tier !== "keyless") {
-          this.write(slot, "no_api_key", null, { kind: "no_api_key", message: "CDA_API_KEY is not configured on the worker." });
+          if (this.o.demo) {
+            // Demo mode: the saved sample for this symbol, or "not in demo".
+            this.o.cache.setEnvelope(slot.key, this.o.demo.envelope(id, slot.param) ?? this.o.demo.unavailable(id, slot.param), DEMO_TTL_MS);
+          } else {
+            this.write(slot, "no_api_key", null, { kind: "no_api_key", message: "CDA_API_KEY is not configured on the worker." });
+          }
           slot.nextDueAt = Number.POSITIVE_INFINITY;
           continue;
         }
@@ -366,28 +381,4 @@ export function retryDelay(kind: CdaErrorKind, interval: number, failures: numbe
     default:
       return Math.min(interval, Math.min(15 * MIN, 30 * SEC * 2 ** Math.min(failures - 1, 5)));
   }
-}
-
-function toIso(v: unknown): string | null {
-  if (typeof v === "number" && Number.isFinite(v)) {
-    const ms = v > 1e12 ? v : v > 1e9 ? v * 1000 : null;
-    return ms ? new Date(ms).toISOString() : null;
-  }
-  if (typeof v === "string" && v.length > 0) {
-    const t = Date.parse(v);
-    return Number.isFinite(t) ? new Date(t).toISOString() : null;
-  }
-  return null;
-}
-
-/** CDA's own timestamp inside the payload ("data as of"), falling back to common field names. */
-export function extractAsOf(def: DatasetDef, data: unknown): string | null {
-  if (!data || typeof data !== "object") return null;
-  const d = data as Record<string, unknown>;
-  const candidates = [def.asOfField, "as_of", "timestamp", "positions_as_of", "generated_at", "ts"].filter(Boolean) as string[];
-  for (const c of candidates) {
-    const iso = toIso(d[c]);
-    if (iso) return iso;
-  }
-  return null;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Database, KeyRound, PlugZap, Radio, Server } from "lucide-react";
+import { Bot, Database, FlaskConical, KeyRound, PlugZap, Radio, Server } from "lucide-react";
 import type * as React from "react";
 import { TIER_LABEL, type Tier } from "@cqd/schemas";
 import { Tip } from "@/components/ui/primitives";
@@ -34,6 +34,18 @@ export function SystemStatus() {
   const stream = w?.stream;
   const account = w?.account ?? null;
   const tierLabel = account?.tier ? (TIER_LABEL[account.tier as Tier] ?? account.tier) : null;
+
+  if (data?.via === "static") {
+    return (
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Pill tip="Static GitHub Pages build: no server, no live calls. Every panel shows saved samples.">
+          <FlaskConical className="size-3.5" aria-hidden />
+          <Dot tone="info" />
+          Static demo
+        </Pill>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">

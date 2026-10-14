@@ -10,6 +10,18 @@ export function jevAgrees(cdaBias: number, jevChoice: string): boolean {
   return cda === jevChoice;
 }
 
+/** Demo mode (no key): panels show the committed samples in docs/samples/. */
+export interface DemoStatus {
+  /** CryptoDataApi datasets come from samples (CDA_API_KEY empty). */
+  cda: boolean;
+  /** Jev datasets come from samples (TYPESAFE_API_KEY empty, or CDA itself in demo). */
+  jev: boolean;
+  /** Static GitHub Pages build: no server at all. */
+  static: boolean;
+  capturedFrom: string | null;
+  capturedTo: string | null;
+}
+
 export interface JevStatus {
   /** JEV_ENABLED (default true). */
   enabled: boolean;
@@ -37,8 +49,11 @@ export type StreamEventType = (typeof STREAM_EVENT_TYPES)[number];
 
 /** Status of the worker's stream relay, pushed to browsers as `event: status`. */
 export interface StreamStatus {
-  /** live = CDA /stream (Pro); delayed = keyless 30-minute-delayed preview; off = disabled. */
-  source: "live" | "delayed" | "off";
+  /**
+   * live = CDA /stream (Pro); delayed = keyless 30-minute-delayed preview; replay = saved events
+   * looped at their original pace (demo, when the preview is unreachable); off = disabled.
+   */
+  source: "live" | "delayed" | "replay" | "off";
   state: "connecting" | "open" | "error" | "disabled" | "idle";
   message?: string | null;
   lastEventAt: number | null;
@@ -53,6 +68,8 @@ export interface StreamStatus {
 export interface RelayedEvent extends StreamEvent {
   /** Set when the event came from the delayed preview rather than the live stream. */
   preview?: boolean;
+  /** Set when the event is a saved sample replayed in demo mode (timestamps shifted to now). */
+  replay?: boolean;
 }
 
 export type BudgetMode = "normal" | "throttled" | "paused";
@@ -102,5 +119,7 @@ export interface WorkerStatus {
   onDemand: { active: number; max: number; keys: string[] };
   /** TypeSafe Jev classifier (PLAN.md 3.9). */
   jev: JevStatus;
+  /** Null when everything is live. */
+  demo: DemoStatus | null;
   datasets: DatasetRuntimeStatus[];
 }

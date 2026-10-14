@@ -1,4 +1,4 @@
-import { CalendarDays, ChartColumn, Flame, Layers, LayoutDashboard, Newspaper, Orbit, Radar, Sigma } from "lucide-react";
+import { CalendarDays, ChartColumn, Flame, KeyRound, Layers, LayoutDashboard, Newspaper, Orbit, Radar, Sigma } from "lucide-react";
 import type { ElementType } from "react";
 
 export interface NavItem {
@@ -19,4 +19,5 @@ export const NAV: NavItem[] = [
   { href: "/liquidations", label: "Liquidations", short: "Liqs", icon: Flame, description: "Rolling totals, heatmap, exchanges and the live tape" },
   { href: "/calendar", label: "Calendar", short: "Calendar", icon: CalendarDays, description: "Event risk, unlocks, macro prints and depegs" },
   { href: "/news", label: "News", short: "News", icon: Newspaper, description: "Market-moving catalysts, news pulse and feed health" },
+  { href: "/setup", label: "Setup", short: "Setup", icon: KeyRound, description: "API keys, demo mode and a setup prompt for your AI agent" },
 ];

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
+import { DemoBanner } from "./demo-banner";
 import { NAV } from "./nav";
 import { StatStrip } from "./stat-strip";
 import { SystemStatus } from "./system-status";
@@ -84,6 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="border-t px-2 lg:px-4">
           <StatStrip />
         </div>
+        <DemoBanner />
       </header>
 
       <main className="px-4 py-4 lg:px-6 lg:py-5">{children}</main>

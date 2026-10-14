@@ -21,6 +21,16 @@ function StreamBadge({ status, connection }: { status: ReturnType<typeof useStre
       </Badge>
     );
   }
+  if (status.source === "replay") {
+    return (
+      <Tip content="Demo: saved CryptoDataApi stream events replayed at their original pace and re-stamped to now. Add a key for the live stream.">
+        <Badge variant="info" tabIndex={0}>
+          <Radio aria-hidden />
+          DEMO REPLAY
+        </Badge>
+      </Tip>
+    );
+  }
   if (status.source === "delayed") {
     return (
       <Tip content="No Pro key: replaying CryptoDataApi's free /stream/delayed preview at its original pace, about 31 minutes behind real time.">
@@ -140,6 +150,7 @@ export function LiquidationTape({ className, maxRows = 60, height = 420 }: { cla
                       <td className="hidden px-2 py-1 text-muted-foreground capitalize md:table-cell">
                         {e.venue}
                         {e.preview ? <span className="ml-1 text-[10px] text-muted-foreground/60">(delayed)</span> : null}
+                        {e.replay ? <span className="ml-1 text-[10px] text-muted-foreground/60">(demo)</span> : null}
                       </td>
                     </tr>
                   );

@@ -30,7 +30,7 @@ export function loadEnv(): string[] {
   return loaded;
 }
 
-export type StreamSource = "auto" | "live" | "delayed" | "off";
+export type StreamSource = "auto" | "live" | "delayed" | "replay" | "off";
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
 export interface WorkerConfig {
@@ -123,7 +123,7 @@ export function readConfig(): WorkerConfig {
     // Our share of the key's daily allowance (Pro Plus: 50,000/day, shared with other tooling).
     // Also capped at 95% of the key's reported daily limit.
     dailyBudget: int("CDA_DAILY_BUDGET", 30_000, 100, 1_000_000),
-    streamSource: oneOf("STREAM_SOURCE", ["auto", "live", "delayed", "off"] as const, "auto"),
+    streamSource: oneOf("STREAM_SOURCE", ["auto", "live", "delayed", "replay", "off"] as const, "auto"),
     gexSymbols: symbols || "BTC,ETH,SOL,HYPE",
     logLevel: oneOf("LOG_LEVEL", ["debug", "info", "warn", "error"] as const, "info"),
     onDemandMax: int("ON_DEMAND_MAX", 16, 1, 50),

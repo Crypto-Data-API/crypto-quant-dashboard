@@ -4,7 +4,8 @@ import { budgetPerHour, keys, type WorkerStatus } from "@cqd/schemas";
 import { BudgetGovernor } from "./budget";
 import { createKeyInfoMonitor } from "./key-info";
 import { WorkerCache } from "./cache";
-import { loadEnv, readConfig } from "./config";
+import { findWorkspaceRoot, loadEnv, readConfig } from "./config";
+import { loadDemoSamples, seedDemo } from "./demo";
 import { createHttpServer } from "./http";
 import { JevClassifier } from "./jev/classifier";
 import { createJevClient } from "./jev/client";
@@ -59,6 +60,23 @@ async function main(): Promise<void> {
   const keyInfo = createKeyInfoMonitor({ client, budget, limiter, configuredRate: config.ratePerMinute, log: log.child({ component: "key-info" }) });
   await keyInfo.refresh();
 
+  // ---- demo mode ---------------------------------------------------------------
+  // No CDA key: every keyed panel shows the committed samples in docs/samples/ instead of an
+  // empty state. Jev panels show their samples when the classifier is off, and also whenever
+  // CDA itself is in demo (no point paying to classify saved data).
+  const samples = loadDemoSamples(findWorkspaceRoot(), log.child({ component: "demo" }));
+  const demoCda = samples !== null && !client.hasKey;
+  const demoJev = samples !== null && (!jev.configured || demoCda);
+  if (demoCda || demoJev) {
+    log.warn("demo mode: serving saved samples", {
+      cda: demoCda,
+      jev: demoJev,
+      capturedFrom: samples?.capturedFrom,
+      capturedTo: samples?.capturedTo,
+      hint: "set CDA_API_KEY (and TYPESAFE_API_KEY) in the repo-root .env and restart for live data; see /setup",
+    });
+  }
+
   const hub = new StreamHub();
   const poller = new Poller({
     client,
@@ -69,6 +87,7 @@ async function main(): Promise<void> {
     onDemandMax: config.onDemandMax,
     keyTier: () => budget.accountInfo?.tier ?? null,
     jevConfigured: () => jev.configured,
+    demo: demoCda ? samples : null,
   });
 
   // ---- single-poller lock -------------------------------------------------
@@ -97,9 +116,14 @@ async function main(): Promise<void> {
   const startWork = async () => {
     if (started) return;
     started = true;
+    if (samples && (demoCda || demoJev)) {
+      const n = seedDemo(cache, samples, { cda: demoCda, jev: demoJev });
+      log.info("demo samples seeded", { datasets: n });
+    }
     await poller.start();
-    void runStream({ source: config.streamSource, client, hub, log, signal: streamAbort.signal });
-    await classifier.start();
+    void runStream({ source: config.streamSource, client, hub, log, signal: streamAbort.signal, replayEvents: () => samples?.streamEvents() ?? [] });
+    if (!demoJev) await classifier.start();
+    else if (jev.configured) log.info("Jev not called in demo mode: it would only classify saved samples");
   };
 
   const lockTimer = setInterval(async () => {
@@ -155,6 +179,10 @@ async function main(): Promise<void> {
       onDemand: { active: poller.activeDemand().length, max: config.onDemandMax, keys: poller.activeDemand() },
       datasets: poller.runtimeStatus(),
       jev: jev.status(),
+      demo:
+        demoCda || demoJev
+          ? { cda: demoCda, jev: demoJev, static: false, capturedFrom: samples?.capturedFrom ?? null, capturedTo: samples?.capturedTo ?? null }
+          : null,
     };
   };
   // Only the lock holder publishes the heartbeat the web app reads; a standby worker would

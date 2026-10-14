@@ -15,6 +15,9 @@ const IDLE_TIMEOUT_MS = 45 * SEC;
 /** Delayed preview: poll cadence (CDA caches it for 60 s) and the playback lag we add. */
 const DELAYED_POLL_MS = 60 * SEC;
 const DELAYED_LAG_MS = 60 * SEC;
+/** Demo replay: longest pause between replayed events, and how long to replay before retrying the preview. */
+const REPLAY_MAX_GAP_MS = 3 * SEC;
+const REPLAY_WINDOW_MS = 10 * MIN;
 
 const sleep = (ms: number, signal: AbortSignal) =>
   new Promise<void>((resolve) => {
@@ -121,7 +124,8 @@ async function runLive(client: CdaClient, hub: StreamHub, log: Logger, signal: A
  * ago) and replays the events at their original pace, so the tape UI can be built and
  * demoed without a Pro key. Events are flagged `preview: true`.
  */
-async function runDelayed(client: CdaClient, hub: StreamHub, log: Logger, signal: AbortSignal): Promise<void> {
+async function runDelayed(client: CdaClient, hub: StreamHub, log: Logger, signal: AbortSignal, maxFailures = Infinity): Promise<"aborted" | "failed"> {
+  let failures = 0;
   const seen = new Set<string>();
   const seenOrder: string[] = [];
   const timers = new Set<ReturnType<typeof setTimeout>>();
@@ -136,11 +140,17 @@ async function runDelayed(client: CdaClient, hub: StreamHub, log: Logger, signal
     const res = await client.get<unknown>("/api/v1/stream/delayed", { signal });
     if (signal.aborted) break;
     if (!res.ok) {
+      failures++;
       hub.setStatus({ state: "error", message: `Preview unavailable: ${res.message}` });
-      log.warn("delayed preview fetch failed", { kind: res.kind, message: res.message });
-      await sleep(DELAYED_POLL_MS, signal);
+      log.warn("delayed preview fetch failed", { kind: res.kind, message: res.message, failures });
+      if (failures >= maxFailures) {
+        clearTimers();
+        return "failed";
+      }
+      await sleep(Math.min(DELAYED_POLL_MS, 15 * SEC), signal);
       continue;
     }
+    failures = 0;
     const parsed = DelayedStreamResponse.safeParse(res.data);
     if (!parsed.success) {
       hub.setStatus({ state: "error", message: "Preview payload did not match the expected shape" });
@@ -172,6 +182,31 @@ async function runDelayed(client: CdaClient, hub: StreamHub, log: Logger, signal
     await sleep(DELAYED_POLL_MS, signal);
   }
   clearTimers();
+  return "aborted";
+}
+
+/**
+ * Demo replay: saved stream events (docs/samples/stream-*.json) looped at their original pace
+ * (pauses capped at 3 s), re-stamped to the current time and flagged `replay: true`.
+ */
+async function runReplay(events: RelayedEvent[], hub: StreamHub, log: Logger, signal: AbortSignal): Promise<void> {
+  if (events.length === 0) {
+    hub.setStatus({ source: "replay", state: "error", message: "No saved stream events to replay" });
+    return;
+  }
+  hub.setStatus({ source: "replay", state: "open", message: "Demo replay of saved events", delayMs: null });
+  log.info("stream demo replay started", { events: events.length });
+  for (let loop = 1; !signal.aborted; loop++) {
+    let prevTs = events[0]!.ts;
+    for (let i = 0; i < events.length && !signal.aborted; i++) {
+      const ev = events[i]!;
+      await sleep(Math.min(REPLAY_MAX_GAP_MS, Math.max(0, ev.ts - prevTs)), signal);
+      prevTs = ev.ts;
+      if (signal.aborted) break;
+      const now = Date.now();
+      hub.publish({ ...ev, id: `replay-${loop}-${i}`, ts: now, recv_ts: now, replay: true });
+    }
+  }
 }
 
 /**
@@ -181,17 +216,47 @@ async function runDelayed(client: CdaClient, hub: StreamHub, log: Logger, signal
  *   delayed -> preview only
  *   off     -> nothing
  */
-export async function runStream(opts: { source: StreamSource; client: CdaClient; hub: StreamHub; log: Logger; signal: AbortSignal }): Promise<void> {
+export async function runStream(opts: {
+  source: StreamSource;
+  client: CdaClient;
+  hub: StreamHub;
+  log: Logger;
+  signal: AbortSignal;
+  /** Saved events for the demo replay (empty when docs/samples is absent). */
+  replayEvents?: () => RelayedEvent[];
+}): Promise<void> {
   const { source, client, hub, signal } = opts;
+  const replayEvents = opts.replayEvents ?? (() => []);
   const log = opts.log.child({ component: "stream" });
   if (source === "off") {
     hub.setStatus({ source: "off", state: "disabled", message: "STREAM_SOURCE=off" });
     return;
   }
+  if (source === "replay") {
+    await runReplay(replayEvents(), hub, log, signal);
+    return;
+  }
   const wantLive = source === "live" || (source === "auto" && client.hasKey);
   if (!wantLive) {
-    if (source === "auto") log.info("no API key: serving the keyless delayed preview on /stream");
-    await runDelayed(client, hub, log, signal);
+    if (source === "delayed") {
+      await runDelayed(client, hub, log, signal);
+      return;
+    }
+    // auto without a key: the keyless delayed preview while it is reachable, otherwise the
+    // saved-event replay, retrying the preview every 10 minutes.
+    log.info("no API key: serving the keyless delayed preview on /stream (demo replay if unreachable)");
+    while (!signal.aborted) {
+      const r = await runDelayed(client, hub, log, signal, 2);
+      if (r === "aborted" || signal.aborted) return;
+      log.warn("delayed preview unreachable; replaying saved events", { retryInMs: REPLAY_WINDOW_MS });
+      const window = new AbortController();
+      const stop = () => window.abort();
+      signal.addEventListener("abort", stop, { once: true });
+      const timer = setTimeout(stop, REPLAY_WINDOW_MS);
+      await runReplay(replayEvents(), hub, log, window.signal);
+      clearTimeout(timer);
+      signal.removeEventListener("abort", stop);
+    }
     return;
   }
   while (!signal.aborted) {
