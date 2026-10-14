@@ -11,7 +11,8 @@ import { StreamHub } from "./stream/hub";
 import { runStream } from "./stream/sources";
 
 const VERSION = "0.1.0";
-const LOCK_TTL_MS = 30_000;
+/** Lock TTL. A worker killed without cleanup (e.g. tsx watch on Windows) hands over within this window. */
+const LOCK_TTL_MS = 15_000;
 
 async function main(): Promise<void> {
   const envFiles = loadEnv();
@@ -91,7 +92,7 @@ async function main(): Promise<void> {
     if (!ok && leader) log.warn("lost poller lock to another worker");
     leader = ok;
     if (leader) await startWork();
-  }, 10_000);
+  }, 5_000);
 
   leader = await tryLock();
   if (leader) await startWork();
@@ -130,10 +131,13 @@ async function main(): Promise<void> {
       datasets: poller.runtimeStatus(),
     };
   };
-  const heartbeat = setInterval(() => {
-    void cache.setRaw(keys.heartbeat, JSON.stringify(status()), 20_000);
-  }, 5_000);
-  void cache.setRaw(keys.heartbeat, JSON.stringify(status()), 20_000);
+  // Only the lock holder publishes the heartbeat the web app reads; a standby worker would
+  // otherwise overwrite it with an idle status.
+  const beat = () => {
+    if (leader) void cache.setRaw(keys.heartbeat, JSON.stringify(status()), 20_000);
+  };
+  const heartbeat = setInterval(beat, 5_000);
+  beat();
 
   let lastMode = budget.mode();
   const budgetTimer = setInterval(() => {

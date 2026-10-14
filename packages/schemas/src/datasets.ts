@@ -7,9 +7,9 @@
  * has asked for them in the last `demandTtlMs`, and share the same rate limiter at a higher
  * priority.
  *
- * Steady-state budget (scheduled only) is ~318 calls/hour = ~7,600/day against the Pro cap
- * of 10,000/day, leaving ~2,400/day for on-demand reads (the L2 book alone is 240/hour while
- * the order-book page is open). Run `budgetPerHour()` to recompute after editing intervals.
+ * Steady-state budget (scheduled only) is 298 calls/hour = 7,152/day against the Pro cap of
+ * 10,000/day, leaving ~2,800/day for on-demand reads (the L2 book alone is 240/hour while the
+ * order-book page is open). Run `budgetPerHour()` to recompute after editing intervals.
  */
 import type { GetPath, QueryValue } from "@cqd/cda-client";
 import type * as Cda from "./generated/cda";
@@ -74,7 +74,8 @@ export const DATASETS = {
     tier: "pro",
     asOfField: "as_of",
   }),
-  "quant-model": def({ id: "quant-model", label: "Model card", path: "/api/v1/quant/model", intervalMs: 60 * MIN, tier: "free", asOfField: "last_retrain" }),
+  // No asOfField: the payload's timestamps are the retrain date and last inference, not a snapshot time.
+  "quant-model": def({ id: "quant-model", label: "Model card", path: "/api/v1/quant/model", intervalMs: 60 * MIN, tier: "free" }),
   "quant-coin": def({
     id: "quant-coin",
     label: "Coin regime detail",

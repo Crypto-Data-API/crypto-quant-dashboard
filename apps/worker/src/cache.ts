@@ -21,7 +21,7 @@ export class WorkerCache {
     redisUrl: string | null,
   ) {
     if (!redisUrl) {
-      log.warn("REDIS_URL not set: using in-memory cache only (web app will read through the worker HTTP API)");
+      log.warn("Redis disabled (REDIS_URL is empty or off): using in-memory cache only; the web app reads through the worker HTTP API");
       return;
     }
     const redis = new Redis(redisUrl, {
@@ -44,9 +44,12 @@ export class WorkerCache {
       if (this.redisReady) log.warn("redis connection closed; continuing in memory");
       this.redisReady = false;
     });
-    redis.on("error", (err: Error) => {
+    redis.on("error", (err: Error & { code?: string }) => {
       if (!this.warnedDown) {
-        log.warn("redis unavailable; continuing in memory and retrying in the background", { error: err.message });
+        log.warn("redis unavailable; continuing in memory and retrying in the background", {
+          url: redactUrl(redisUrl),
+          error: err.message || err.code || err.name,
+        });
         this.warnedDown = true;
       }
     });

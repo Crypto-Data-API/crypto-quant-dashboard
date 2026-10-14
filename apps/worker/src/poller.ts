@@ -160,11 +160,15 @@ export class Poller {
       if (!def.param) continue;
       const slot = this.slotFor(id, d.param);
       if (slot.nextDueAt === 0) {
+        // Claim the slot so the tick loop does not fetch while we look for a cached copy.
+        slot.nextDueAt = Number.POSITIVE_INFINITY;
         if (!this.o.client.hasKey && def.tier !== "keyless") {
           this.write(slot, "no_api_key", null, { kind: "no_api_key", message: "CDA_API_KEY is not configured on the worker." });
           slot.nextDueAt = Number.POSITIVE_INFINITY;
           continue;
         }
+        // A previous worker may have left this envelope in Redis: reuse it instead of blanking it.
+        if (!this.o.cache.getEnvelope(slot.key)) await this.o.cache.restore([slot.key]);
         const existing = this.o.cache.getEnvelope(slot.key);
         const fetchedAt = existing?.fetchedAt ? Date.parse(existing.fetchedAt) : 0;
         slot.nextDueAt = Math.max(now, fetchedAt + def.intervalMs);

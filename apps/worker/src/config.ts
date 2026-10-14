@@ -49,6 +49,17 @@ export interface WorkerConfig {
   onDemandMax: number;
 }
 
+/**
+ * REDIS_URL unset -> local default (docker compose); empty, "off", "none" or "disabled" ->
+ * no Redis (in-memory only).
+ */
+export function resolveRedisUrl(raw: string | undefined): string | null {
+  if (raw === undefined) return "redis://localhost:6379";
+  const v = raw.trim();
+  if (v === "" || ["off", "none", "disabled", "false"].includes(v.toLowerCase())) return null;
+  return v;
+}
+
 function int(name: string, fallback: number, min: number, max: number): number {
   const raw = process.env[name];
   if (raw === undefined || raw.trim() === "") return fallback;
@@ -73,12 +84,12 @@ export function readConfig(): WorkerConfig {
   return {
     apiKey: process.env.CDA_API_KEY?.trim() || null,
     baseUrl: process.env.CDA_BASE_URL?.trim() || "https://cryptodataapi.com",
-    redisUrl: process.env.REDIS_URL?.trim() || null,
+    redisUrl: resolveRedisUrl(process.env.REDIS_URL),
     port: int("WORKER_PORT", 4100, 1, 65535),
     host: process.env.WORKER_HOST?.trim() || "0.0.0.0",
     token: process.env.WORKER_TOKEN?.trim() || null,
     corsOrigin: process.env.WORKER_CORS_ORIGIN?.trim() || "*",
-    // Hard ceiling of 29: CDA Pro allows 30/min and the bucket can admit burst + rate per minute.
+    // Capped at 28: with burst 1 the bucket admits at most 29 requests per rolling minute, under the Pro limit of 30.
     ratePerMinute: int("CDA_RATE_PER_MIN", 28, 1, 28),
     dailyBudget: int("CDA_DAILY_BUDGET", 10_000, 100, 1_000_000),
     streamSource: oneOf("STREAM_SOURCE", ["auto", "live", "delayed", "off"] as const, "auto"),
