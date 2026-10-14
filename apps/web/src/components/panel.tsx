@@ -1,7 +1,8 @@
 "use client";
 
 import { DATASETS, isStale, type DatasetDef, type DatasetId, type Envelope, type EnvelopeStatus } from "@cqd/schemas";
-import { Bot, Clock, Gauge, Hourglass, KeyRound, Loader, Lock, PlugZap, ShieldAlert, TriangleAlert } from "lucide-react";
+import { Bot, Clock, FlaskConical, Gauge, Hourglass, KeyRound, Loader, Lock, PlugZap, ShieldAlert, TriangleAlert } from "lucide-react";
+import Link from "next/link";
 import type * as React from "react";
 import { Badge, Card, CardContent, CardHeader, CardTitle, Skeleton, Tip } from "@/components/ui/primitives";
 import { ago, dateTime, duration } from "@/lib/format";
@@ -51,6 +52,12 @@ const STATE_COPY: Record<Exclude<EnvelopeStatus, "ok">, { icon: React.ElementTyp
     body: "The last request to CryptoDataApi failed. The worker retries with backoff.",
     tone: "text-serious",
   },
+  demo_unavailable: {
+    icon: FlaskConical,
+    title: "Not in the demo data",
+    body: "Demo mode bundles saved responses for a few symbols only. Add a CryptoDataApi key to load any symbol live.",
+    tone: "text-[#7db3f0]",
+  },
   classifier_off: {
     icon: Bot,
     title: "Classifier not configured",
@@ -74,6 +81,11 @@ export function StateView({ status, message, compact = false }: { status: Exclud
       <div className="text-sm font-medium">{s.title}</div>
       <p className="max-w-sm text-xs text-muted-foreground">{s.body}</p>
       {message && status !== "pending" && status !== "worker_offline" && status !== "no_api_key" && status !== "classifier_off" ? <p className="max-w-sm font-mono text-[11px] break-words text-muted-foreground/80">{message}</p> : null}
+      {status === "no_api_key" || status === "classifier_off" || status === "demo_unavailable" ? (
+        <Link href="/setup" className="text-xs text-primary hover:underline">
+          Set up keys
+        </Link>
+      ) : null}
     </div>
   );
 }
@@ -84,8 +96,20 @@ export function Freshness({ env }: { env: Envelope | undefined }) {
   if (!env) return null;
   const fetched = toMs(env.fetchedAt);
   const asOf = toMs(env.asOf);
-  const stale = env.fetchedAt ? isStale(env, now || Date.now()) : false;
   const effectiveNow = now || Date.now();
+  if (env.demo) {
+    return (
+      <Tip content={`Saved CryptoDataApi response captured ${dateTime(toMs(env.demo.capturedAt))}${asOf ? `, data as of ${dateTime(asOf)}` : ""}. Not live.`}>
+        <span tabIndex={0} className="outline-none">
+          <Badge variant="info">
+            <FlaskConical aria-hidden />
+            Demo sample
+          </Badge>
+        </span>
+      </Tip>
+    );
+  }
+  const stale = env.fetchedAt ? isStale(env, now || Date.now()) : false;
   return (
     <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
       {stale ? (

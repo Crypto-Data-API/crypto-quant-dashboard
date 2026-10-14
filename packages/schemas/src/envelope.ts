@@ -23,7 +23,9 @@ export type EnvelopeStatus =
   /** The web app could not reach the cache or the worker. */
   | "worker_offline"
   /** A worker-side classifier dataset (Jev) with TYPESAFE_API_KEY unset or JEV_ENABLED=false. */
-  | "classifier_off";
+  | "classifier_off"
+  /** Demo mode: no saved sample for the requested symbol. */
+  | "demo_unavailable";
 
 export interface EnvelopeError {
   kind: string;
@@ -51,6 +53,8 @@ export interface Envelope<T = unknown> {
   error?: EnvelopeError | null;
   /** Zod drift report. Data is still served when validation fails. */
   validation?: { ok: boolean; issues?: string[] } | null;
+  /** Set when `data` is a saved sample (demo mode), not a live fetch. */
+  demo?: { capturedAt: string } | null;
 }
 
 export const isProblemStatus = (s: EnvelopeStatus) => s !== "ok" && s !== "pending";

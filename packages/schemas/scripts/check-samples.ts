@@ -4,12 +4,14 @@
  *
  * docs/samples/index.json maps each file to its endpoint and dataset id. Dataset samples are
  * checked with the dataset validator; stream samples are checked event by event against the
- * strict per-type stream schema (unknown event types are reported, not failed).
+ * strict per-type stream schema (unknown event types are reported, not failed). Finally it
+ * fails if any registry dataset (or the stream) lacks a demo sample.
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { isDatasetId } from "../src/datasets";
+import { DATASET_IDS, isDatasetId } from "../src/datasets";
+import { demoCoverageProblems, type SampleIndex } from "../src/demo";
 import { DelayedStreamResponse, JevResponse, RecentStreamResponse, StreamEventStrict, validateDataset } from "../src/validators";
 
 interface IndexEntry {
@@ -67,5 +69,10 @@ if (existsSync(jevDir)) {
   }
 }
 
-console.log(failures === 0 ? `\nall ${index.files.length + jevCount} samples valid` : `\n${failures} sample(s) failed`);
+// CI guard: every registry dataset (and the stream) must have a demo sample, so the keyless
+// worker and the static GitHub Pages build can render every panel.
+const coverage = demoCoverageProblems(index as SampleIndex, DATASET_IDS);
+line(coverage.length === 0, `demo coverage: ${DATASET_IDS.length} registry datasets plus the stream`, coverage);
+
+console.log(failures === 0 ? `\nall ${index.files.length + jevCount} samples valid, demo coverage complete` : `\n${failures} check(s) failed`);
 process.exit(failures === 0 ? 0 : 1);

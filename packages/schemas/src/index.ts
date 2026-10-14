@@ -3,6 +3,7 @@
 export * from "./envelope";
 export * from "./datasets";
 export * from "./keys";
+export * from "./demo";
 export * from "./types";
 export type * from "./generated/cda";
 export type {

@@ -1,320 +1,492 @@
 {
-  "captured_with": "Pro Plus key, 2026-10-14 (UTC); responses saved verbatim",
+  "captured_with": "Pro Plus CryptoDataApi key and TypeSafe Jev (jev-1.13.0), 2026-10-14 (UTC); responses saved verbatim",
   "files": [
     {
       "file": "derivatives-summary-BTC.json",
       "dataset": "derivatives-summary",
       "endpoint": "/api/v1/derivatives/summary?coin=BTC",
       "captured_at": "2026-10-14T06:57:33.850Z",
-      "bytes": 2586
+      "bytes": 2586,
+      "param": null,
+      "demo": true
     },
     {
       "file": "event-calendar.json",
       "dataset": "event-calendar",
       "endpoint": "/api/v1/event/calendar?window_days=30",
       "captured_at": "2026-10-14T06:57:58.459Z",
-      "bytes": 11949
+      "bytes": 11949,
+      "param": null,
+      "demo": true
+    },
+    {
+      "file": "event-regime-BTC.json",
+      "dataset": "event-symbol",
+      "param": "BTC",
+      "endpoint": "/api/v1/event/regime/BTC",
+      "captured_at": "2026-10-14T09:42:52.115Z",
+      "demo": true
     },
     {
       "file": "event-regime-STRK.json",
       "dataset": "event-symbol",
       "endpoint": "/api/v1/event/regime/STRK",
       "captured_at": "2026-10-14T06:57:59.967Z",
-      "bytes": 265
+      "bytes": 265,
+      "param": "STRK",
+      "demo": true
     },
     {
       "file": "event-regime-score.json",
       "dataset": "score-event",
       "endpoint": "/api/v1/event/regime/score",
       "captured_at": "2026-10-14T06:57:32.323Z",
-      "bytes": 609
+      "bytes": 609,
+      "param": null,
+      "demo": true
     },
     {
       "file": "health.json",
       "dataset": "cda-health",
       "endpoint": "/api/v1/health",
       "captured_at": "2026-10-14T06:57:24.707Z",
-      "bytes": 43
+      "bytes": 43,
+      "param": null,
+      "demo": true
+    },
+    {
+      "file": "hyperliquid-l2-book-BTC.json",
+      "dataset": "l2-book",
+      "param": "BTC",
+      "endpoint": "/api/v1/hyperliquid/l2-book?coin=BTC",
+      "captured_at": "2026-10-14T09:42:48.689Z",
+      "demo": true
     },
     {
       "file": "hyperliquid-l2-book-ETH.json",
       "dataset": "l2-book",
       "endpoint": "/api/v1/hyperliquid/l2-book?coin=ETH",
       "captured_at": "2026-10-14T06:57:52.414Z",
-      "bytes": 1785
+      "bytes": 1785,
+      "param": "ETH",
+      "demo": true
+    },
+    {
+      "file": "jev-market-verdict.json",
+      "dataset": "jev-market-verdict",
+      "param": null,
+      "endpoint": "worker:jev-market-verdict (TypeSafe Jev, built by apps/worker)",
+      "captured_at": "2026-10-14T09:32:36.099Z",
+      "demo": true
+    },
+    {
+      "file": "jev-news.json",
+      "dataset": "jev-news",
+      "param": null,
+      "endpoint": "worker:jev-news (TypeSafe Jev, built by apps/worker)",
+      "captured_at": "2026-10-14T09:42:12.992Z",
+      "demo": true
+    },
+    {
+      "file": "jev-squeeze.json",
+      "dataset": "jev-squeeze",
+      "param": null,
+      "endpoint": "worker:jev-squeeze (TypeSafe Jev, built by apps/worker)",
+      "captured_at": "2026-10-14T09:42:15.989Z",
+      "demo": true
+    },
+    {
+      "file": "liquidity-depth-BTC.json",
+      "dataset": "depth-history",
+      "param": "BTC",
+      "endpoint": "/api/v1/liquidity/depth/BTC?minutes=360",
+      "captured_at": "2026-10-14T09:42:49.554Z",
+      "demo": true
     },
     {
       "file": "liquidity-depth-ETH.json",
       "dataset": "depth-history",
       "endpoint": "/api/v1/liquidity/depth/ETH?minutes=360",
       "captured_at": "2026-10-14T06:57:41.517Z",
-      "bytes": 94700
+      "bytes": 94700,
+      "param": "ETH",
+      "demo": true
     },
     {
       "file": "liquidity-depth.json",
       "dataset": "liquidity-depth",
       "endpoint": "/api/v1/liquidity/depth",
       "captured_at": "2026-10-14T06:57:40.727Z",
-      "bytes": 12779
+      "bytes": 12779,
+      "param": null,
+      "demo": true
     },
     {
       "file": "liquidity-oi-divergence.json",
       "dataset": "oi-divergence",
       "endpoint": "/api/v1/liquidity/oi-divergence",
       "captured_at": "2026-10-14T06:57:43.097Z",
-      "bytes": 6297
+      "bytes": 6297,
+      "param": null,
+      "demo": true
     },
     {
       "file": "liquidity-regime.json",
       "dataset": "liquidity-regime",
       "endpoint": "/api/v1/liquidity/regime",
       "captured_at": "2026-10-14T06:57:42.333Z",
-      "bytes": 8836
+      "bytes": 8836,
+      "param": null,
+      "demo": true
     },
     {
       "file": "market-health.json",
       "dataset": "market-health",
       "endpoint": "/api/v1/market-health",
       "captured_at": "2026-10-14T06:57:29.277Z",
-      "bytes": 6524
+      "bytes": 6524,
+      "param": null,
+      "demo": true
     },
     {
       "file": "market-intelligence-liquidations-by-exchange.json",
       "dataset": "liquidations-by-exchange",
       "endpoint": "/api/v1/market-intelligence/liquidations/by-exchange",
       "captured_at": "2026-10-14T06:57:55.912Z",
-      "bytes": 435
+      "bytes": 435,
+      "param": null,
+      "demo": true
     },
     {
       "file": "market-intelligence-liquidations.json",
       "dataset": "liquidations",
       "endpoint": "/api/v1/market-intelligence/liquidations?limit=100",
       "captured_at": "2026-10-14T06:57:55.156Z",
-      "bytes": 58347
+      "bytes": 58347,
+      "param": null,
+      "demo": true
     },
     {
       "file": "market-intelligence-squeeze-alerts-quiet.json",
       "dataset": "squeeze-alerts",
       "endpoint": "/api/v1/market-intelligence/squeeze-alerts?include_quiet=true&limit=20",
       "captured_at": "2026-10-14T06:57:57.712Z",
-      "bytes": 631
+      "bytes": 631,
+      "param": null,
+      "demo": false
     },
     {
       "file": "market-intelligence-squeeze-alerts.json",
       "dataset": "squeeze-alerts",
       "endpoint": "/api/v1/market-intelligence/squeeze-alerts",
       "captured_at": "2026-10-14T06:57:56.945Z",
-      "bytes": 136
+      "bytes": 136,
+      "param": null,
+      "demo": true
     },
     {
       "file": "meme-regime-score.json",
       "dataset": "score-meme",
       "endpoint": "/api/v1/meme/regime/score",
       "captured_at": "2026-10-14T06:57:33.088Z",
-      "bytes": 550
+      "bytes": 550,
+      "param": null,
+      "demo": true
     },
     {
       "file": "news-coin-BTC.json",
       "dataset": "news-coin",
       "endpoint": "/api/v1/news/coin/BTC?hours=168",
       "captured_at": "2026-10-14T08:44:13.461Z",
-      "bytes": 7209
+      "bytes": 7209,
+      "param": "BTC",
+      "demo": true
     },
     {
       "file": "news-coin-MARKET.json",
       "dataset": "news-coin",
       "endpoint": "/api/v1/news/coin/MARKET?hours=168",
       "captured_at": "2026-10-14T08:44:14.426Z",
-      "bytes": 8913
+      "bytes": 8913,
+      "param": "MARKET",
+      "demo": true
     },
     {
       "file": "news-coin-NEAR.json",
       "dataset": "news-coin",
       "endpoint": "/api/v1/news/coin/NEAR?hours=168",
       "captured_at": "2026-10-14T08:44:55.945Z",
-      "bytes": 1937
+      "bytes": 1937,
+      "param": "NEAR",
+      "demo": true
     },
     {
       "file": "news-market-moving-MARKET.json",
       "dataset": "news-market-moving",
       "endpoint": "/api/v1/news/market-moving?symbol=MARKET&hours=168&limit=200",
       "captured_at": "2026-10-14T08:44:15.385Z",
-      "bytes": 8905
+      "bytes": 8905,
+      "param": null,
+      "demo": false
     },
     {
       "file": "news-market-moving.json",
       "dataset": "news-market-moving",
       "endpoint": "/api/v1/news/market-moving?hours=168&limit=200",
       "captured_at": "2026-10-14T08:44:10.763Z",
-      "bytes": 23948
+      "bytes": 23948,
+      "param": null,
+      "demo": true
     },
     {
       "file": "news-pulse.json",
       "dataset": "news-pulse",
       "endpoint": "/api/v1/news/pulse?hours=24",
       "captured_at": "2026-10-14T08:44:11.649Z",
-      "bytes": 20059
+      "bytes": 20059,
+      "param": null,
+      "demo": true
     },
     {
       "file": "news-sources.json",
       "dataset": "news-sources",
       "endpoint": "/api/v1/news/sources",
       "captured_at": "2026-10-14T08:44:12.522Z",
-      "bytes": 9510
+      "bytes": 9510,
+      "param": null,
+      "demo": true
     },
     {
       "file": "policy-regime-score.json",
       "dataset": "score-policy",
       "endpoint": "/api/v1/policy/regime/score",
       "captured_at": "2026-10-14T06:57:30.816Z",
-      "bytes": 414
+      "bytes": 414,
+      "param": null,
+      "demo": true
     },
     {
       "file": "quant-coins-BTC.json",
       "dataset": "quant-coin",
       "endpoint": "/api/v1/quant/coins/BTC?horizon=24h",
       "captured_at": "2026-10-14T06:57:27.769Z",
-      "bytes": 8312
+      "bytes": 8312,
+      "param": "BTC",
+      "demo": true
+    },
+    {
+      "file": "quant-coins-ETH.json",
+      "dataset": "quant-coin",
+      "param": "ETH",
+      "endpoint": "/api/v1/quant/coins/ETH?horizon=24h",
+      "captured_at": "2026-10-14T09:42:50.407Z",
+      "demo": true
+    },
+    {
+      "file": "quant-coins-SOL.json",
+      "dataset": "quant-coin",
+      "param": "SOL",
+      "endpoint": "/api/v1/quant/coins/SOL?horizon=24h",
+      "captured_at": "2026-10-14T09:42:51.262Z",
+      "demo": true
     },
     {
       "file": "quant-coins-risk.json",
       "dataset": "quant-coins-risk",
       "endpoint": "/api/v1/quant/coins/risk?horizon=24h",
       "captured_at": "2026-10-14T06:57:26.250Z",
-      "bytes": 99977
+      "bytes": 99977,
+      "param": null,
+      "demo": true
     },
     {
       "file": "quant-gex-DOGE.json",
       "dataset": "quant-gex-coin",
       "endpoint": "/api/v1/quant/gex?symbol=DOGE",
       "captured_at": "2026-10-14T06:57:35.923Z",
-      "bytes": 9148
+      "bytes": 9148,
+      "param": "DOGE",
+      "demo": true
     },
     {
       "file": "quant-gex-history-BTC.json",
       "dataset": "gex-history",
       "endpoint": "/api/v1/quant/gex/history?symbol=BTC",
       "captured_at": "2026-10-14T06:57:36.746Z",
-      "bytes": 161723
+      "bytes": 161723,
+      "param": "BTC",
+      "demo": true
     },
     {
       "file": "quant-gex.json",
       "dataset": "quant-gex",
       "endpoint": "/api/v1/quant/gex?symbol=BTC,ETH,SOL,HYPE",
       "captured_at": "2026-10-14T06:57:34.867Z",
-      "bytes": 26841
+      "bytes": 26841,
+      "param": null,
+      "demo": true
     },
     {
       "file": "quant-history-market.json",
       "dataset": "quant-history",
       "endpoint": "/api/v1/quant/history?scope=market&horizon=24h&limit=96&start=<now-2d>",
       "captured_at": "2026-10-14T06:58:28.289Z",
-      "bytes": 79157
+      "bytes": 79157,
+      "param": null,
+      "demo": true
     },
     {
       "file": "quant-market.json",
       "dataset": "quant-market",
       "endpoint": "/api/v1/quant/market?horizon=24h",
       "captured_at": "2026-10-14T06:57:25.454Z",
-      "bytes": 3650
+      "bytes": 3650,
+      "param": null,
+      "demo": true
     },
     {
       "file": "quant-model.json",
       "dataset": "quant-model",
       "endpoint": "/api/v1/quant/model",
       "captured_at": "2026-10-14T06:57:27.006Z",
-      "bytes": 5025
+      "bytes": 5025,
+      "param": null,
+      "demo": true
     },
     {
       "file": "quant-positioning-ladder-BTC.json",
       "dataset": "positioning-ladder",
       "endpoint": "/api/v1/quant/positioning/ladder?symbol=BTC",
       "captured_at": "2026-10-14T06:58:02.405Z",
-      "bytes": 64010
+      "bytes": 64010,
+      "param": "BTC",
+      "demo": true
     },
     {
       "file": "quant-positioning.json",
       "dataset": "quant-positioning",
       "endpoint": "/api/v1/quant/positioning?symbol=BTC,ETH,SOL,HYPE",
       "captured_at": "2026-10-14T06:57:37.636Z",
-      "bytes": 3609
+      "bytes": 3609,
+      "param": null,
+      "demo": true
     },
     {
       "file": "quant-whales-history.json",
       "dataset": "quant-whales-history",
       "endpoint": "/api/v1/quant/whales/history?days=90",
       "captured_at": "2026-10-14T06:58:01.539Z",
-      "bytes": 36290
+      "bytes": 36290,
+      "param": null,
+      "demo": true
     },
     {
       "file": "quant-whales.json",
       "dataset": "quant-whales",
       "endpoint": "/api/v1/quant/whales",
       "captured_at": "2026-10-14T06:57:38.407Z",
-      "bytes": 21224
+      "bytes": 21224,
+      "param": null,
+      "demo": true
     },
     {
       "file": "regimes.json",
       "dataset": "regimes",
       "endpoint": "/api/v1/regimes",
       "captured_at": "2026-10-14T06:57:28.521Z",
-      "bytes": 6799
+      "bytes": 6799,
+      "param": null,
+      "demo": true
     },
     {
       "file": "security-regime-score.json",
       "dataset": "score-security",
       "endpoint": "/api/v1/security/regime/score",
       "captured_at": "2026-10-14T06:57:31.585Z",
-      "bytes": 373
+      "bytes": 373,
+      "param": null,
+      "demo": true
     },
     {
       "file": "stream-delayed.json",
       "dataset": null,
       "endpoint": "/api/v1/stream/delayed",
       "captured_at": "2026-10-14T06:58:04.815Z",
-      "bytes": 38425
+      "bytes": 38425,
+      "param": null,
+      "demo": false,
+      "stream": true
+    },
+    {
+      "file": "stream-recent-liquidations.json",
+      "dataset": null,
+      "param": null,
+      "endpoint": "/api/v1/stream/recent?limit=300&types=liquidation",
+      "captured_at": "2026-10-14T09:42:53.854Z",
+      "demo": false,
+      "stream": true
     },
     {
       "file": "stream-recent-whales.json",
       "dataset": null,
       "endpoint": "/api/v1/stream/recent?limit=60&types=whale_transfer,whale_position",
       "captured_at": "2026-10-14T06:58:04.048Z",
-      "bytes": 13365
+      "bytes": 13365,
+      "param": null,
+      "demo": false,
+      "stream": true
     },
     {
       "file": "stream-recent.json",
       "dataset": null,
       "endpoint": "/api/v1/stream/recent?limit=200",
       "captured_at": "2026-10-14T06:58:03.285Z",
-      "bytes": 36443
+      "bytes": 36443,
+      "param": null,
+      "demo": false,
+      "stream": true
     },
     {
       "file": "supply-unlocks.json",
       "dataset": "supply-unlocks",
       "endpoint": "/api/v1/supply/unlocks?window_days=30&limit=200",
       "captured_at": "2026-10-14T06:57:59.212Z",
-      "bytes": 2717
+      "bytes": 2717,
+      "param": null,
+      "demo": true
     },
     {
       "file": "volatility-regime-score.json",
       "dataset": "score-volatility",
       "endpoint": "/api/v1/volatility/regime/score",
       "captured_at": "2026-10-14T06:57:30.063Z",
-      "bytes": 376
+      "bytes": 376,
+      "param": null,
+      "demo": true
     },
     {
       "file": "volume-scanner-BTC.json",
       "dataset": "volume-detail",
       "endpoint": "/api/v1/volume/scanner/BTC",
       "captured_at": "2026-10-14T06:57:39.984Z",
-      "bytes": 2048
+      "bytes": 2048,
+      "param": "BTC",
+      "demo": true
     },
     {
       "file": "volume-scanner.json",
       "dataset": "volume-scanner",
       "endpoint": "/api/v1/volume/scanner?limit=500&sort=multiplier",
       "captured_at": "2026-10-14T06:57:39.218Z",
-      "bytes": 81295
+      "bytes": 81295,
+      "param": null,
+      "demo": true
     }
-  ]
+  ],
+  "fields": {
+    "dataset": "registry dataset id the file validates against (null for stream captures)",
+    "param": "symbol for on-demand datasets",
+    "demo": "seeds demo mode (keyless worker and the static GitHub Pages build)",
+    "stream": "events replayed by the demo stream"
+  }
 }
