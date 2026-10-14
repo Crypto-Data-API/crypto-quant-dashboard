@@ -3,13 +3,20 @@
  * is cached, and how the UI refetches it. Zod-free so the browser can import it.
  *
  * Scheduled datasets are polled on a timer whether or not anyone is looking.
- * On-demand datasets take one parameter (a symbol / coin), are only fetched while a viewer
- * has asked for them in the last `demandTtlMs`, and share the same rate limiter at a higher
- * priority.
+ * On-demand datasets (those with a `param`, or `onDemand: true`) are fetched only while a
+ * viewer has asked for them within `demandTtlMs`, at a higher limiter priority.
  *
- * Steady-state budget (scheduled only) is 298 calls/hour = 7,152/day against the Pro cap of
- * 10,000/day, leaving ~2,800/day for on-demand reads (the L2 book alone is 240/hour while the
- * order-book page is open). Run `budgetPerHour()` to recompute after editing intervals.
+ * Steady-state budget (scheduled only) is 298 calls/hour = 7,152/day. The worker's default
+ * daily budget is 28,000 (the key is Pro Plus: 50,000/day, shared with other tooling), so
+ * on-demand reads have ample room; the L2 book alone is 240/hour while the order-book page is
+ * open. Run `budgetPerHour()` to recompute after editing intervals.
+ *
+ * Adding a dataset (for example a Pro Plus history endpoint for Phase 3):
+ *   1. add an entry below (path is type-checked against the OpenAPI spec; `tier` gates it
+ *      against the key's tier so a lower-tier key never spends calls on it);
+ *   2. add its payload type to DatasetDataMap and its Zod schema to validators.ts;
+ *   3. read it in a page with `useDataset("<id>", { param })`.
+ * The worker, cache, proxy route, panel states and budget accounting need no changes.
  */
 import type { GetPath, QueryValue } from "@cqd/cda-client";
 import type * as Cda from "./generated/cda";
@@ -17,6 +24,7 @@ import type * as P from "./permissive";
 
 const SEC = 1_000;
 const MIN = 60 * SEC;
+const DAY = 24 * 60 * MIN;
 
 export interface DatasetParam {
   /** Name of the path placeholder or query parameter. */
@@ -26,23 +34,49 @@ export interface DatasetParam {
   example: string;
 }
 
+/** CDA plan tiers, lowest first. "keyless" endpoints need no key at all. */
+export const TIERS = ["keyless", "free", "pro", "pro_plus"] as const;
+export type Tier = (typeof TIERS)[number];
+
+export const TIER_LABEL: Record<Tier, string> = { keyless: "Keyless", free: "Free", pro: "Pro", pro_plus: "Pro Plus" };
+
+/** True when a key of `keyTier` may call an endpoint that needs `required`. Unknown tiers are not gated. */
+export function tierAllows(keyTier: string | null | undefined, required: Tier): boolean {
+  if (!keyTier) return true;
+  const have = TIERS.indexOf(keyTier as Tier);
+  if (have < 0) return true;
+  return have >= TIERS.indexOf(required);
+}
+
+/** A query value, or a function computing one at request time (e.g. a rolling start date). */
+export type QuerySpec = QueryValue | ((now: number) => QueryValue);
+
 export interface DatasetDef {
   id: string;
   label: string;
   /** CDA endpoint (typed against the OpenAPI spec). */
   path: GetPath;
-  query?: Record<string, QueryValue>;
+  query?: Record<string, QuerySpec>;
   intervalMs: number;
   /** Shown as stale after this long without a successful fetch. Default 3 x interval. */
   staleAfterMs?: number;
   /** Minimum tier CDA documents for this endpoint. */
-  tier: "keyless" | "free" | "pro";
-  /** Present for on-demand datasets. */
+  tier: Tier;
+  /** One symbol/coin parameter. Implies on-demand. */
   param?: DatasetParam;
+  /** On-demand without a parameter (fetched only while a viewer asks for it). */
+  onDemand?: boolean;
   /** How long a viewer's request keeps an on-demand dataset warm. */
   demandTtlMs?: number;
   /** Payload field that carries CDA's own timestamp (shown as "as of"). */
   asOfField?: string;
+}
+
+/** Resolve computed query values at request time. */
+export function resolveQuery(query: Record<string, QuerySpec> | undefined, now = Date.now()): Record<string, QueryValue> {
+  const out: Record<string, QueryValue> = {};
+  for (const [k, v] of Object.entries(query ?? {})) out[k] = typeof v === "function" ? v(now) : v;
+  return out;
 }
 
 function def<const T extends DatasetDef>(d: T): T {
@@ -254,6 +288,42 @@ export const DATASETS = {
     demandTtlMs: 5 * MIN,
     asOfField: "timestamp",
   }),
+
+  // ---- Pro Plus history (Phase 3): registered on-demand, so they cost nothing until a page
+  // reads them. Unlocked by the current key (tier pro_plus).
+  "quant-history": def({
+    id: "quant-history",
+    label: "Market regime history (7d)",
+    path: "/api/v1/quant/history",
+    query: { scope: "market", horizon: "24h", limit: 700, start: (now: number) => new Date(now - 7 * DAY).toISOString() },
+    intervalMs: 60 * MIN,
+    staleAfterMs: 3 * 60 * MIN,
+    tier: "pro_plus",
+    onDemand: true,
+    demandTtlMs: 5 * MIN,
+  }),
+  "quant-whales-history": def({
+    id: "quant-whales-history",
+    label: "Whale positioning history (180d)",
+    path: "/api/v1/quant/whales/history",
+    query: { days: 180 },
+    intervalMs: 60 * MIN,
+    staleAfterMs: 6 * 60 * MIN,
+    tier: "pro_plus",
+    onDemand: true,
+    demandTtlMs: 5 * MIN,
+    asOfField: "timestamp",
+  }),
+  "positioning-ladder": def({
+    id: "positioning-ladder",
+    label: "Liquidation ladder by account class",
+    path: "/api/v1/quant/positioning/ladder",
+    intervalMs: 5 * MIN,
+    tier: "pro_plus",
+    param: { name: "symbol", in: "query", example: "BTC" },
+    demandTtlMs: 3 * MIN,
+    asOfField: "positions_as_of",
+  }),
 } as const satisfies Record<string, DatasetDef>;
 
 /** Payload type of each dataset (as validated by ./validators). */
@@ -289,6 +359,9 @@ export interface DatasetDataMap {
   "event-calendar": Cda.EventRegimeResponse;
   "supply-unlocks": Cda.SupplyUnlocksResponse;
   "event-symbol": Cda.EventSymbolOverlayResponse;
+  "quant-history": Cda.QuantHistoryResponse;
+  "quant-whales-history": P.WhalesHistoryResponse;
+  "positioning-ladder": P.PositioningLadderResponse;
 }
 
 export type DatasetId = keyof typeof DATASETS;
@@ -310,8 +383,13 @@ export function getDataset(id: DatasetId): DatasetDef {
   return DATASETS[id];
 }
 
+/** On-demand datasets poll only while a viewer asks for them. */
+export function isOnDemandDef(d: DatasetDef): boolean {
+  return d.param !== undefined || d.onDemand === true;
+}
+
 export function isOnDemand(id: DatasetId): boolean {
-  return (DATASETS[id] as DatasetDef).param !== undefined;
+  return isOnDemandDef(DATASETS[id] as DatasetDef);
 }
 
 export function staleAfter(d: DatasetDef): number {
@@ -335,7 +413,7 @@ export function budgetPerHour(): { total: number; byDataset: Record<string, numb
   const byDataset: Record<string, number> = {};
   let total = 0;
   for (const d of Object.values(DATASETS) as DatasetDef[]) {
-    if (d.param || d.tier === "keyless") continue;
+    if (isOnDemandDef(d) || d.tier === "keyless") continue;
     const n = Math.round((60 * MIN) / d.intervalMs);
     byDataset[d.id] = n;
     total += n;

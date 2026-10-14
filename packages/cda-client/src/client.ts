@@ -30,7 +30,7 @@ export interface CdaClientOptions {
   /** CDA_API_KEY. When missing, keyed endpoints short-circuit to `no_api_key` without a network call. */
   apiKey?: string | null;
   userAgent?: string;
-  /** Shared limiter for keyed calls. Default: 28/min, burst 1. */
+  /** Shared limiter for keyed calls. Default: 28/min, burst 1 (safe for any paid tier). */
   limiter?: TokenBucket;
   /** Separate, gentler limiter for keyless calls (they do not count against the key). */
   keylessLimiter?: TokenBucket;

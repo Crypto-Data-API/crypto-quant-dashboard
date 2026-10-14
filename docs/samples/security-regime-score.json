@@ -1,0 +1,1 @@
+{"as_of":"2026-10-14T06:45:55.275697+00:00","security_stress_score":19.0,"band":"quiet","hack_subscore":0.9,"flow_subscore":46.0,"depeg_subscore":0.0,"hacks_in_window":1,"largest_hack_usd":1280000.0,"worst_flow_symbol":"UNI","worst_flow_zscore":3.84,"events_count":1,"counts":{"hack":1,"depeg":0},"partial":true,"inputs_available":["flow","hack"],"security_headlines":null}

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { createCdaClient, TokenBucket } from "@cqd/cda-client";
 import { budgetPerHour, keys, type WorkerStatus } from "@cqd/schemas";
 import { BudgetGovernor } from "./budget";
+import { createKeyInfoMonitor } from "./key-info";
 import { WorkerCache } from "./cache";
 import { loadEnv, readConfig } from "./config";
 import { createHttpServer } from "./http";
@@ -46,6 +47,11 @@ async function main(): Promise<void> {
     },
   });
 
+  // Tier and limits of the key (account-wide usage includes other tooling on the same key).
+  // Read before polling starts so tier gating and the limiter rate apply from the first call.
+  const keyInfo = createKeyInfoMonitor({ client, budget, limiter, configuredRate: config.ratePerMinute, log: log.child({ component: "key-info" }) });
+  await keyInfo.refresh();
+
   const hub = new StreamHub();
   const poller = new Poller({
     client,
@@ -54,6 +60,7 @@ async function main(): Promise<void> {
     log: log.child({ component: "poller" }),
     gexSymbols: config.gexSymbols,
     onDemandMax: config.onDemandMax,
+    keyTier: () => budget.accountInfo?.tier ?? null,
   });
 
   // ---- single-poller lock -------------------------------------------------
@@ -113,10 +120,19 @@ async function main(): Promise<void> {
       keyConfigured: client.hasKey,
       cache: cache.kind,
       leader,
+      account: budget.accountInfo
+        ? {
+            tier: budget.accountInfo.tier,
+            requestsToday: budget.accountRequestsToday(now),
+            dailyLimit: budget.accountInfo.dailyLimit,
+            perMinuteLimit: budget.accountInfo.perMinuteLimit,
+            checkedAt: new Date(budget.accountInfo.checkedAt).toISOString(),
+          }
+        : null,
       budget: {
         date: today,
         callsToday: counters.total,
-        dailyBudget: config.dailyBudget,
+        dailyBudget: budget.dailyBudget,
         paceLimit: budget.paceLimit(now),
         mode: budget.mode(now),
         stretch: budget.stretch(now),
@@ -167,6 +183,7 @@ async function main(): Promise<void> {
     clearInterval(lockTimer);
     clearInterval(heartbeat);
     clearInterval(budgetTimer);
+    keyInfo.stop();
     poller.stop();
     streamAbort.abort();
     hub.close();

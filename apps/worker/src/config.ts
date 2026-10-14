@@ -89,12 +89,15 @@ export function readConfig(): WorkerConfig {
     host: process.env.WORKER_HOST?.trim() || "0.0.0.0",
     token: process.env.WORKER_TOKEN?.trim() || null,
     corsOrigin: process.env.WORKER_CORS_ORIGIN?.trim() || "*",
-    // Capped at 28: with burst 1 the bucket admits at most 29 requests per rolling minute, under the Pro limit of 30.
-    ratePerMinute: int("CDA_RATE_PER_MIN", 28, 1, 28),
-    dailyBudget: int("CDA_DAILY_BUDGET", 10_000, 100, 1_000_000),
+    // Pro Plus allows 120/min: 100/min with burst 1 admits at most 101 per rolling minute.
+    // The worker lowers this automatically if /auth/keys/me reports a smaller per-minute limit.
+    ratePerMinute: int("CDA_RATE_PER_MIN", 100, 1, 115),
+    // Our share of the key's daily allowance (Pro Plus: 50,000/day, shared with other tooling).
+    // Also capped at 95% of the key's reported daily limit.
+    dailyBudget: int("CDA_DAILY_BUDGET", 28_000, 100, 1_000_000),
     streamSource: oneOf("STREAM_SOURCE", ["auto", "live", "delayed", "off"] as const, "auto"),
     gexSymbols: symbols || "BTC,ETH,SOL,HYPE",
     logLevel: oneOf("LOG_LEVEL", ["debug", "info", "warn", "error"] as const, "info"),
-    onDemandMax: int("ON_DEMAND_MAX", 8, 1, 50),
+    onDemandMax: int("ON_DEMAND_MAX", 16, 1, 50),
   };
 }

@@ -747,3 +747,55 @@ export const CrossExchangeSummary = z.looseObject({
   cross_exchange: z.unknown().nullish(),
 });
 export type CrossExchangeSummary = z.infer<typeof CrossExchangeSummary>;
+
+export const QuantHistoryEntry = z.looseObject({
+  /** Inference timestamp, unix ms UTC */
+  time: z.number(),
+  timestamp: z.string(),
+  scope: z.string(),
+  horizon: z.string(),
+  regime_id: z.number(),
+  regime_label: z.string(),
+  regime_conf: z.number(),
+  candles_in_regime: z.number(),
+  p_dir_strong_down: z.number().nullish(),
+  p_dir_down: z.number().nullish(),
+  p_dir_flat: z.number().nullish(),
+  p_dir_up: z.number().nullish(),
+  p_dir_strong_up: z.number().nullish(),
+  p_vol_low: z.number().nullish(),
+  p_vol_mid: z.number().nullish(),
+  p_vol_high: z.number().nullish(),
+  p_liq_low: z.number().nullish(),
+  p_liq_mid: z.number().nullish(),
+  p_liq_high: z.number().nullish(),
+  p_fund_neg: z.number().nullish(),
+  p_fund_neutral: z.number().nullish(),
+  p_fund_pos: z.number().nullish(),
+  p_breadth_narrow: z.number().nullish(),
+  p_breadth_mixed: z.number().nullish(),
+  p_breadth_broad: z.number().nullish(),
+  p_oi_falling: z.number().nullish(),
+  p_oi_flat: z.number().nullish(),
+  p_oi_rising: z.number().nullish(),
+  post_label_0: z.number().nullish(),
+  post_label_1: z.number().nullish(),
+  post_label_2: z.number().nullish(),
+  post_label_3: z.number().nullish(),
+  post_label_4: z.number().nullish(),
+  post_label_5: z.number().nullish(),
+  model_version: z.string(),
+  feature_coverage: z.number().nullish(),
+  insufficient_history: z.boolean().nullish(),
+  /** True = retro-computed by the backfill script (1h cadence), False = live point-in-time inference (15-min cadence). The trust contract. */
+  backfilled: z.boolean(),
+});
+export type QuantHistoryEntry = z.infer<typeof QuantHistoryEntry>;
+
+export const QuantHistoryResponse = z.looseObject({
+  scope: z.string(),
+  horizon: z.string().nullish(),
+  entries: z.array(QuantHistoryEntry),
+  count: z.number(),
+});
+export type QuantHistoryResponse = z.infer<typeof QuantHistoryResponse>;

@@ -2,6 +2,7 @@
 
 import {
   DATASETS,
+  isOnDemandDef,
   STREAM_EVENT_TYPES,
   type DataOf,
   type DatasetDef,
@@ -20,7 +21,7 @@ import { clamp } from "./utils";
 /**
  * Read one dataset envelope from our own cache (/api/data). This never reaches CDA, so the
  * browser can refetch more often than the worker polls: a quarter of the dataset interval,
- * between 5 s and 60 s, and every 2 s while an on-demand fetch is pending.
+ * between 5 s and 5 min, and every 2 s while an on-demand fetch is pending.
  */
 export function useDataset<K extends DatasetId>(id: K, opts: { param?: string | null; enabled?: boolean } = {}) {
   const def = DATASETS[id] as DatasetDef;
@@ -42,9 +43,9 @@ export function useDataset<K extends DatasetId>(id: K, opts: { param?: string | 
     refetchInterval: (q) => {
       const env = q.state.data;
       if (!env || env.status === "pending") return 2_000;
-      if (def.param && typeof document !== "undefined" && document.hidden) return false;
+      if (isOnDemandDef(def) && typeof document !== "undefined" && document.hidden) return false;
       if (env.status === "worker_offline") return 5_000;
-      return clamp(Math.round(def.intervalMs / 4), 5_000, 60_000);
+      return clamp(Math.round(def.intervalMs / 4), 5_000, 5 * 60_000);
     },
     // Scheduled datasets keep the last render while refetching (no skeleton flash). On-demand
     // datasets must not show the previous symbol's data under a new symbol's header.

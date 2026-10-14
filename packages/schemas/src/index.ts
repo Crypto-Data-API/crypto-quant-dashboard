@@ -23,5 +23,7 @@ export type {
   ExchangeLiquidationsResponse,
   L2Level,
   L2BookResponse,
+  WhalesHistoryResponse,
+  PositioningLadderResponse,
 } from "./permissive";
-export type { StreamEvent, DelayedStreamResponse } from "./stream";
+export type { StreamEvent, StreamEventStrict, DelayedStreamResponse, RecentStreamResponse } from "./stream";

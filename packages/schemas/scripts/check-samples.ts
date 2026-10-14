@@ -1,37 +1,59 @@
 /**
- * Validate the saved CDA responses in docs/samples/ against the dataset validators.
+ * Validate the saved CDA responses in docs/samples/ against the schemas.
  *   pnpm --filter @cqd/schemas check-samples
- * Each sample file is named after its dataset id (optionally suffixed with -SYMBOL).
+ *
+ * docs/samples/index.json maps each file to its endpoint and dataset id. Dataset samples are
+ * checked with the dataset validator; stream samples are checked event by event against the
+ * strict per-type stream schema (unknown event types are reported, not failed).
  */
-import { readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { DATASET_IDS, type DatasetId } from "../src/datasets";
-import { DelayedStreamResponse, validateDataset } from "../src/validators";
+import { isDatasetId } from "../src/datasets";
+import { DelayedStreamResponse, RecentStreamResponse, StreamEventStrict, validateDataset } from "../src/validators";
+
+interface IndexEntry {
+  file: string;
+  dataset: string | null;
+  endpoint: string;
+}
 
 const here = dirname(fileURLToPath(import.meta.url));
 const dir = resolve(here, "../../../docs/samples");
-const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
-const ids = [...DATASET_IDS].sort((a, b) => b.length - a.length);
+const index = JSON.parse(readFileSync(join(dir, "index.json"), "utf8")) as { files: IndexEntry[] };
 
 let failures = 0;
-for (const file of files) {
-  const base = file.replace(/\.json$/, "");
-  const data: unknown = JSON.parse(readFileSync(join(dir, file), "utf8"));
-  if (base === "stream-delayed") {
-    const r = DelayedStreamResponse.safeParse(data);
-    console.log(`${r.success ? "ok  " : "FAIL"} ${file} -> stream-delayed`);
-    if (!r.success) failures++;
+const line = (ok: boolean, msg: string, detail?: string[]) => {
+  console.log(`${ok ? "ok  " : "FAIL"} ${msg}${detail?.length ? `\n     ${detail.join("\n     ")}` : ""}`);
+  if (!ok) failures++;
+};
+
+for (const entry of index.files) {
+  const data: unknown = JSON.parse(readFileSync(join(dir, entry.file), "utf8"));
+  if (entry.dataset && isDatasetId(entry.dataset)) {
+    const r = validateDataset(entry.dataset, data, 5);
+    line(r.ok, `${entry.file} -> ${entry.dataset}`, r.issues);
     continue;
   }
-  const id = ids.find((d) => base === d || base.startsWith(`${d}-`)) as DatasetId | undefined;
-  if (!id) {
-    console.log(`skip ${file} (no matching dataset)`);
+  if (entry.endpoint.startsWith("/api/v1/stream/")) {
+    const outer = entry.endpoint.includes("/delayed") ? DelayedStreamResponse.safeParse(data) : RecentStreamResponse.safeParse(data);
+    if (!outer.success) {
+      line(false, `${entry.file} -> stream envelope`, outer.error.issues.slice(0, 5).map((i) => `${i.path.join(".")}: ${i.message}`));
+      continue;
+    }
+    const counts = new Map<string, number>();
+    const issues: string[] = [];
+    for (const ev of outer.data.events) {
+      const r = StreamEventStrict.safeParse(ev);
+      counts.set(ev.type, (counts.get(ev.type) ?? 0) + 1);
+      if (!r.success && issues.length < 5) issues.push(`${ev.type} ${String(ev.id)}: ${r.error.issues.map((i) => `${i.path.join(".")} ${i.message}`).join("; ")}`);
+    }
+    const summary = [...counts].map(([t, n]) => `${t} x${n}`).join(", ");
+    line(issues.length === 0, `${entry.file} -> ${outer.data.events.length} stream events (${summary})`, issues);
     continue;
   }
-  const r = validateDataset(id, data, 5);
-  console.log(`${r.ok ? "ok  " : "FAIL"} ${file} -> ${id}${r.ok ? "" : `\n     ${r.issues?.join("\n     ")}`}`);
-  if (!r.ok) failures++;
+  console.log(`skip ${entry.file} (${entry.endpoint})`);
 }
-console.log(failures === 0 ? `\nall ${files.length} samples valid` : `\n${failures} sample(s) failed`);
+
+console.log(failures === 0 ? `\nall ${index.files.length} samples valid` : `\n${failures} sample(s) failed`);
 process.exit(failures === 0 ? 0 : 1);

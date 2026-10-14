@@ -3,8 +3,12 @@ import {
   DATASETS,
   DATASET_IDS,
   emptyEnvelope,
+  isOnDemandDef,
   keys,
+  resolveQuery,
   staleAfter,
+  TIER_LABEL,
+  tierAllows,
   type DatasetDef,
   type DatasetId,
   type DatasetRuntimeStatus,
@@ -44,7 +48,12 @@ export interface PollerOptions {
   log: Logger;
   gexSymbols: string;
   onDemandMax: number;
+  /** The key's tier from /auth/keys/me (null until known: no gating). */
+  keyTier: () => string | null;
 }
+
+/** Demand-set member for a dataset (paramless on-demand datasets use an empty param). */
+const memberKey = (id: string, param: string | null) => `${id}|${param ?? ""}`;
 
 /**
  * Dataset poller. One loop (500 ms tick) dispatches every due scheduled dataset and every
@@ -64,7 +73,7 @@ export class Poller {
   /** Query for a dataset, with GEX_SYMBOLS applied to the scheduled GEX / positioning sets. */
   private queryFor(def: DatasetDef, param: string | null): Record<string, string | number | boolean> {
     const q: Record<string, string | number | boolean> = {};
-    for (const [k, v] of Object.entries(def.query ?? {})) {
+    for (const [k, v] of Object.entries(resolveQuery(def.query))) {
       if (v !== undefined && v !== null) q[k] = v;
     }
     if ((def.id === "quant-gex" || def.id === "quant-positioning") && this.o.gexSymbols) q.symbol = this.o.gexSymbols;
@@ -84,7 +93,7 @@ export class Poller {
 
   async start(): Promise<void> {
     const { cache, client, log } = this.o;
-    const scheduled = DATASET_IDS.filter((id) => !(DATASETS[id] as DatasetDef).param);
+    const scheduled = DATASET_IDS.filter((id) => !isOnDemandDef(DATASETS[id] as DatasetDef));
 
     // Warm start from Redis: datasets fetched recently by a previous worker are not refetched early.
     const restored = await cache.restore(scheduled.map((id) => keys.data(id)));
@@ -101,8 +110,8 @@ export class Poller {
         return;
       }
       const fetchedAt = existing?.fetchedAt ? Date.parse(existing.fetchedAt) : 0;
-      // Stagger first fetches ~1.5 s apart; the limiter spaces them anyway.
-      slot.nextDueAt = Math.max(now + i * 1_500, fetchedAt + def.intervalMs);
+      // Stagger first fetches ~0.7 s apart; the limiter spaces them anyway.
+      slot.nextDueAt = Math.max(now + i * 700, fetchedAt + def.intervalMs);
       if (!existing) this.write(slot, "pending", null, null);
     });
 
@@ -126,9 +135,9 @@ export class Poller {
   }
 
   /** Called by the HTTP API when a viewer asks for an on-demand dataset through the worker. */
-  touchDemand(id: DatasetId, param: string): void {
+  touchDemand(id: DatasetId, param: string | null): void {
     const def = DATASETS[id] as DatasetDef;
-    this.o.cache.addDemand(`${id}|${param}`, Date.now() + (def.demandTtlMs ?? 2 * MIN));
+    this.o.cache.addDemand(memberKey(id, param), Date.now() + (def.demandTtlMs ?? 2 * MIN));
   }
 
   /** The envelope to serve for a dataset right now (never null). */
@@ -151,14 +160,14 @@ export class Poller {
     if (!this.running) return;
     const demands = await this.o.cache.activeDemand();
     const active = demands.slice(0, this.o.onDemandMax);
-    this.activeDemandKeys = active.map((d) => `${d.dataset}|${d.param}`);
+    this.activeDemandKeys = active.map((d) => memberKey(d.dataset, d.param || null));
     const now = Date.now();
     for (const d of active) {
       if (!(d.dataset in DATASETS)) continue;
       const id = d.dataset as DatasetId;
       const def = DATASETS[id] as DatasetDef;
-      if (!def.param) continue;
-      const slot = this.slotFor(id, d.param);
+      if (!isOnDemandDef(def)) continue;
+      const slot = this.slotFor(id, d.param || null);
       if (slot.nextDueAt === 0) {
         // Claim the slot so the tick loop does not fetch while we look for a cached copy.
         slot.nextDueAt = Number.POSITIVE_INFINITY;
@@ -182,12 +191,22 @@ export class Poller {
     const mode = this.o.budget.mode(now);
     const active = new Set(this.activeDemandKeys);
     for (const slot of [...this.slots.values()]) {
-      if (slot.def.param && !active.has(`${slot.id}|${slot.param}`)) {
+      if (isOnDemandDef(slot.def) && !active.has(memberKey(slot.id, slot.param))) {
         // Nobody is looking: drop the slot until the next request re-activates it.
         this.slots.delete(slot.key);
         continue;
       }
       if (slot.inFlight || slot.nextDueAt > now) continue;
+      const keyTier = this.o.keyTier();
+      if (!tierAllows(keyTier, slot.def.tier)) {
+        // Known in advance from /auth/keys/me: do not spend a call to collect a 403.
+        this.write(slot, "pro_required", null, {
+          kind: "tier",
+          message: `Needs a ${TIER_LABEL[slot.def.tier]} key; this key is ${TIER_LABEL[keyTier as keyof typeof TIER_LABEL] ?? keyTier}.`,
+        });
+        slot.nextDueAt = now + TIER_RECHECK_MS;
+        continue;
+      }
       if (mode === "paused" && slot.def.tier !== "keyless") {
         const resetsAt = this.o.budget.resetsAt(now);
         this.write(slot, "budget_paused", null, {
@@ -209,7 +228,7 @@ export class Poller {
       const res: CdaResult = await client.get(slot.def.path, {
         pathParams: slot.def.param?.in === "path" && slot.param ? { [slot.def.param.name]: slot.param } : undefined,
         query: this.queryFor(slot.def, slot.param),
-        priority: slot.def.param ? PRIORITY_ON_DEMAND : PRIORITY_SCHEDULED,
+        priority: isOnDemandDef(slot.def) ? PRIORITY_ON_DEMAND : PRIORITY_SCHEDULED,
         signal: this.abort.signal,
       });
       const stretch = budget.stretch();

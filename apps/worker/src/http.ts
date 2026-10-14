@@ -1,5 +1,5 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
-import { DATASETS, isDatasetId, normalizeParam, type DatasetDef, type WorkerStatus } from "@cqd/schemas";
+import { DATASETS, isDatasetId, isOnDemandDef, normalizeParam, type DatasetDef, type WorkerStatus } from "@cqd/schemas";
 import type { Logger } from "./log";
 import type { Poller } from "./poller";
 import { parseFilter, type StreamHub } from "./stream/hub";
@@ -90,6 +90,8 @@ function route(req: IncomingMessage, res: ServerResponse, deps: HttpDeps): void 
         return;
       }
       deps.poller.touchDemand(id, param);
+    } else if (isOnDemandDef(def)) {
+      deps.poller.touchDemand(id, null);
     }
     json(res, 200, deps.poller.envelopeFor(id, param));
     return;

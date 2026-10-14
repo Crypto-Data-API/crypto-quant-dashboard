@@ -40,6 +40,9 @@ export const VALIDATORS: Record<DatasetId, z.ZodType> = {
   "event-calendar": Cda.EventRegimeResponse,
   "supply-unlocks": Cda.SupplyUnlocksResponse,
   "event-symbol": Cda.EventSymbolOverlayResponse,
+  "quant-history": Cda.QuantHistoryResponse,
+  "quant-whales-history": P.WhalesHistoryResponse,
+  "positioning-ladder": P.PositioningLadderResponse,
 };
 
 /** Validate a payload; returns at most `maxIssues` readable issue strings. */
@@ -52,4 +55,4 @@ export function validateDataset(id: DatasetId, data: unknown, maxIssues = 8): { 
 
 export * as CdaSchemas from "./generated/cda";
 export * as PermissiveSchemas from "./permissive";
-export { StreamEvent, DelayedStreamResponse } from "./stream";
+export { StreamEvent, StreamEventStrict, DelayedStreamResponse, RecentStreamResponse } from "./stream";

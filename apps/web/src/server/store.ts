@@ -12,6 +12,7 @@ import {
   DATASETS,
   demandMember,
   emptyEnvelope,
+  isOnDemandDef,
   keys,
   staleAfter,
   type DatasetDef,
@@ -140,6 +141,7 @@ export async function readEnvelope<T = unknown>(id: DatasetId, param: string | n
   const qs = param ? `?param=${encodeURIComponent(param)}` : "";
 
   if (def.param && param) await registerDemand(id, param);
+  else if (isOnDemandDef(def)) await registerDemand(id, "");
 
   const raw = await redisGet(keys.data(id, param));
   if (typeof raw === "string") {

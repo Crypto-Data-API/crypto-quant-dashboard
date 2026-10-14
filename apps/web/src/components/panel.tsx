@@ -23,8 +23,8 @@ const STATE_COPY: Record<Exclude<EnvelopeStatus, "ok">, { icon: React.ElementTyp
   },
   pro_required: {
     icon: Lock,
-    title: "Pro plan required",
-    body: "CryptoDataApi answered 403 for this endpoint: it is above this key's tier. The worker re-checks hourly instead of retrying.",
+    title: "Higher plan required",
+    body: "This endpoint is above the key's tier (CryptoDataApi answered 403, or /auth/keys/me shows a lower tier). The worker re-checks hourly instead of retrying.",
     tone: "text-[#7db3f0]",
   },
   unauthorized: {

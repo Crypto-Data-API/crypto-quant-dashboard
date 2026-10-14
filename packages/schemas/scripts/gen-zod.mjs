@@ -48,6 +48,8 @@ const ROOTS = [
   "EventSymbolOverlayResponse",
   "SupplyUnlocksResponse",
   "CrossExchangeSummary",
+  // Pro Plus (registered on-demand for Phase 3)
+  "QuantHistoryResponse",
 ];
 
 const spec = JSON.parse(readFileSync(specPath, "utf8"));

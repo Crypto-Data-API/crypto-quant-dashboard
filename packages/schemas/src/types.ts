@@ -48,6 +48,14 @@ export interface WorkerStatus {
   keyConfigured: boolean;
   cache: "redis" | "memory";
   leader: boolean;
+  /** From /auth/keys/me: the key's tier and account-wide usage (all tooling on this key). */
+  account: {
+    tier: string | null;
+    requestsToday: number | null;
+    dailyLimit: number | null;
+    perMinuteLimit: number | null;
+    checkedAt: string;
+  } | null;
   budget: {
     date: string;
     callsToday: number;

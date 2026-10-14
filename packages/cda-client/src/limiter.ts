@@ -2,8 +2,8 @@
  * Token bucket with a priority wait queue.
  *
  * Guarantee: at most `burst + ratePerMinute` requests start in any rolling 60 s window.
- * With the defaults (28/min, burst 1) that is 29, one under CDA's Pro limit of 30/min,
- * so a clock skew of one request still cannot trip a 429.
+ * The worker runs it at 100/min with burst 1 (101 per rolling minute) for a Pro Plus key
+ * (120/min), and lowers the rate automatically when /auth/keys/me reports a smaller limit.
  *
  * `pauseUntil()` freezes the bucket after a 429 so every caller backs off together.
  */
@@ -38,7 +38,7 @@ export interface TokenBucketSnapshot {
 }
 
 export class TokenBucket {
-  readonly ratePerMinute: number;
+  private rate: number;
   readonly burst: number;
   private tokens: number;
   private last: number;
@@ -47,11 +47,11 @@ export class TokenBucket {
   private waiters: Waiter[] = [];
   private timer: ReturnType<typeof setTimeout> | null = null;
   private readonly now: () => number;
-  private readonly msPerToken: number;
+  private msPerToken: number;
 
   constructor(opts: TokenBucketOptions) {
     if (!(opts.ratePerMinute > 0)) throw new Error("ratePerMinute must be > 0");
-    this.ratePerMinute = opts.ratePerMinute;
+    this.rate = opts.ratePerMinute;
     this.burst = Math.max(1, Math.floor(opts.burst ?? 1));
     this.now = opts.now ?? Date.now;
     this.msPerToken = 60_000 / opts.ratePerMinute;
@@ -76,6 +76,19 @@ export class TokenBucket {
     });
   }
 
+  get ratePerMinute(): number {
+    return this.rate;
+  }
+
+  /** Change the refill rate (e.g. after reading the key's real per-minute limit). */
+  setRate(ratePerMinute: number): void {
+    if (!(ratePerMinute > 0) || ratePerMinute === this.rate) return;
+    this.refill();
+    this.rate = ratePerMinute;
+    this.msPerToken = 60_000 / ratePerMinute;
+    this.drain();
+  }
+
   /** Stop handing out tokens until `ts` (epoch ms). Used when CDA answers 429. */
   pauseUntil(ts: number): void {
     if (ts > this.pausedUntil) this.pausedUntil = ts;
@@ -86,7 +99,7 @@ export class TokenBucket {
   snapshot(): TokenBucketSnapshot {
     this.refill();
     return {
-      ratePerMinute: this.ratePerMinute,
+      ratePerMinute: this.rate,
       burst: this.burst,
       tokens: Math.floor(this.tokens * 100) / 100,
       queued: this.waiters.length,
