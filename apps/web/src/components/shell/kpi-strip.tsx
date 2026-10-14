@@ -61,16 +61,21 @@ export function KpiStrip() {
       {KPI_DEFS.map((def) => {
         const v = values[def.key];
         const hist = series[def.key];
+        const env = envs[SOURCE_ENV[def.key]];
+        const fetched = env?.fetchedAt ? toMs(env.fetchedAt) : null;
+        const last = hist[hist.length - 1];
+        // Append the current value only when it was fetched after the last recorded point. A demo
+        // history is recorded after the demo snapshots, so there it stays a record of its own window.
+        const fresh = v !== null && (!last || fetched === null || fetched > last.t);
         const vals = hist.map((p) => p.v);
-        // Append the current value when it is newer than the last recorded point.
-        if (v !== null && (vals.length === 0 || vals[vals.length - 1] !== v)) vals.push(v);
+        if (fresh) vals.push(v);
+        const end = fresh ? v : (last?.v ?? null);
         // A change needs at least two recorded points (one sampling interval) to mean anything.
         const first = hist.length >= 2 ? hist[0] : undefined;
-        const delta = first && v !== null && first.v !== 0 ? ((v - first.v) / Math.abs(first.v)) * 100 : null;
+        const delta = first && end !== null && first.v !== 0 ? ((end - first.v) / Math.abs(first.v)) * 100 : null;
         const color = delta === null || delta >= 0 ? C.long : C.short;
-        const env = envs[SOURCE_ENV[def.key]];
         const stale = env?.fetchedAt && !env.demo ? isStale(env, now) : false;
-        const span = first ? now - first.t : 0;
+        const span = first ? (fresh ? now : last!.t) - first.t : 0;
         return (
           <Tip
             key={def.key}
@@ -90,7 +95,11 @@ export function KpiStrip() {
                 ) : (
                   <div style={{ color: "#8b98a9" }}>The sparkline fills in as the worker records this value every 5 minutes.</div>
                 )}
-                {history.data?.demo ? <div style={{ color: "#7fb6ff" }}>History is a saved demo recording.</div> : null}
+                {history.data?.demo ? (
+                  <div style={{ color: "#7fb6ff" }}>
+                    History is a saved demo recording{fresh ? "." : `, made after this snapshot: the change covers the recording, which ended at ${format(def, last?.v ?? null)}.`}
+                  </div>
+                ) : null}
                 {env && env.status !== "ok" ? <div style={{ color: "#ffb547" }}>Status: {env.status.replace(/_/g, " ")}</div> : null}
               </div>
             }
