@@ -1,0 +1,1033 @@
+{
+  "as_of": "2026-10-14T06:18:19.970231+00:00",
+  "horizon": "24h",
+  "items": [
+    {
+      "symbol": "0G",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.8324
+      },
+      "vol_target_multiplier": 0.446,
+      "vol_pctile_30": 57.2,
+      "rv_24h": 57.66,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4285,
+          "medium": 0.3523,
+          "high": 0.2192,
+          "confidence": 0.0321
+        },
+        "liquidation_risk": {
+          "low": 0.4285,
+          "medium": 0.3523,
+          "high": 0.2192,
+          "confidence": 0.0321
+        },
+        "funding": {
+          "falls": 0.2847,
+          "stable": 0.3605,
+          "rises": 0.3548,
+          "confidence": 0.005
+        },
+        "open_interest": {
+          "contracting": 0.2872,
+          "neutral": 0.3826,
+          "expanding": 0.3302,
+          "confidence": 0.0062
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "2Z",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.5657
+      },
+      "vol_target_multiplier": 0.446,
+      "vol_pctile_30": 97.2,
+      "rv_24h": 68.78,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4004,
+          "medium": 0.3474,
+          "high": 0.2522,
+          "confidence": 0.0158
+        },
+        "liquidation_risk": {
+          "low": 0.4004,
+          "medium": 0.3474,
+          "high": 0.2522,
+          "confidence": 0.0158
+        },
+        "funding": {
+          "falls": 0.2851,
+          "stable": 0.3606,
+          "rises": 0.3543,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2932,
+          "neutral": 0.3727,
+          "expanding": 0.3341,
+          "confidence": 0.0043
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "AAVE",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.648,
+      "vol_pctile_30": 85.0,
+      "rv_24h": 37.8,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4407,
+          "medium": 0.3547,
+          "high": 0.2046,
+          "confidence": 0.0412
+        },
+        "liquidation_risk": {
+          "low": 0.4407,
+          "medium": 0.3547,
+          "high": 0.2046,
+          "confidence": 0.0412
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3584,
+          "rises": 0.3567,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2838,
+          "neutral": 0.3881,
+          "expanding": 0.3281,
+          "confidence": 0.0075
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "ACE",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.5427
+      },
+      "vol_target_multiplier": 0.431,
+      "vol_pctile_30": 7.2,
+      "rv_24h": 123.06,
+      "probabilities": {
+        "volatility": {
+          "low": 0.3644,
+          "medium": 0.3623,
+          "high": 0.2733,
+          "confidence": 0.0076
+        },
+        "liquidation_risk": {
+          "low": 0.3644,
+          "medium": 0.3623,
+          "high": 0.2733,
+          "confidence": 0.0076
+        },
+        "funding": {
+          "falls": 0.3073,
+          "stable": 0.4161,
+          "rises": 0.2766,
+          "confidence": 0.0143
+        },
+        "open_interest": {
+          "contracting": 0.3231,
+          "neutral": 0.3255,
+          "expanding": 0.3514,
+          "confidence": 0.0007
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "ADA",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.69,
+      "vol_pctile_30": 65.0,
+      "rv_24h": 47.46,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4407,
+          "medium": 0.3547,
+          "high": 0.2046,
+          "confidence": 0.0412
+        },
+        "liquidation_risk": {
+          "low": 0.4407,
+          "medium": 0.3547,
+          "high": 0.2046,
+          "confidence": 0.0412
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3584,
+          "rises": 0.3567,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2838,
+          "neutral": 0.3881,
+          "expanding": 0.3281,
+          "confidence": 0.0074
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "AERO",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.5889
+      },
+      "vol_target_multiplier": 0.528,
+      "vol_pctile_30": 72.8,
+      "rv_24h": 73.96,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4164,
+          "medium": 0.3548,
+          "high": 0.2288,
+          "confidence": 0.0261
+        },
+        "liquidation_risk": {
+          "low": 0.4164,
+          "medium": 0.3548,
+          "high": 0.2288,
+          "confidence": 0.0261
+        },
+        "funding": {
+          "falls": 0.2865,
+          "stable": 0.3789,
+          "rises": 0.3346,
+          "confidence": 0.0059
+        },
+        "open_interest": {
+          "contracting": 0.2873,
+          "neutral": 0.378,
+          "expanding": 0.3347,
+          "confidence": 0.0056
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "AIXBT",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.701,
+      "vol_pctile_30": 40.6,
+      "rv_24h": 63.73,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4405,
+          "medium": 0.3547,
+          "high": 0.2048,
+          "confidence": 0.041
+        },
+        "liquidation_risk": {
+          "low": 0.4405,
+          "medium": 0.3547,
+          "high": 0.2048,
+          "confidence": 0.041
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3584,
+          "rises": 0.3566,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2839,
+          "neutral": 0.388,
+          "expanding": 0.3281,
+          "confidence": 0.0074
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "ALGO",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.509,
+      "vol_pctile_30": 97.2,
+      "rv_24h": 81.39,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4403,
+          "medium": 0.3547,
+          "high": 0.205,
+          "confidence": 0.0409
+        },
+        "liquidation_risk": {
+          "low": 0.4403,
+          "medium": 0.3547,
+          "high": 0.205,
+          "confidence": 0.0409
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3586,
+          "rises": 0.3565,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2839,
+          "neutral": 0.3879,
+          "expanding": 0.3282,
+          "confidence": 0.0074
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "ALT",
+      "regime": {
+        "label": "strong_trend_bull",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.684,
+      "vol_pctile_30": 92.8,
+      "rv_24h": 125.29,
+      "probabilities": {
+        "volatility": {
+          "low": 0.2449,
+          "medium": 0.3568,
+          "high": 0.3984,
+          "confidence": 0.0179
+        },
+        "liquidation_risk": {
+          "low": 0.2449,
+          "medium": 0.3568,
+          "high": 0.3984,
+          "confidence": 0.0179
+        },
+        "funding": {
+          "falls": 0.3715,
+          "stable": 0.3293,
+          "rises": 0.2991,
+          "confidence": 0.0036
+        },
+        "open_interest": {
+          "contracting": 0.319,
+          "neutral": 0.3083,
+          "expanding": 0.3727,
+          "confidence": 0.0032
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "ANIME",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.785,
+      "vol_pctile_30": 37.2,
+      "rv_24h": 53.35,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4406,
+          "medium": 0.3547,
+          "high": 0.2047,
+          "confidence": 0.0411
+        },
+        "liquidation_risk": {
+          "low": 0.4406,
+          "medium": 0.3547,
+          "high": 0.2047,
+          "confidence": 0.0411
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3584,
+          "rises": 0.3567,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2838,
+          "neutral": 0.388,
+          "expanding": 0.3281,
+          "confidence": 0.0074
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "APE",
+      "regime": {
+        "label": "strong_trend_bear",
+        "confidence": 0.381
+      },
+      "vol_target_multiplier": 0.586,
+      "vol_pctile_30": 98.3,
+      "rv_24h": 76.86,
+      "probabilities": {
+        "volatility": {
+          "low": 0.3298,
+          "medium": 0.3436,
+          "high": 0.3265,
+          "confidence": 0.0002
+        },
+        "liquidation_risk": {
+          "low": 0.3298,
+          "medium": 0.3436,
+          "high": 0.3265,
+          "confidence": 0.0002
+        },
+        "funding": {
+          "falls": 0.2886,
+          "stable": 0.4021,
+          "rises": 0.3094,
+          "confidence": 0.0097
+        },
+        "open_interest": {
+          "contracting": 0.3055,
+          "neutral": 0.3441,
+          "expanding": 0.3504,
+          "confidence": 0.0016
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "APEX",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.504,
+      "vol_pctile_30": 41.7,
+      "rv_24h": 68.92,
+      "probabilities": {
+        "volatility": {
+          "low": 0.3439,
+          "medium": 0.3693,
+          "high": 0.2867,
+          "confidence": 0.005
+        },
+        "liquidation_risk": {
+          "low": 0.3439,
+          "medium": 0.3693,
+          "high": 0.2867,
+          "confidence": 0.005
+        },
+        "funding": {
+          "falls": 0.3209,
+          "stable": 0.4079,
+          "rises": 0.2713,
+          "confidence": 0.0129
+        },
+        "open_interest": {
+          "contracting": 0.3244,
+          "neutral": 0.322,
+          "expanding": 0.3536,
+          "confidence": 0.0008
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "APT",
+      "regime": {
+        "label": "strong_trend_bull",
+        "confidence": 0.8839
+      },
+      "vol_target_multiplier": 0.485,
+      "vol_pctile_30": 98.3,
+      "rv_24h": 77.52,
+      "probabilities": {
+        "volatility": {
+          "low": 0.2767,
+          "medium": 0.3552,
+          "high": 0.3681,
+          "confidence": 0.0069
+        },
+        "liquidation_risk": {
+          "low": 0.2767,
+          "medium": 0.3552,
+          "high": 0.3681,
+          "confidence": 0.0069
+        },
+        "funding": {
+          "falls": 0.2957,
+          "stable": 0.4967,
+          "rises": 0.2076,
+          "confidence": 0.0586
+        },
+        "open_interest": {
+          "contracting": 0.3072,
+          "neutral": 0.3201,
+          "expanding": 0.3727,
+          "confidence": 0.0032
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "AR",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.377,
+      "vol_pctile_30": 78.3,
+      "rv_24h": 55.78,
+      "probabilities": {
+        "volatility": {
+          "low": 0.432,
+          "medium": 0.3532,
+          "high": 0.2148,
+          "confidence": 0.0347
+        },
+        "liquidation_risk": {
+          "low": 0.432,
+          "medium": 0.3532,
+          "high": 0.2148,
+          "confidence": 0.0347
+        },
+        "funding": {
+          "falls": 0.285,
+          "stable": 0.3588,
+          "rises": 0.3562,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2858,
+          "neutral": 0.3848,
+          "expanding": 0.3294,
+          "confidence": 0.0067
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "ARB",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.449,
+      "vol_pctile_30": 58.3,
+      "rv_24h": 65.42,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4406,
+          "medium": 0.3547,
+          "high": 0.2047,
+          "confidence": 0.0411
+        },
+        "liquidation_risk": {
+          "low": 0.4406,
+          "medium": 0.3547,
+          "high": 0.2047,
+          "confidence": 0.0411
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3584,
+          "rises": 0.3567,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2838,
+          "neutral": 0.388,
+          "expanding": 0.3281,
+          "confidence": 0.0074
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "ASTER",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.849,
+      "vol_pctile_30": 42.8,
+      "rv_24h": 40.55,
+      "probabilities": {
+        "volatility": {
+          "low": 0.3454,
+          "medium": 0.3695,
+          "high": 0.2851,
+          "confidence": 0.0053
+        },
+        "liquidation_risk": {
+          "low": 0.3454,
+          "medium": 0.3695,
+          "high": 0.2851,
+          "confidence": 0.0053
+        },
+        "funding": {
+          "falls": 0.3209,
+          "stable": 0.4048,
+          "rises": 0.2743,
+          "confidence": 0.0118
+        },
+        "open_interest": {
+          "contracting": 0.3228,
+          "neutral": 0.3243,
+          "expanding": 0.3529,
+          "confidence": 0.0008
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "ATOM",
+      "regime": {
+        "label": "strong_trend_bull",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.652,
+      "vol_pctile_30": 92.8,
+      "rv_24h": 97.65,
+      "probabilities": {
+        "volatility": {
+          "low": 0.2668,
+          "medium": 0.3552,
+          "high": 0.378,
+          "confidence": 0.0098
+        },
+        "liquidation_risk": {
+          "low": 0.2668,
+          "medium": 0.3552,
+          "high": 0.378,
+          "confidence": 0.0098
+        },
+        "funding": {
+          "falls": 0.2963,
+          "stable": 0.5051,
+          "rises": 0.1986,
+          "confidence": 0.0657
+        },
+        "open_interest": {
+          "contracting": 0.3086,
+          "neutral": 0.316,
+          "expanding": 0.3754,
+          "confidence": 0.0036
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "AVAX",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.62,
+      "vol_pctile_30": 98.3,
+      "rv_24h": 46.7,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4369,
+          "medium": 0.354,
+          "high": 0.209,
+          "confidence": 0.0383
+        },
+        "liquidation_risk": {
+          "low": 0.4369,
+          "medium": 0.354,
+          "high": 0.209,
+          "confidence": 0.0383
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3586,
+          "rises": 0.3565,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2847,
+          "neutral": 0.3867,
+          "expanding": 0.3287,
+          "confidence": 0.0071
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "AVNT",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.624,
+      "vol_pctile_30": 49.4,
+      "rv_24h": 68.24,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4406,
+          "medium": 0.3547,
+          "high": 0.2047,
+          "confidence": 0.0411
+        },
+        "liquidation_risk": {
+          "low": 0.4406,
+          "medium": 0.3547,
+          "high": 0.2047,
+          "confidence": 0.0411
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3585,
+          "rises": 0.3566,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2838,
+          "neutral": 0.388,
+          "expanding": 0.3281,
+          "confidence": 0.0074
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "AXS",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.599,
+      "vol_pctile_30": 98.3,
+      "rv_24h": 55.52,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4384,
+          "medium": 0.3543,
+          "high": 0.2073,
+          "confidence": 0.0394
+        },
+        "liquidation_risk": {
+          "low": 0.4384,
+          "medium": 0.3543,
+          "high": 0.2073,
+          "confidence": 0.0394
+        },
+        "funding": {
+          "falls": 0.285,
+          "stable": 0.3586,
+          "rises": 0.3564,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2843,
+          "neutral": 0.3872,
+          "expanding": 0.3285,
+          "confidence": 0.0072
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "AZTEC",
+      "regime": {
+        "label": "vol_spike",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.43,
+      "vol_pctile_30": 73.9,
+      "rv_24h": 171.09,
+      "probabilities": {
+        "volatility": {
+          "low": 0.1274,
+          "medium": 0.2367,
+          "high": 0.636,
+          "confidence": 0.1886
+        },
+        "liquidation_risk": {
+          "low": 0.1274,
+          "medium": 0.2367,
+          "high": 0.636,
+          "confidence": 0.1886
+        },
+        "funding": {
+          "falls": 0.3493,
+          "stable": 0.335,
+          "rises": 0.3157,
+          "confidence": 0.0008
+        },
+        "open_interest": {
+          "contracting": 0.3513,
+          "neutral": 0.2415,
+          "expanding": 0.4072,
+          "confidence": 0.0201
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "BABY",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.638,
+      "vol_pctile_30": 37.2,
+      "rv_24h": 63.98,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4405,
+          "medium": 0.3547,
+          "high": 0.2048,
+          "confidence": 0.0411
+        },
+        "liquidation_risk": {
+          "low": 0.4405,
+          "medium": 0.3547,
+          "high": 0.2048,
+          "confidence": 0.0411
+        },
+        "funding": {
+          "falls": 0.2849,
+          "stable": 0.3584,
+          "rises": 0.3567,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2838,
+          "neutral": 0.388,
+          "expanding": 0.3281,
+          "confidence": 0.0074
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "BANANA",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.964,
+      "vol_pctile_30": 1.7,
+      "rv_24h": 54.04,
+      "probabilities": {
+        "volatility": {
+          "low": 0.4406,
+          "medium": 0.3547,
+          "high": 0.2047,
+          "confidence": 0.0411
+        },
+        "liquidation_risk": {
+          "low": 0.4406,
+          "medium": 0.3547,
+          "high": 0.2047,
+          "confidence": 0.0411
+        },
+        "funding": {
+          "falls": 0.285,
+          "stable": 0.3584,
+          "rises": 0.3566,
+          "confidence": 0.0049
+        },
+        "open_interest": {
+          "contracting": 0.2838,
+          "neutral": 0.388,
+          "expanding": 0.3281,
+          "confidence": 0.0074
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "BCH",
+      "regime": {
+        "label": "strong_trend_bear",
+        "confidence": 0.5152
+      },
+      "vol_target_multiplier": 0.686,
+      "vol_pctile_30": 46.1,
+      "rv_24h": 48.55,
+      "probabilities": {
+        "volatility": {
+          "low": 0.3298,
+          "medium": 0.3346,
+          "high": 0.3356,
+          "confidence": 0.0
+        },
+        "liquidation_risk": {
+          "low": 0.3298,
+          "medium": 0.3346,
+          "high": 0.3356,
+          "confidence": 0.0
+        },
+        "funding": {
+          "falls": 0.2853,
+          "stable": 0.3644,
+          "rises": 0.3503,
+          "confidence": 0.005
+        },
+        "open_interest": {
+          "contracting": 0.3097,
+          "neutral": 0.3459,
+          "expanding": 0.3445,
+          "confidence": 0.0012
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    },
+    {
+      "symbol": "BERA",
+      "regime": {
+        "label": "range_low_vol",
+        "confidence": 0.975
+      },
+      "vol_target_multiplier": 0.549,
+      "vol_pctile_30": 62.8,
+      "rv_24h": 87.59,
+      "probabilities": {
+        "volatility": {
+          "low": 0.3389,
+          "medium": 0.3705,
+          "high": 0.2906,
+          "confidence": 0.0045
+        },
+        "liquidation_risk": {
+          "low": 0.3389,
+          "medium": 0.3705,
+          "high": 0.2906,
+          "confidence": 0.0045
+        },
+        "funding": {
+          "falls": 0.3232,
+          "stable": 0.408,
+          "rises": 0.2688,
+          "confidence": 0.0133
+        },
+        "open_interest": {
+          "contracting": 0.3251,
+          "neutral": 0.3204,
+          "expanding": 0.3545,
+          "confidence": 0.0009
+        }
+      },
+      "meta": {
+        "status": "ok",
+        "insufficient_history": false,
+        "new_listing": false
+      }
+    }
+  ],
+  "count": 178,
+  "universe_size": 178
+}

@@ -1,0 +1,1415 @@
+{
+  "scope": "gamma_exposure",
+  "note": "Perp analog of options GEX — market-maker inventory + liquidation-driven forced flow, not literal options gamma.",
+  "timestamp": "2026-10-14T06:18:49.409000Z",
+  "positions_as_of": 1791958509279,
+  "meta": {
+    "mm_accounts": 255,
+    "coins": 4,
+    "classifier_version": "2026-07-02",
+    "regime_rules": {
+      "rules_version": "2",
+      "state_thresholds": {
+        "amplify_at": 0.35,
+        "dampen_at": -0.2,
+        "score_clamp": [
+          -1.0,
+          1.0
+        ]
+      },
+      "funding": {
+        "baseline_abs": 1.5e-05,
+        "crowded_abs": 5e-05,
+        "extreme_abs": 0.0001,
+        "weights": {
+          "extreme": 0.35,
+          "crowded": 0.2,
+          "near_baseline": -0.2
+        }
+      },
+      "cluster": {
+        "near_band_pct": 5.0,
+        "dense_frac": 0.4,
+        "empty_frac": 0.15,
+        "weights": {
+          "dense_near_mark": 0.25,
+          "none_near_mark": -0.15
+        }
+      },
+      "flip": {
+        "on_line_pct": 2.0,
+        "far_pct": 10.0,
+        "weights": {
+          "on_line": 0.2,
+          "far": -0.1
+        }
+      },
+      "skew": {
+        "source": "mm_skew_pctile (fallback: market_skew raw while distribution_context.status == 'warming')",
+        "pctile_one_sided": [
+          10.0,
+          90.0
+        ],
+        "pctile_balanced": [
+          25.0,
+          75.0
+        ],
+        "raw_one_sided_abs": 0.5,
+        "raw_balanced_abs": 0.15,
+        "weights": {
+          "one_sided": 0.2,
+          "balanced": -0.1
+        }
+      },
+      "oi": {
+        "rising_pct": 5.0,
+        "min_abs_market_skew": 0.2,
+        "weight": 0.15
+      },
+      "realized_liq": {
+        "spike_ratio": 3.0,
+        "weight": 0.4
+      },
+      "confidence": {
+        "mm_accounts_full": 20.0,
+        "mm_gross_full_usd": 50000000.0,
+        "blend": "0.6 * accounts + 0.4 * book"
+      },
+      "coverage": {
+        "full": ">= 20 MM accounts and >= 1 density band",
+        "funding_only": "cluster/skew evidence thin or absent; funding (+OI/cascade) only",
+        "none": "no bands and no funding"
+      },
+      "fuel_side": "funding_state sign, else market_skew beyond +-raw_balanced_abs",
+      "legend": {
+        "amplify": "Short-gamma analog: crowded book + dense clusters near mark — forced flow follows through. Don't fade.",
+        "dampen": "Long-gamma analog: balanced positioning, funding near baseline, no overhead clusters — fade extremes, expect mean-reversion.",
+        "transitional": "Sitting on the flip line (jumpiest) or mixed signals.",
+        "flip_line": "Nearest large liquidation cluster — the regime boundary (perp analog of the options gamma-flip).",
+        "coverage": "full = real MM/cluster read; funding_only = state rests on funding (+OI/cascade) alone, treat as low-evidence; none = nothing to score on.",
+        "rules_version": "Scoring rule-set id — a change here, not the market, may move states.",
+        "since": "ISO time the current state was first committed for this coin (forward-only from 2026-09-09)."
+      }
+    },
+    "regime_legend": {
+      "amplify": "Short-gamma analog: crowded book + dense clusters near mark — forced flow follows through. Don't fade.",
+      "dampen": "Long-gamma analog: balanced positioning, funding near baseline, no overhead clusters — fade extremes, expect mean-reversion.",
+      "transitional": "Sitting on the flip line (jumpiest) or mixed signals.",
+      "flip_line": "Nearest large liquidation cluster — the regime boundary (perp analog of the options gamma-flip).",
+      "coverage": "full = real MM/cluster read; funding_only = state rests on funding (+OI/cascade) alone, treat as low-evidence; none = nothing to score on.",
+      "rules_version": "Scoring rule-set id — a change here, not the market, may move states.",
+      "since": "ISO time the current state was first committed for this coin (forward-only from 2026-09-09)."
+    },
+    "distribution_legend": {
+      "window_days": "Trailing window the percentile ranks are computed over (capped by history).",
+      "history_days": "How much history actually exists for this coin (sample_count / 24).",
+      "status": "'warming' until 2 days of hourly samples exist — all *_pctile null until then.",
+      "sample_ts": "Unix ms of the last hourly ring sample for this coin (the percentile ranks re-rank every ~5-min build; only the SAMPLING is hourly).",
+      "near_density_pctile": "Percentile rank of the near-mark cluster density (fuel within ±5% of mark) vs the coin's own trailing window.",
+      "abs_dist_to_flip_pctile": "Percentile rank of |distance to the gamma flip|. LOW = unusually close to the flip line.",
+      "mm_skew": "Normalized dealer inventory: mm_net_delta / mm_gross (−1 all-short … +1 all-long). Note: net/gross, not net/OI.",
+      "mm_skew_pctile": "Percentile rank of the signed MM skew vs the coin's own trailing window.",
+      "mm_skew_z": "Z-score of the live MM skew vs the coin's trailing-window mean/std (null while warming or if the window is constant).",
+      "regime_score_pctile": "Percentile rank of the amplify/dampen composite score (high = unusually amplify-leaning).",
+      "funding_rate_pctile": "Percentile rank of the signed funding rate vs the coin's own trailing window. null while warming AND when funding_pinned is true.",
+      "funding_pinned": "true when >= 18 of the last 24 hourly funding samples sit within 1e-07 of HL's 1.25e-05 interest baseline (a pinned series carries no crowding information); null until 24 samples exist."
+    },
+    "realized_liq_coverage": [
+      "0G",
+      "2Z",
+      "AAVE",
+      "ADA",
+      "AERO",
+      "ALGO",
+      "ANIME",
+      "APE",
+      "APT",
+      "AR",
+      "ARB",
+      "ASTER"
+    ],
+    "maintenance_margin_tiers": {
+      "BTC": [
+        {
+          "notional_lo_usd": 0.0,
+          "notional_hi_usd": 150000000.0,
+          "max_leverage": 40,
+          "maintenance_margin_pct": 1.25,
+          "maintenance_deduction_usd": 0.0
+        },
+        {
+          "notional_lo_usd": 150000000.0,
+          "notional_hi_usd": null,
+          "max_leverage": 20,
+          "maintenance_margin_pct": 2.5,
+          "maintenance_deduction_usd": 1875000.0
+        }
+      ],
+      "ETH": [
+        {
+          "notional_lo_usd": 0.0,
+          "notional_hi_usd": 100000000.0,
+          "max_leverage": 25,
+          "maintenance_margin_pct": 2.0,
+          "maintenance_deduction_usd": 0.0
+        },
+        {
+          "notional_lo_usd": 100000000.0,
+          "notional_hi_usd": null,
+          "max_leverage": 15,
+          "maintenance_margin_pct": 3.3333,
+          "maintenance_deduction_usd": 1333333.33
+        }
+      ],
+      "SOL": [
+        {
+          "notional_lo_usd": 0.0,
+          "notional_hi_usd": 70000000.0,
+          "max_leverage": 20,
+          "maintenance_margin_pct": 2.5,
+          "maintenance_deduction_usd": 0.0
+        },
+        {
+          "notional_lo_usd": 70000000.0,
+          "notional_hi_usd": null,
+          "max_leverage": 10,
+          "maintenance_margin_pct": 5.0,
+          "maintenance_deduction_usd": 1750000.0
+        }
+      ],
+      "HYPE": [
+        {
+          "notional_lo_usd": 0.0,
+          "notional_hi_usd": 20000000.0,
+          "max_leverage": 10,
+          "maintenance_margin_pct": 5.0,
+          "maintenance_deduction_usd": 0.0
+        },
+        {
+          "notional_lo_usd": 20000000.0,
+          "notional_hi_usd": null,
+          "max_leverage": 5,
+          "maintenance_margin_pct": 10.0,
+          "maintenance_deduction_usd": 1000000.0
+        }
+      ],
+      "note": "Hyperliquid's live margin tiers per coin (meta.marginTables). maintenance_margin_pct = 50 / max_leverage (half the initial margin at the tier's max leverage); maintenance margin = notional x pct / 100 - maintenance_deduction_usd. Reference only: liquidation cluster prices are the exact on-chain liquidationPx."
+    }
+  },
+  "coins": {
+    "BTC": {
+      "mark": 83541.5,
+      "positions_as_of": 1791958509279,
+      "mm_net_delta": -82906457.63,
+      "mm_long_usd": 53199419.76,
+      "mm_short_usd": 136105877.39,
+      "mm_gross": 189305297.15,
+      "mm_n_accounts": 100,
+      "gamma_flip": 102824.007939,
+      "gamma_profile": [
+        {
+          "price_lo": 41770.75,
+          "price_hi": 42188.4575,
+          "long_usd": 29142731.23,
+          "short_usd": 0.0,
+          "total_usd": 29142731.23
+        },
+        {
+          "price_lo": 44276.995,
+          "price_hi": 44694.7025,
+          "long_usd": 8956165.19,
+          "short_usd": 0.0,
+          "total_usd": 8956165.19
+        },
+        {
+          "price_lo": 48871.7775,
+          "price_hi": 49289.485,
+          "long_usd": 816097.38,
+          "short_usd": 0.0,
+          "total_usd": 816097.38
+        },
+        {
+          "price_lo": 52631.145,
+          "price_hi": 53048.8525,
+          "long_usd": 89288.12,
+          "short_usd": 0.0,
+          "total_usd": 89288.12
+        },
+        {
+          "price_lo": 58479.05,
+          "price_hi": 58896.7575,
+          "long_usd": 105955.54,
+          "short_usd": 0.0,
+          "total_usd": 105955.54
+        },
+        {
+          "price_lo": 58896.7575,
+          "price_hi": 59314.465,
+          "long_usd": 532763.65,
+          "short_usd": 0.0,
+          "total_usd": 532763.65
+        },
+        {
+          "price_lo": 63909.2475,
+          "price_hi": 64326.955,
+          "long_usd": 263614.36,
+          "short_usd": 0.0,
+          "total_usd": 263614.36
+        },
+        {
+          "price_lo": 65997.785,
+          "price_hi": 66415.4925,
+          "long_usd": 16709.2,
+          "short_usd": 0.0,
+          "total_usd": 16709.2
+        },
+        {
+          "price_lo": 70174.86,
+          "price_hi": 70592.5675,
+          "long_usd": 438515.41,
+          "short_usd": 0.0,
+          "total_usd": 438515.41
+        },
+        {
+          "price_lo": 70592.5675,
+          "price_hi": 71010.275,
+          "long_usd": 397450.04,
+          "short_usd": 0.0,
+          "total_usd": 397450.04
+        },
+        {
+          "price_lo": 73516.52,
+          "price_hi": 73934.2275,
+          "long_usd": 880982.54,
+          "short_usd": 0.0,
+          "total_usd": 880982.54
+        },
+        {
+          "price_lo": 73934.2275,
+          "price_hi": 74351.935,
+          "long_usd": 1373.5,
+          "short_usd": 0.0,
+          "total_usd": 1373.5
+        },
+        {
+          "price_lo": 74769.6425,
+          "price_hi": 75187.35,
+          "long_usd": 11355.57,
+          "short_usd": 0.0,
+          "total_usd": 11355.57
+        },
+        {
+          "price_lo": 75187.35,
+          "price_hi": 75605.0575,
+          "long_usd": 19664.82,
+          "short_usd": 0.0,
+          "total_usd": 19664.82
+        },
+        {
+          "price_lo": 76440.4725,
+          "price_hi": 76858.18,
+          "long_usd": 1625470.98,
+          "short_usd": 0.0,
+          "total_usd": 1625470.98
+        },
+        {
+          "price_lo": 76858.18,
+          "price_hi": 77275.8875,
+          "long_usd": 3341840.0,
+          "short_usd": 0.0,
+          "total_usd": 3341840.0
+        },
+        {
+          "price_lo": 77275.8875,
+          "price_hi": 77693.595,
+          "long_usd": 1292.46,
+          "short_usd": 0.0,
+          "total_usd": 1292.46
+        },
+        {
+          "price_lo": 77693.595,
+          "price_hi": 78111.3025,
+          "long_usd": 654176.04,
+          "short_usd": 0.0,
+          "total_usd": 654176.04
+        },
+        {
+          "price_lo": 78946.7175,
+          "price_hi": 79364.425,
+          "long_usd": 167092.0,
+          "short_usd": 0.0,
+          "total_usd": 167092.0
+        },
+        {
+          "price_lo": 80199.84,
+          "price_hi": 80617.5475,
+          "long_usd": 617258.87,
+          "short_usd": 0.0,
+          "total_usd": 617258.87
+        },
+        {
+          "price_lo": 80617.5475,
+          "price_hi": 81035.255,
+          "long_usd": 5035088.5,
+          "short_usd": 0.0,
+          "total_usd": 5035088.5
+        },
+        {
+          "price_lo": 81870.67,
+          "price_hi": 82288.3775,
+          "long_usd": 84534.35,
+          "short_usd": 0.0,
+          "total_usd": 84534.35
+        },
+        {
+          "price_lo": 84376.915,
+          "price_hi": 84794.6225,
+          "long_usd": 0.0,
+          "short_usd": 2158708.33,
+          "total_usd": 2158708.33
+        },
+        {
+          "price_lo": 90224.82,
+          "price_hi": 90642.5275,
+          "long_usd": 0.0,
+          "short_usd": 112537.62,
+          "total_usd": 112537.62
+        },
+        {
+          "price_lo": 90642.5275,
+          "price_hi": 91060.235,
+          "long_usd": 0.0,
+          "short_usd": 504694.51,
+          "total_usd": 504694.51
+        },
+        {
+          "price_lo": 95237.31,
+          "price_hi": 95655.0175,
+          "long_usd": 0.0,
+          "short_usd": 406086.19,
+          "total_usd": 406086.19
+        },
+        {
+          "price_lo": 98578.97,
+          "price_hi": 98996.6775,
+          "long_usd": 0.0,
+          "short_usd": 250638.0,
+          "total_usd": 250638.0
+        },
+        {
+          "price_lo": 101085.215,
+          "price_hi": 101502.9225,
+          "long_usd": 0.0,
+          "short_usd": 7686140.0,
+          "total_usd": 7686140.0
+        },
+        {
+          "price_lo": 104426.875,
+          "price_hi": 104844.5825,
+          "long_usd": 0.0,
+          "short_usd": 25063498.33,
+          "total_usd": 25063498.33
+        },
+        {
+          "price_lo": 108603.95,
+          "price_hi": 109021.6575,
+          "long_usd": 0.0,
+          "short_usd": 2966550.82,
+          "total_usd": 2966550.82
+        },
+        {
+          "price_lo": 111110.195,
+          "price_hi": 111527.9025,
+          "long_usd": 0.0,
+          "short_usd": 308284.74,
+          "total_usd": 308284.74
+        },
+        {
+          "price_lo": 112363.3175,
+          "price_hi": 112781.025,
+          "long_usd": 0.0,
+          "short_usd": 7351960.0,
+          "total_usd": 7351960.0
+        },
+        {
+          "price_lo": 121552.8825,
+          "price_hi": 121970.59,
+          "long_usd": 0.0,
+          "short_usd": 4968946.65,
+          "total_usd": 4968946.65
+        },
+        {
+          "price_lo": 124894.5425,
+          "price_hi": 125312.25,
+          "long_usd": 0.0,
+          "short_usd": 84327832.19,
+          "total_usd": 84327832.19
+        }
+      ],
+      "coverage": {
+        "bands": 34,
+        "mm_n_accounts": 100,
+        "has_flip": true,
+        "history_days": 30.0
+      },
+      "levels": [
+        {
+          "price": 84168.06125,
+          "dist_pct": 0.75,
+          "total_usd": 1226126.94,
+          "side": "short",
+          "n_accounts": 1
+        },
+        {
+          "price": 84585.76875,
+          "dist_pct": 1.25,
+          "total_usd": 7138585.46,
+          "side": "short",
+          "n_accounts": 3
+        },
+        {
+          "price": 82497.23125,
+          "dist_pct": -1.25,
+          "total_usd": 9794826.1,
+          "side": "long",
+          "n_accounts": 4
+        },
+        {
+          "price": 85003.47625,
+          "dist_pct": 1.75,
+          "total_usd": 17384975.21,
+          "side": "short",
+          "n_accounts": 2
+        },
+        {
+          "price": 82079.52375,
+          "dist_pct": -1.75,
+          "total_usd": 1130133.43,
+          "side": "long",
+          "n_accounts": 4
+        },
+        {
+          "price": 81661.81625,
+          "dist_pct": -2.25,
+          "total_usd": 4680713.11,
+          "side": "long",
+          "n_accounts": 1
+        }
+      ],
+      "funding_rate": 1.25e-05,
+      "oracle_price": 83539.2,
+      "premium": -0.0004213591,
+      "open_interest": 37798.75758,
+      "open_interest_usd": 3156309654.2027397,
+      "oi_change_pct": -0.18,
+      "dist_to_flip_pct": 23.081,
+      "regime": {
+        "state": "dampen",
+        "score": -0.55,
+        "confidence": 1.0,
+        "coverage": "full",
+        "insufficient_mm_coverage": false,
+        "rules_version": "2",
+        "fuel_side": "balanced",
+        "flip_price": 102824.007939,
+        "dist_to_flip_pct": 23.081,
+        "rationale": "funding near baseline; no cluster near mark; flip line far from mark; balanced positioning (mm skew mid-range)",
+        "inputs": {
+          "funding_rate": 1.25e-05,
+          "funding_apy": 10.95,
+          "funding_state": "neutral",
+          "funding_pinned": false,
+          "premium": -0.0004213591,
+          "oracle_price": 83539.2,
+          "open_interest_usd": 3156309654.2027397,
+          "oi_change_pct": -0.18,
+          "cluster_density_near_pct": 4.17,
+          "market_net_usd": -109580080.87,
+          "market_skew": -0.0443,
+          "mm_skew_pctile": 66.2,
+          "skew_source": "mm_skew_pctile",
+          "realized_liq": {
+            "venue": "okx+bybit",
+            "coverage": "okx+bybit_aggregate",
+            "window_s": 300,
+            "long_usd": 0,
+            "short_usd": 0,
+            "total_usd": 0,
+            "dominant_side": "balanced",
+            "liq_24h_usd": 4488538.24,
+            "spike_ratio": 0.0,
+            "window_uptime_h": 98.2,
+            "baseline_span_h": 23.61
+          }
+        },
+        "since": "2026-10-14T05:14:49.960000Z"
+      },
+      "distribution_context": {
+        "window_days": 30,
+        "history_days": 30.0,
+        "sample_count": 720,
+        "status": "ok",
+        "sample_ts": 1791955852020,
+        "near_density_pctile": 46.7,
+        "abs_dist_to_flip_pctile": 85.2,
+        "mm_skew_pctile": 66.2,
+        "regime_score_pctile": 13.9,
+        "funding_rate_pctile": 67.1,
+        "mm_skew": -0.438,
+        "mm_skew_z": 0.413,
+        "funding_pinned": false
+      }
+    },
+    "ETH": {
+      "mark": 2507.85,
+      "positions_as_of": 1791958509279,
+      "mm_net_delta": -124740615.02,
+      "mm_long_usd": 42388137.34,
+      "mm_short_usd": 167128752.36,
+      "mm_gross": 209516889.71,
+      "mm_n_accounts": 105,
+      "gamma_flip": 1858.182732,
+      "gamma_profile": [
+        {
+          "price_lo": 1253.925,
+          "price_hi": 1266.46425,
+          "long_usd": 9026295.23,
+          "short_usd": 0.0,
+          "total_usd": 9026295.23
+        },
+        {
+          "price_lo": 1304.082,
+          "price_hi": 1316.62125,
+          "long_usd": 210228.19,
+          "short_usd": 0.0,
+          "total_usd": 210228.19
+        },
+        {
+          "price_lo": 1416.93525,
+          "price_hi": 1429.4745,
+          "long_usd": 910.44,
+          "short_usd": 0.0,
+          "total_usd": 910.44
+        },
+        {
+          "price_lo": 1442.01375,
+          "price_hi": 1454.553,
+          "long_usd": 399966.16,
+          "short_usd": 0.0,
+          "total_usd": 399966.16
+        },
+        {
+          "price_lo": 1793.11275,
+          "price_hi": 1805.652,
+          "long_usd": 219397.5,
+          "short_usd": 0.0,
+          "total_usd": 219397.5
+        },
+        {
+          "price_lo": 1818.19125,
+          "price_hi": 1830.7305,
+          "long_usd": 700.57,
+          "short_usd": 0.0,
+          "total_usd": 700.57
+        },
+        {
+          "price_lo": 1855.809,
+          "price_hi": 1868.34825,
+          "long_usd": 25074022.07,
+          "short_usd": 0.0,
+          "total_usd": 25074022.07
+        },
+        {
+          "price_lo": 2043.89775,
+          "price_hi": 2056.437,
+          "long_usd": 59397.3,
+          "short_usd": 0.0,
+          "total_usd": 59397.3
+        },
+        {
+          "price_lo": 2119.13325,
+          "price_hi": 2131.6725,
+          "long_usd": 45140.72,
+          "short_usd": 0.0,
+          "total_usd": 45140.72
+        },
+        {
+          "price_lo": 2181.8295,
+          "price_hi": 2194.36875,
+          "long_usd": 2423735.08,
+          "short_usd": 0.0,
+          "total_usd": 2423735.08
+        },
+        {
+          "price_lo": 2269.60425,
+          "price_hi": 2282.1435,
+          "long_usd": 188444.65,
+          "short_usd": 0.0,
+          "total_usd": 188444.65
+        },
+        {
+          "price_lo": 2282.1435,
+          "price_hi": 2294.68275,
+          "long_usd": 19926.06,
+          "short_usd": 0.0,
+          "total_usd": 19926.06
+        },
+        {
+          "price_lo": 2294.68275,
+          "price_hi": 2307.222,
+          "long_usd": 250399.24,
+          "short_usd": 0.0,
+          "total_usd": 250399.24
+        },
+        {
+          "price_lo": 2344.83975,
+          "price_hi": 2357.379,
+          "long_usd": 837451.29,
+          "short_usd": 0.0,
+          "total_usd": 837451.29
+        },
+        {
+          "price_lo": 2357.379,
+          "price_hi": 2369.91825,
+          "long_usd": 377146.06,
+          "short_usd": 0.0,
+          "total_usd": 377146.06
+        },
+        {
+          "price_lo": 2369.91825,
+          "price_hi": 2382.4575,
+          "long_usd": 2517680.09,
+          "short_usd": 0.0,
+          "total_usd": 2517680.09
+        },
+        {
+          "price_lo": 2382.4575,
+          "price_hi": 2394.99675,
+          "long_usd": 125370.0,
+          "short_usd": 0.0,
+          "total_usd": 125370.0
+        },
+        {
+          "price_lo": 2432.6145,
+          "price_hi": 2445.15375,
+          "long_usd": 531689.91,
+          "short_usd": 0.0,
+          "total_usd": 531689.91
+        },
+        {
+          "price_lo": 2445.15375,
+          "price_hi": 2457.693,
+          "long_usd": 80236.8,
+          "short_usd": 0.0,
+          "total_usd": 80236.8
+        },
+        {
+          "price_lo": 2532.9285,
+          "price_hi": 2545.46775,
+          "long_usd": 0.0,
+          "short_usd": 1429888.98,
+          "total_usd": 1429888.98
+        },
+        {
+          "price_lo": 3159.891,
+          "price_hi": 3172.43025,
+          "long_usd": 0.0,
+          "short_usd": 2558820.76,
+          "total_usd": 2558820.76
+        },
+        {
+          "price_lo": 3322.90125,
+          "price_hi": 3335.4405,
+          "long_usd": 0.0,
+          "short_usd": 12510085.82,
+          "total_usd": 12510085.82
+        },
+        {
+          "price_lo": 3373.05825,
+          "price_hi": 3385.5975,
+          "long_usd": 0.0,
+          "short_usd": 4638690.0,
+          "total_usd": 4638690.0
+        },
+        {
+          "price_lo": 3586.2255,
+          "price_hi": 3598.76475,
+          "long_usd": 0.0,
+          "short_usd": 1155911.4,
+          "total_usd": 1155911.4
+        },
+        {
+          "price_lo": 3749.23575,
+          "price_hi": 3761.775,
+          "long_usd": 0.0,
+          "short_usd": 144835355.41,
+          "total_usd": 144835355.41
+        }
+      ],
+      "coverage": {
+        "bands": 25,
+        "mm_n_accounts": 105,
+        "has_flip": true,
+        "history_days": 30.0
+      },
+      "levels": [
+        {
+          "price": 2539.198125,
+          "dist_pct": 1.25,
+          "total_usd": 1429888.98,
+          "side": "short",
+          "n_accounts": 2
+        },
+        {
+          "price": 2476.501875,
+          "dist_pct": -1.25,
+          "total_usd": 18053280.0,
+          "side": "long",
+          "n_accounts": 1
+        },
+        {
+          "price": 2463.962625,
+          "dist_pct": -1.75,
+          "total_usd": 32596.2,
+          "side": "long",
+          "n_accounts": 1
+        },
+        {
+          "price": 2451.423375,
+          "dist_pct": -2.25,
+          "total_usd": 5277618.65,
+          "side": "long",
+          "n_accounts": 2
+        },
+        {
+          "price": 2576.815875,
+          "dist_pct": 2.75,
+          "total_usd": 626850.0,
+          "side": "short",
+          "n_accounts": 1
+        },
+        {
+          "price": 2589.355125,
+          "dist_pct": 3.25,
+          "total_usd": 194395.71,
+          "side": "short",
+          "n_accounts": 1
+        }
+      ],
+      "funding_rate": 1.18268e-05,
+      "oracle_price": 2506.8,
+      "premium": -0.0001196745,
+      "open_interest": 1078268.4978,
+      "open_interest_usd": 2701925201.78724,
+      "oi_change_pct": 0.05,
+      "dist_to_flip_pct": -25.905,
+      "regime": {
+        "state": "dampen",
+        "score": -0.45,
+        "confidence": 1.0,
+        "coverage": "full",
+        "insufficient_mm_coverage": false,
+        "rules_version": "2",
+        "fuel_side": "balanced",
+        "flip_price": 1858.182732,
+        "dist_to_flip_pct": -25.905,
+        "rationale": "funding near baseline; no cluster near mark; flip line far from mark",
+        "inputs": {
+          "funding_rate": 1.18268e-05,
+          "funding_apy": 10.36,
+          "funding_state": "neutral",
+          "funding_pinned": false,
+          "premium": -0.0001196745,
+          "oracle_price": 2506.8,
+          "open_interest_usd": 2701925201.78724,
+          "oi_change_pct": 0.05,
+          "cluster_density_near_pct": 1.03,
+          "market_net_usd": -48612953.42,
+          "market_skew": -0.0207,
+          "mm_skew_pctile": 79.3,
+          "skew_source": "mm_skew_pctile",
+          "realized_liq": {
+            "venue": "okx+bybit",
+            "coverage": "okx+bybit_aggregate",
+            "window_s": 300,
+            "long_usd": 0,
+            "short_usd": 1510.12,
+            "total_usd": 1510.12,
+            "dominant_side": "short",
+            "liq_24h_usd": 4583789.15,
+            "spike_ratio": 0.09,
+            "window_uptime_h": 98.2,
+            "baseline_span_h": 23.48
+          }
+        },
+        "since": "2026-10-14T05:14:49.973000Z"
+      },
+      "distribution_context": {
+        "window_days": 30,
+        "history_days": 30.0,
+        "sample_count": 720,
+        "status": "ok",
+        "sample_ts": 1791955852020,
+        "near_density_pctile": 45.3,
+        "abs_dist_to_flip_pctile": 87.2,
+        "mm_skew_pctile": 79.3,
+        "regime_score_pctile": 58.4,
+        "funding_rate_pctile": 19.2,
+        "mm_skew": -0.5954,
+        "mm_skew_z": 0.523,
+        "funding_pinned": false
+      }
+    },
+    "SOL": {
+      "mark": 107.365,
+      "positions_as_of": 1791958509279,
+      "mm_net_delta": -52088790.34,
+      "mm_long_usd": 583113.59,
+      "mm_short_usd": 52671903.92,
+      "mm_gross": 53255017.51,
+      "mm_n_accounts": 77,
+      "gamma_flip": 114.523029,
+      "gamma_profile": [
+        {
+          "price_lo": 53.6825,
+          "price_hi": 54.219325,
+          "long_usd": 437203.12,
+          "short_usd": 0.0,
+          "total_usd": 437203.12
+        },
+        {
+          "price_lo": 66.5663,
+          "price_hi": 67.103125,
+          "long_usd": 1671.75,
+          "short_usd": 0.0,
+          "total_usd": 1671.75
+        },
+        {
+          "price_lo": 73.545025,
+          "price_hi": 74.08185,
+          "long_usd": 35104.62,
+          "short_usd": 0.0,
+          "total_usd": 35104.62
+        },
+        {
+          "price_lo": 82.134225,
+          "price_hi": 82.67105,
+          "long_usd": 13522.18,
+          "short_usd": 0.0,
+          "total_usd": 13522.18
+        },
+        {
+          "price_lo": 88.0393,
+          "price_hi": 88.576125,
+          "long_usd": 9676.18,
+          "short_usd": 0.0,
+          "total_usd": 9676.18
+        },
+        {
+          "price_lo": 96.091675,
+          "price_hi": 96.6285,
+          "long_usd": 53685.0,
+          "short_usd": 0.0,
+          "total_usd": 53685.0
+        },
+        {
+          "price_lo": 98.7758,
+          "price_hi": 99.312625,
+          "long_usd": 39.73,
+          "short_usd": 0.0,
+          "total_usd": 39.73
+        },
+        {
+          "price_lo": 104.14405,
+          "price_hi": 104.680875,
+          "long_usd": 32211.0,
+          "short_usd": 0.0,
+          "total_usd": 32211.0
+        },
+        {
+          "price_lo": 124.006575,
+          "price_hi": 124.5434,
+          "long_usd": 0.0,
+          "short_usd": 253901.06,
+          "total_usd": 253901.06
+        },
+        {
+          "price_lo": 126.6907,
+          "price_hi": 127.227525,
+          "long_usd": 0.0,
+          "short_usd": 39847.15,
+          "total_usd": 39847.15
+        },
+        {
+          "price_lo": 128.301175,
+          "price_hi": 128.838,
+          "long_usd": 0.0,
+          "short_usd": 52761.62,
+          "total_usd": 52761.62
+        },
+        {
+          "price_lo": 160.510675,
+          "price_hi": 161.0475,
+          "long_usd": 0.0,
+          "short_usd": 52325394.09,
+          "total_usd": 52325394.09
+        }
+      ],
+      "coverage": {
+        "bands": 12,
+        "mm_n_accounts": 77,
+        "has_flip": true,
+        "history_days": 30.0
+      },
+      "levels": [
+        {
+          "price": 104.412463,
+          "dist_pct": -2.75,
+          "total_usd": 3344531.48,
+          "side": "long",
+          "n_accounts": 2
+        },
+        {
+          "price": 102.801987,
+          "dist_pct": -4.25,
+          "total_usd": 9820094.56,
+          "side": "long",
+          "n_accounts": 1
+        },
+        {
+          "price": 101.728338,
+          "dist_pct": -5.25,
+          "total_usd": 367766.95,
+          "side": "long",
+          "n_accounts": 2
+        },
+        {
+          "price": 114.612138,
+          "dist_pct": 6.75,
+          "total_usd": 131376.86,
+          "side": "short",
+          "n_accounts": 1
+        },
+        {
+          "price": 115.685788,
+          "dist_pct": 7.75,
+          "total_usd": 14967.38,
+          "side": "short",
+          "n_accounts": 1
+        },
+        {
+          "price": 117.296262,
+          "dist_pct": 9.25,
+          "total_usd": 1610550.0,
+          "side": "short",
+          "n_accounts": 1
+        }
+      ],
+      "funding_rate": 1.25e-05,
+      "oracle_price": 107.35,
+      "premium": -0.0001863065,
+      "open_interest": 5813089.720000002,
+      "open_interest_usd": 623802657.8532002,
+      "oi_change_pct": 0.1,
+      "dist_to_flip_pct": 6.667,
+      "regime": {
+        "state": "transitional",
+        "score": -0.15,
+        "confidence": 1.0,
+        "coverage": "full",
+        "insufficient_mm_coverage": false,
+        "rules_version": "2",
+        "fuel_side": "balanced",
+        "flip_price": 114.523029,
+        "dist_to_flip_pct": 6.667,
+        "rationale": "funding near baseline; no cluster near mark; one-sided positioning (mm skew 2th pctile)",
+        "inputs": {
+          "funding_rate": 1.25e-05,
+          "funding_apy": 10.95,
+          "funding_state": "neutral",
+          "funding_pinned": false,
+          "premium": -0.0001863065,
+          "oracle_price": 107.35,
+          "open_interest_usd": 623802657.8532002,
+          "oi_change_pct": 0.1,
+          "cluster_density_near_pct": 0.06,
+          "market_net_usd": -41570870.23,
+          "market_skew": -0.0823,
+          "mm_skew_pctile": 2.4,
+          "skew_source": "mm_skew_pctile",
+          "realized_liq": {
+            "venue": "okx+bybit",
+            "coverage": "okx+bybit_aggregate",
+            "window_s": 300,
+            "long_usd": 0,
+            "short_usd": 0,
+            "total_usd": 0,
+            "dominant_side": "balanced",
+            "liq_24h_usd": 2891677.13,
+            "spike_ratio": 0.0,
+            "window_uptime_h": 98.2,
+            "baseline_span_h": 23.86
+          }
+        },
+        "since": "2026-10-14T01:50:56.705000Z"
+      },
+      "distribution_context": {
+        "window_days": 30,
+        "history_days": 30.0,
+        "sample_count": 720,
+        "status": "ok",
+        "sample_ts": 1791955852020,
+        "near_density_pctile": 23.6,
+        "abs_dist_to_flip_pctile": 24.1,
+        "mm_skew_pctile": 2.4,
+        "regime_score_pctile": 87.1,
+        "funding_rate_pctile": 63.9,
+        "mm_skew": -0.9781,
+        "mm_skew_z": -1.901,
+        "funding_pinned": false
+      }
+    },
+    "HYPE": {
+      "mark": 81.8575,
+      "positions_as_of": 1791958509279,
+      "mm_net_delta": 14718742.23,
+      "mm_long_usd": 50395037.98,
+      "mm_short_usd": 35676295.76,
+      "mm_gross": 86071333.74,
+      "mm_n_accounts": 111,
+      "gamma_flip": 59.102719,
+      "gamma_profile": [
+        {
+          "price_lo": 40.92875,
+          "price_hi": 41.338037,
+          "long_usd": 17838298.4,
+          "short_usd": 0.0,
+          "total_usd": 17838298.4
+        },
+        {
+          "price_lo": 42.156613,
+          "price_hi": 42.5659,
+          "long_usd": 204620.0,
+          "short_usd": 0.0,
+          "total_usd": 204620.0
+        },
+        {
+          "price_lo": 43.793762,
+          "price_hi": 44.20305,
+          "long_usd": 269195.62,
+          "short_usd": 0.0,
+          "total_usd": 269195.62
+        },
+        {
+          "price_lo": 51.570225,
+          "price_hi": 51.979512,
+          "long_usd": 11845621.23,
+          "short_usd": 0.0,
+          "total_usd": 11845621.23
+        },
+        {
+          "price_lo": 53.616663,
+          "price_hi": 54.02595,
+          "long_usd": 472326.8,
+          "short_usd": 0.0,
+          "total_usd": 472326.8
+        },
+        {
+          "price_lo": 55.253813,
+          "price_hi": 55.6631,
+          "long_usd": 204192.75,
+          "short_usd": 0.0,
+          "total_usd": 204192.75
+        },
+        {
+          "price_lo": 55.6631,
+          "price_hi": 56.072388,
+          "long_usd": 1676454.93,
+          "short_usd": 0.0,
+          "total_usd": 1676454.93
+        },
+        {
+          "price_lo": 56.481675,
+          "price_hi": 56.890963,
+          "long_usd": 36455.4,
+          "short_usd": 0.0,
+          "total_usd": 36455.4
+        },
+        {
+          "price_lo": 57.709538,
+          "price_hi": 58.118825,
+          "long_usd": 60560.97,
+          "short_usd": 0.0,
+          "total_usd": 60560.97
+        },
+        {
+          "price_lo": 58.118825,
+          "price_hi": 58.528112,
+          "long_usd": 667787.19,
+          "short_usd": 0.0,
+          "total_usd": 667787.19
+        },
+        {
+          "price_lo": 58.528112,
+          "price_hi": 58.9374,
+          "long_usd": 511550.0,
+          "short_usd": 0.0,
+          "total_usd": 511550.0
+        },
+        {
+          "price_lo": 59.346688,
+          "price_hi": 59.755975,
+          "long_usd": 398207.71,
+          "short_usd": 0.0,
+          "total_usd": 398207.71
+        },
+        {
+          "price_lo": 62.620988,
+          "price_hi": 63.030275,
+          "long_usd": 867659.19,
+          "short_usd": 0.0,
+          "total_usd": 867659.19
+        },
+        {
+          "price_lo": 68.351012,
+          "price_hi": 68.7603,
+          "long_usd": 4516362.82,
+          "short_usd": 0.0,
+          "total_usd": 4516362.82
+        },
+        {
+          "price_lo": 69.578875,
+          "price_hi": 69.988163,
+          "long_usd": 16369.6,
+          "short_usd": 0.0,
+          "total_usd": 16369.6
+        },
+        {
+          "price_lo": 71.216025,
+          "price_hi": 71.625313,
+          "long_usd": 291816.77,
+          "short_usd": 0.0,
+          "total_usd": 291816.77
+        },
+        {
+          "price_lo": 71.625313,
+          "price_hi": 72.0346,
+          "long_usd": 7775560.0,
+          "short_usd": 0.0,
+          "total_usd": 7775560.0
+        },
+        {
+          "price_lo": 72.443888,
+          "price_hi": 72.853175,
+          "long_usd": 167788.4,
+          "short_usd": 0.0,
+          "total_usd": 167788.4
+        },
+        {
+          "price_lo": 72.853175,
+          "price_hi": 73.262462,
+          "long_usd": 994608.71,
+          "short_usd": 0.0,
+          "total_usd": 994608.71
+        },
+        {
+          "price_lo": 74.490325,
+          "price_hi": 74.899613,
+          "long_usd": 13407.52,
+          "short_usd": 0.0,
+          "total_usd": 13407.52
+        },
+        {
+          "price_lo": 74.899613,
+          "price_hi": 75.3089,
+          "long_usd": 20712.45,
+          "short_usd": 0.0,
+          "total_usd": 20712.45
+        },
+        {
+          "price_lo": 75.718187,
+          "price_hi": 76.127475,
+          "long_usd": 1329799.19,
+          "short_usd": 0.0,
+          "total_usd": 1329799.19
+        },
+        {
+          "price_lo": 76.536763,
+          "price_hi": 76.94605,
+          "long_usd": 7165.55,
+          "short_usd": 0.0,
+          "total_usd": 7165.55
+        },
+        {
+          "price_lo": 77.355338,
+          "price_hi": 77.764625,
+          "long_usd": 40924.0,
+          "short_usd": 0.0,
+          "total_usd": 40924.0
+        },
+        {
+          "price_lo": 77.764625,
+          "price_hi": 78.173913,
+          "long_usd": 91000.24,
+          "short_usd": 0.0,
+          "total_usd": 91000.24
+        },
+        {
+          "price_lo": 78.173913,
+          "price_hi": 78.5832,
+          "long_usd": 76592.54,
+          "short_usd": 0.0,
+          "total_usd": 76592.54
+        },
+        {
+          "price_lo": 92.089687,
+          "price_hi": 92.498975,
+          "long_usd": 0.0,
+          "short_usd": 1183605.56,
+          "total_usd": 1183605.56
+        },
+        {
+          "price_lo": 109.279763,
+          "price_hi": 109.68905,
+          "long_usd": 0.0,
+          "short_usd": 15932.53,
+          "total_usd": 15932.53
+        },
+        {
+          "price_lo": 111.735488,
+          "price_hi": 112.144775,
+          "long_usd": 0.0,
+          "short_usd": 547825.85,
+          "total_usd": 547825.85
+        },
+        {
+          "price_lo": 114.191213,
+          "price_hi": 114.6005,
+          "long_usd": 0.0,
+          "short_usd": 1305985.51,
+          "total_usd": 1305985.51
+        },
+        {
+          "price_lo": 122.376963,
+          "price_hi": 122.78625,
+          "long_usd": 0.0,
+          "short_usd": 32622946.29,
+          "total_usd": 32622946.29
+        }
+      ],
+      "coverage": {
+        "bands": 31,
+        "mm_n_accounts": 111,
+        "has_flip": true,
+        "history_days": 30.0
+      },
+      "levels": [
+        {
+          "price": 78.787844,
+          "dist_pct": -3.75,
+          "total_usd": 156331.32,
+          "side": "long",
+          "n_accounts": 2
+        },
+        {
+          "price": 78.378557,
+          "dist_pct": -4.25,
+          "total_usd": 4249068.4,
+          "side": "long",
+          "n_accounts": 6
+        },
+        {
+          "price": 77.969269,
+          "dist_pct": -4.75,
+          "total_usd": 1293417.75,
+          "side": "long",
+          "n_accounts": 7
+        },
+        {
+          "price": 86.155018,
+          "dist_pct": 5.25,
+          "total_usd": 4980.45,
+          "side": "short",
+          "n_accounts": 1
+        },
+        {
+          "price": 87.382881,
+          "dist_pct": 6.75,
+          "total_usd": 216897.2,
+          "side": "short",
+          "n_accounts": 1
+        },
+        {
+          "price": 89.429318,
+          "dist_pct": 9.25,
+          "total_usd": 1227720.0,
+          "side": "short",
+          "n_accounts": 1
+        }
+      ],
+      "funding_rate": 1.25e-05,
+      "oracle_price": 81.898,
+      "premium": 0.0002686268,
+      "open_interest": 20310891.83999998,
+      "open_interest_usd": 1663076134.7510386,
+      "oi_change_pct": -0.03,
+      "dist_to_flip_pct": -27.798,
+      "regime": {
+        "state": "dampen",
+        "score": -0.25,
+        "confidence": 1.0,
+        "coverage": "full",
+        "insufficient_mm_coverage": false,
+        "rules_version": "2",
+        "fuel_side": "balanced",
+        "flip_price": 59.102719,
+        "dist_to_flip_pct": -27.798,
+        "rationale": "funding near baseline; no cluster near mark; flip line far from mark; one-sided positioning (mm skew 92th pctile)",
+        "inputs": {
+          "funding_rate": 1.25e-05,
+          "funding_apy": 10.95,
+          "funding_state": "neutral",
+          "funding_pinned": true,
+          "premium": 0.0002686268,
+          "oracle_price": 81.898,
+          "open_interest_usd": 1663076134.7510386,
+          "oi_change_pct": -0.03,
+          "cluster_density_near_pct": 0.19,
+          "market_net_usd": -37477355.94,
+          "market_skew": -0.0307,
+          "mm_skew_pctile": 91.6,
+          "skew_source": "mm_skew_pctile",
+          "realized_liq": {
+            "venue": "okx+bybit",
+            "coverage": "okx+bybit_aggregate",
+            "window_s": 300,
+            "long_usd": 0,
+            "short_usd": 0,
+            "total_usd": 0,
+            "dominant_side": "balanced",
+            "liq_24h_usd": 275452.82,
+            "spike_ratio": 0.0,
+            "window_uptime_h": 98.2,
+            "baseline_span_h": 21.35
+          }
+        },
+        "since": "2026-10-14T05:59:57.712000Z"
+      },
+      "distribution_context": {
+        "window_days": 30,
+        "history_days": 30.0,
+        "sample_count": 720,
+        "status": "ok",
+        "sample_ts": 1791955852020,
+        "near_density_pctile": 43.1,
+        "abs_dist_to_flip_pctile": 72.9,
+        "mm_skew_pctile": 91.6,
+        "regime_score_pctile": 77.3,
+        "funding_rate_pctile": null,
+        "mm_skew": 0.171,
+        "mm_skew_z": 1.44,
+        "funding_pinned": true
+      }
+    }
+  }
+}

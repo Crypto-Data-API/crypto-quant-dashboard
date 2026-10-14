@@ -1,0 +1,224 @@
+{
+  "as_of": 1791958748,
+  "universe_size": 25,
+  "coins": [
+    {
+      "coin": "BTC",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 6987348.81,
+        "current_spread_bps": 0.12,
+        "liq_24h_usd": 5066004.034070002,
+        "liq_1h_usd": 21694.9002,
+        "depth_drop_10min_pct": 17.22,
+        "spread_widen_10min_pct": 0.0,
+        "oi_change_4h_pct": -0.066,
+        "price_change_4h_pct": 0.253
+      }
+    },
+    {
+      "coin": "ETH",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 17379909.73,
+        "current_spread_bps": 0.399,
+        "liq_24h_usd": 4583163.591719997,
+        "liq_1h_usd": 32430.43905,
+        "depth_drop_10min_pct": -0.36,
+        "spread_widen_10min_pct": -0.25,
+        "oi_change_4h_pct": 0.084,
+        "price_change_4h_pct": 0.06
+      }
+    },
+    {
+      "coin": "HYPE",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 1022652.42,
+        "current_spread_bps": 0.122,
+        "liq_24h_usd": 275452.82070000004,
+        "liq_1h_usd": 7236.450570000002,
+        "depth_drop_10min_pct": -328.27,
+        "spread_widen_10min_pct": 0.0,
+        "oi_change_4h_pct": -0.33,
+        "price_change_4h_pct": -0.424
+      }
+    },
+    {
+      "coin": "ZEC",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 2068172.55,
+        "current_spread_bps": 0.798,
+        "liq_24h_usd": 2249198.1096,
+        "liq_1h_usd": 63249.88060000001,
+        "depth_drop_10min_pct": 4.51,
+        "spread_widen_10min_pct": -0.5,
+        "oi_change_4h_pct": -1.828,
+        "price_change_4h_pct": -1.657
+      }
+    },
+    {
+      "coin": "SOL",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 10133184.65,
+        "current_spread_bps": 0.932,
+        "liq_24h_usd": 3101596.933199999,
+        "liq_1h_usd": 6205.479299999999,
+        "depth_drop_10min_pct": 4.27,
+        "spread_widen_10min_pct": -0.11,
+        "oi_change_4h_pct": -0.632,
+        "price_change_4h_pct": -0.084
+      }
+    },
+    {
+      "coin": "NEAR",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 116667.07,
+        "current_spread_bps": 0.99,
+        "liq_24h_usd": 1835953.3583500003,
+        "liq_1h_usd": 27157.982600000003,
+        "depth_drop_10min_pct": -16.97,
+        "spread_widen_10min_pct": 66.11,
+        "oi_change_4h_pct": -1.836,
+        "price_change_4h_pct": -1.611
+      }
+    },
+    {
+      "coin": "PUMP",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 396007.73,
+        "current_spread_bps": 3.994,
+        "liq_24h_usd": 217602.08981400006,
+        "liq_1h_usd": 6564.3206900000005,
+        "depth_drop_10min_pct": -11.86,
+        "spread_widen_10min_pct": 100.2,
+        "oi_change_4h_pct": -1.654,
+        "price_change_4h_pct": -1.028
+      }
+    },
+    {
+      "coin": "XRP",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 4616848.58,
+        "current_spread_bps": 0.732,
+        "liq_24h_usd": 711810.5632699998,
+        "liq_1h_usd": 33230.48099999999,
+        "depth_drop_10min_pct": -7.7,
+        "spread_widen_10min_pct": 0.0,
+        "oi_change_4h_pct": -0.742,
+        "price_change_4h_pct": -0.11
+      }
+    },
+    {
+      "coin": "STRK",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 150257.46,
+        "current_spread_bps": 1.241,
+        "liq_24h_usd": 1485760.2215890002,
+        "liq_1h_usd": 136246.856636,
+        "depth_drop_10min_pct": 1.05,
+        "spread_widen_10min_pct": 0.16,
+        "oi_change_4h_pct": -5.704,
+        "price_change_4h_pct": -5.032
+      }
+    },
+    {
+      "coin": "WLD",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 111628.06,
+        "current_spread_bps": 2.934,
+        "liq_24h_usd": 279003.91247,
+        "liq_1h_usd": 13548.28026,
+        "depth_drop_10min_pct": -13.69,
+        "spread_widen_10min_pct": 86.88,
+        "oi_change_4h_pct": -0.958,
+        "price_change_4h_pct": -0.68
+      }
+    },
+    {
+      "coin": "ENA",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 158631.06,
+        "current_spread_bps": 2.859,
+        "liq_24h_usd": 82932.55406,
+        "liq_1h_usd": 12523.867100000001,
+        "depth_drop_10min_pct": -0.67,
+        "spread_widen_10min_pct": 19.77,
+        "oi_change_4h_pct": -1.197,
+        "price_change_4h_pct": -0.855
+      }
+    },
+    {
+      "coin": "PONS",
+      "regime": "neutral",
+      "confidence": 0.5,
+      "low_confidence": false,
+      "baseline_minutes": 930,
+      "signals": {
+        "current_depth_25bps_usd": 25098.05,
+        "current_spread_bps": 6.403,
+        "liq_24h_usd": 114554.92348999997,
+        "liq_1h_usd": 28795.542200000004,
+        "depth_drop_10min_pct": 15.14,
+        "spread_widen_10min_pct": 2027.24,
+        "oi_change_4h_pct": 4.308,
+        "price_change_4h_pct": 2.849
+      }
+    }
+  ],
+  "aggregate": {
+    "deep_book": 1,
+    "oi_price_divergence": 0,
+    "depth_withdrawal": 1,
+    "post_cascade_impaired": 0,
+    "neutral": 23,
+    "pct_deep_book": 4.0,
+    "pct_divergent": 0.0,
+    "pct_withdrawing": 4.0,
+    "pct_impaired": 0.0,
+    "pct_neutral": 92.0
+  },
+  "composite_score": 50.0,
+  "sentiment": "neutral"
+}

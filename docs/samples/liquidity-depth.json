@@ -1,0 +1,474 @@
+{
+  "as_of": 1791958683,
+  "universe_size": 25,
+  "coins": [
+    {
+      "coin": "BTC",
+      "ts": 1791958683,
+      "mid_price": 83525.5,
+      "spread_bps": 0.12,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 3220154.77,
+          "25bps": 3220154.77,
+          "50bps": 3220154.77,
+          "100bps": 3220154.77
+        },
+        "ask": {
+          "10bps": 3767194.04,
+          "25bps": 3767194.04,
+          "50bps": 3767194.04,
+          "100bps": 3767194.04
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 6987348.81,
+      "imbalance_10bps": -0.0783,
+      "open_interest_usd": 3157139651.59
+    },
+    {
+      "coin": "ETH",
+      "ts": 1791958683,
+      "mid_price": 2506.75,
+      "spread_bps": 0.399,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 9258573.71,
+          "25bps": 9258573.71,
+          "50bps": 9258573.71,
+          "100bps": 9258573.71
+        },
+        "ask": {
+          "10bps": 8121336.02,
+          "25bps": 8121336.02,
+          "50bps": 8121336.02,
+          "100bps": 8121336.02
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 17379909.73,
+      "imbalance_10bps": 0.0654,
+      "open_interest_usd": 2703313305.78
+    },
+    {
+      "coin": "HYPE",
+      "ts": 1791958683,
+      "mid_price": 81.9235,
+      "spread_bps": 0.122,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 982266.93,
+          "25bps": 982266.93,
+          "50bps": 982266.93,
+          "100bps": 982266.93
+        },
+        "ask": {
+          "10bps": 40385.49,
+          "25bps": 40385.49,
+          "50bps": 40385.49,
+          "100bps": 40385.49
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 1022652.42,
+      "imbalance_10bps": 0.921,
+      "open_interest_usd": 1663226420.22
+    },
+    {
+      "coin": "ZEC",
+      "ts": 1791958683,
+      "mid_price": 1252.45,
+      "spread_bps": 0.798,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 527685.2,
+          "25bps": 1463991.44,
+          "50bps": 1463991.44,
+          "100bps": 1463991.44
+        },
+        "ask": {
+          "10bps": 254190.37,
+          "25bps": 604181.11,
+          "50bps": 604181.11,
+          "100bps": 604181.11
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 2068172.55,
+      "imbalance_10bps": 0.3498,
+      "open_interest_usd": 608248045.9
+    },
+    {
+      "coin": "SOL",
+      "ts": 1791958683,
+      "mid_price": 107.315,
+      "spread_bps": 0.932,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 3122382.5,
+          "25bps": 5500318.61,
+          "50bps": 5500318.61,
+          "100bps": 5500318.61
+        },
+        "ask": {
+          "10bps": 2323878.29,
+          "25bps": 4632866.04,
+          "50bps": 4632866.04,
+          "100bps": 4632866.04
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 10133184.65,
+      "imbalance_10bps": 0.1466,
+      "open_interest_usd": 623588203.72
+    },
+    {
+      "coin": "NEAR",
+      "ts": 1791958683,
+      "mid_price": 5.05215,
+      "spread_bps": 0.99,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 86056.01,
+          "25bps": 86056.01,
+          "50bps": 86056.01,
+          "100bps": 86056.01
+        },
+        "ask": {
+          "10bps": 30611.06,
+          "25bps": 30611.06,
+          "50bps": 30611.06,
+          "100bps": 30611.06
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 116667.07,
+      "imbalance_10bps": 0.4752,
+      "open_interest_usd": 358878365.59
+    },
+    {
+      "coin": "PUMP",
+      "ts": 1791958683,
+      "mid_price": 0.005007,
+      "spread_bps": 3.994,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 27961.55,
+          "25bps": 249904.73,
+          "50bps": 396023.96,
+          "100bps": 396023.96
+        },
+        "ask": {
+          "10bps": 24934.97,
+          "25bps": 146103.0,
+          "50bps": 296167.57,
+          "100bps": 296167.57
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": false,
+          "25bps": false,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": false,
+          "25bps": false,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 396007.73,
+      "imbalance_10bps": 0.0572,
+      "open_interest_usd": 199708434.71
+    },
+    {
+      "coin": "XRP",
+      "ts": 1791958683,
+      "mid_price": 1.36685,
+      "spread_bps": 0.732,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 1419642.85,
+          "25bps": 2648644.25,
+          "50bps": 2648644.25,
+          "100bps": 2648644.25
+        },
+        "ask": {
+          "10bps": 928641.17,
+          "25bps": 1968204.33,
+          "50bps": 1968204.33,
+          "100bps": 1968204.33
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 4616848.58,
+      "imbalance_10bps": 0.2091,
+      "open_interest_usd": 261259250.9
+    },
+    {
+      "coin": "STRK",
+      "ts": 1791958683,
+      "mid_price": 0.080585,
+      "spread_bps": 1.241,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 7894.24,
+          "25bps": 58227.32,
+          "50bps": 58579.39,
+          "100bps": 58579.39
+        },
+        "ask": {
+          "10bps": 34628.31,
+          "25bps": 92030.14,
+          "50bps": 105950.37,
+          "100bps": 105950.37
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": false,
+          "25bps": false,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": false,
+          "25bps": false,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 150257.46,
+      "imbalance_10bps": -0.6287,
+      "open_interest_usd": 35874229.74
+    },
+    {
+      "coin": "WLD",
+      "ts": 1791958683,
+      "mid_price": 0.511225,
+      "spread_bps": 2.934,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 37205.69,
+          "25bps": 37205.69,
+          "50bps": 37205.69,
+          "100bps": 37205.69
+        },
+        "ask": {
+          "10bps": 74422.37,
+          "25bps": 74422.37,
+          "50bps": 74422.37,
+          "100bps": 74422.37
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": true,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 111628.06,
+      "imbalance_10bps": -0.3334,
+      "open_interest_usd": 73501041.91
+    },
+    {
+      "coin": "ENA",
+      "ts": 1791958683,
+      "mid_price": 0.2099,
+      "spread_bps": 2.859,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 81074.86,
+          "25bps": 96522.52,
+          "50bps": 96522.52,
+          "100bps": 96522.52
+        },
+        "ask": {
+          "10bps": 54924.85,
+          "25bps": 62108.54,
+          "50bps": 62108.54,
+          "100bps": 62108.54
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 158631.06,
+      "imbalance_10bps": 0.1923,
+      "open_interest_usd": 118804269.72
+    },
+    {
+      "coin": "PONS",
+      "ts": 1791958683,
+      "mid_price": 0.327975,
+      "spread_bps": 6.403,
+      "bid_levels": 20,
+      "ask_levels": 20,
+      "depth_usd": {
+        "bid": {
+          "10bps": 5861.64,
+          "25bps": 14610.51,
+          "50bps": 14610.51,
+          "100bps": 14610.51
+        },
+        "ask": {
+          "10bps": 4459.18,
+          "25bps": 10487.54,
+          "50bps": 10487.54,
+          "100bps": 10487.54
+        }
+      },
+      "levels_truncated": {
+        "bid": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        },
+        "ask": {
+          "10bps": false,
+          "25bps": true,
+          "50bps": true,
+          "100bps": true
+        }
+      },
+      "total_depth_25bps_usd": 25098.05,
+      "imbalance_10bps": 0.1359,
+      "open_interest_usd": 30915430.75
+    }
+  ]
+}

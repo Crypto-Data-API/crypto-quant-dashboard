@@ -1,0 +1,28 @@
+{
+  "name": "@cqd/schemas",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Zod schemas, dataset registry and envelope types for the dashboard.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./validators": "./src/validators.ts"
+  },
+  "scripts": {
+    "gen": "node ./scripts/gen-zod.mjs",
+    "check-samples": "tsx ./scripts/check-samples.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint .",
+    "build": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cqd/cda-client": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "eslint": "9.39.5",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "scope": "positioning",
+  "timestamp": "2026-10-14T06:18:54.907000Z",
+  "positions_as_of": 1791958509279,
+  "meta": {
+    "active_accounts": 3656,
+    "by_tag": {
+      "whale": 177,
+      "smart_money": 1182,
+      "high_leverage": 566,
+      "market_maker": 255
+    },
+    "classifier_version": "2026-07-02",
+    "coins": 4
+  },
+  "coins": {
+    "BTC": {
+      "mark": 83541.5,
+      "positions_as_of": 1791958509279,
+      "by_type": {
+        "market_maker": {
+          "long_usd": 53199419.76,
+          "short_usd": 136105877.39,
+          "net_usd": -82906457.63,
+          "gross_usd": 189305297.15,
+          "n_accounts": 100
+        },
+        "whale": {
+          "long_usd": 650776372.41,
+          "short_usd": 229863960.23,
+          "net_usd": 420912412.18,
+          "gross_usd": 880640332.63,
+          "n_accounts": 54
+        },
+        "other": {
+          "long_usd": 477014548.97,
+          "short_usd": 924600584.4,
+          "net_usd": -447586035.43,
+          "gross_usd": 1401615133.36,
+          "n_accounts": 1043
+        },
+        "all": {
+          "long_usd": 1180990341.14,
+          "short_usd": 1290570422.01,
+          "net_usd": -109580080.87,
+          "gross_usd": 2471560763.15,
+          "n_accounts": 1197
+        }
+      },
+      "by_tag": {
+        "smart_money": {
+          "long_usd": 716443055.97,
+          "short_usd": 332202139.66,
+          "net_usd": 384240916.32,
+          "gross_usd": 1048645195.63,
+          "n_accounts": 345
+        },
+        "high_leverage": {
+          "long_usd": 518662293.55,
+          "short_usd": 328935963.7,
+          "net_usd": 189726329.85,
+          "gross_usd": 847598257.25,
+          "n_accounts": 408
+        }
+      }
+    },
+    "ETH": {
+      "mark": 2507.85,
+      "positions_as_of": 1791958509279,
+      "by_type": {
+        "market_maker": {
+          "long_usd": 42388137.34,
+          "short_usd": 167128752.36,
+          "net_usd": -124740615.02,
+          "gross_usd": 209516889.71,
+          "n_accounts": 105
+        },
+        "whale": {
+          "long_usd": 862663701.3,
+          "short_usd": 183022784.1,
+          "net_usd": 679640917.2,
+          "gross_usd": 1045686485.4,
+          "n_accounts": 62
+        },
+        "other": {
+          "long_usd": 245320047.54,
+          "short_usd": 848833303.14,
+          "net_usd": -603513255.6,
+          "gross_usd": 1094153350.68,
+          "n_accounts": 645
+        },
+        "all": {
+          "long_usd": 1150371886.18,
+          "short_usd": 1198984839.6,
+          "net_usd": -48612953.42,
+          "gross_usd": 2349356725.78,
+          "n_accounts": 812
+        }
+      },
+      "by_tag": {
+        "smart_money": {
+          "long_usd": 478042707.36,
+          "short_usd": 392217892.15,
+          "net_usd": 85824815.21,
+          "gross_usd": 870260599.5,
+          "n_accounts": 239
+        },
+        "high_leverage": {
+          "long_usd": 513824688.19,
+          "short_usd": 191659147.29,
+          "net_usd": 322165540.9,
+          "gross_usd": 705483835.48,
+          "n_accounts": 215
+        }
+      }
+    },
+    "SOL": {
+      "mark": 107.365,
+      "positions_as_of": 1791958509279,
+      "by_type": {
+        "market_maker": {
+          "long_usd": 583113.59,
+          "short_usd": 52671903.92,
+          "net_usd": -52088790.34,
+          "gross_usd": 53255017.51,
+          "n_accounts": 77
+        },
+        "whale": {
+          "long_usd": 167938749.46,
+          "short_usd": 27829027.37,
+          "net_usd": 140109722.09,
+          "gross_usd": 195767776.83,
+          "n_accounts": 24
+        },
+        "other": {
+          "long_usd": 63388562.68,
+          "short_usd": 192980364.66,
+          "net_usd": -129591801.99,
+          "gross_usd": 256368927.34,
+          "n_accounts": 296
+        },
+        "all": {
+          "long_usd": 231910425.72,
+          "short_usd": 273481295.96,
+          "net_usd": -41570870.23,
+          "gross_usd": 505391721.68,
+          "n_accounts": 397
+        }
+      },
+      "by_tag": {
+        "smart_money": {
+          "long_usd": 123051633.3,
+          "short_usd": 83256511.48,
+          "net_usd": 39795121.82,
+          "gross_usd": 206308144.78,
+          "n_accounts": 99
+        },
+        "high_leverage": {
+          "long_usd": 116115913.54,
+          "short_usd": 49756963.04,
+          "net_usd": 66358950.51,
+          "gross_usd": 165872876.58,
+          "n_accounts": 78
+        }
+      }
+    },
+    "HYPE": {
+      "mark": 81.8575,
+      "positions_as_of": 1791958509279,
+      "by_type": {
+        "market_maker": {
+          "long_usd": 50395037.98,
+          "short_usd": 35676295.76,
+          "net_usd": 14718742.23,
+          "gross_usd": 86071333.74,
+          "n_accounts": 111
+        },
+        "whale": {
+          "long_usd": 325053407.02,
+          "short_usd": 158132688.31,
+          "net_usd": 166920718.71,
+          "gross_usd": 483186095.33,
+          "n_accounts": 41
+        },
+        "other": {
+          "long_usd": 216857157.87,
+          "short_usd": 435973974.75,
+          "net_usd": -219116816.88,
+          "gross_usd": 652831132.62,
+          "n_accounts": 1030
+        },
+        "all": {
+          "long_usd": 592305602.87,
+          "short_usd": 629782958.82,
+          "net_usd": -37477355.94,
+          "gross_usd": 1222088561.69,
+          "n_accounts": 1182
+        }
+      },
+      "by_tag": {
+        "smart_money": {
+          "long_usd": 259037302.76,
+          "short_usd": 308736176.87,
+          "net_usd": -49698874.11,
+          "gross_usd": 567773479.64,
+          "n_accounts": 421
+        },
+        "high_leverage": {
+          "long_usd": 35405820.12,
+          "short_usd": 32629332.97,
+          "net_usd": 2776487.15,
+          "gross_usd": 68035153.08,
+          "n_accounts": 50
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "as_of": "2026-10-14T05:51:10.335838+00:00",
+  "composite_score": 51.5,
+  "sentiment": "normal",
+  "target_vol": 60.0,
+  "gross_exposure_multiplier": 0.985,
+  "median_vol_pctile_30": 57.2,
+  "aggregate": {
+    "compressed": 91,
+    "expanding": 14,
+    "vol_shock": 53,
+    "mean_reverting": 82,
+    "normal": 251,
+    "pct_compressed": 18.5,
+    "pct_expanding": 2.9,
+    "pct_shock": 10.8,
+    "pct_mean_reverting": 16.7,
+    "pct_normal": 51.1,
+    "total": 491
+  }
+}

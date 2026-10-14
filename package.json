@@ -1,0 +1,39 @@
+{
+  "name": "crypto-quant-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Real-time quant dashboard for Hyperliquid perps and the wider crypto market, powered by CryptoDataApi.",
+  "packageManager": "pnpm@10.34.6",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter @cqd/web --filter @cqd/worker dev",
+    "dev:web": "pnpm --filter @cqd/web dev",
+    "dev:worker": "pnpm --filter @cqd/worker dev",
+    "start:web": "pnpm --filter @cqd/web start",
+    "start:worker": "pnpm --filter @cqd/worker start",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "gen": "pnpm --filter @cqd/cda-client gen && pnpm --filter @cqd/schemas gen",
+    "redis:up": "docker compose up -d redis",
+    "redis:down": "docker compose down"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "22.20.5",
+    "eslint": "9.39.5",
+    "globals": "16.5.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}

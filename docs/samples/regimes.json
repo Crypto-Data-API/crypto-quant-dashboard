@@ -1,0 +1,332 @@
+{
+  "current": {
+    "regime": "distribution_post_peak",
+    "id": 10,
+    "anchor": "distribution-deleveraging",
+    "name": "Distribution / Post-Peak Deleveraging",
+    "rationale": "Early distribution — price near highs while breadth, leadership and follow-through quietly deteriorate.",
+    "stage": "early_distribution",
+    "stage_label": "Early distribution",
+    "euphoria_score": null,
+    "signals": {
+      "lt": 77,
+      "st": 47,
+      "condition": "topping_out",
+      "btc_dom": 59.1,
+      "oi_change": 0,
+      "liq_24h": 41198621.295614004,
+      "long_pct": 56.1,
+      "short_pct": 43.9,
+      "vol_score": 51.5,
+      "vol_pct_compressed": 18.5,
+      "vol_pct_shock": 10.8,
+      "vol_sentiment": "normal",
+      "meme_season": false,
+      "meme_score": 34.8,
+      "security_stress": 15.9,
+      "security_band": "quiet",
+      "quant_label": "range_low_vol",
+      "quant_confidence": 0.7739
+    },
+    "raw": {
+      "anchor": "distribution-deleveraging",
+      "regime": "distribution_post_peak",
+      "name": "Distribution / Post-Peak Deleveraging",
+      "id": 10,
+      "matches_committed": true
+    },
+    "as_of": "2026-10-14T06:15:57.702482+00:00",
+    "in_regime_since": "2026-10-13T17:02:22.295216+00:00",
+    "pending": null,
+    "stability": {
+      "score": 1.0,
+      "raw_agreement": 1.0,
+      "raw_samples": 24,
+      "raw_window": 24,
+      "confirmations_against": 0,
+      "confirmations_needed": 8,
+      "candidate": null,
+      "held_s": 47615,
+      "dwell_floor_s": 43200,
+      "locked_for_s": 0
+    },
+    "thresholds": {
+      "nearest": {
+        "signal": "long_pct",
+        "op": ">=",
+        "cutoff": 55.0,
+        "value": 56.1,
+        "holds": true,
+        "distance": 1.1,
+        "gates": "distribution-deleveraging"
+      },
+      "checks": [
+        {
+          "signal": "security_stress",
+          "op": ">=",
+          "cutoff": 55.0,
+          "value": 15.9,
+          "holds": false,
+          "distance": 39.1,
+          "gates": "structural-shock"
+        },
+        {
+          "signal": "vol_pct_shock",
+          "op": ">=",
+          "cutoff": 40.0,
+          "value": 10.8,
+          "holds": false,
+          "distance": 29.2,
+          "gates": "structural-shock"
+        },
+        {
+          "signal": "st",
+          "op": ">=",
+          "cutoff": 60.0,
+          "value": 47.0,
+          "holds": false,
+          "distance": 13.0,
+          "gates": "speculative-euphoria"
+        },
+        {
+          "signal": "oi_change",
+          "op": "<",
+          "cutoff": -3.0,
+          "value": 0.0,
+          "holds": false,
+          "distance": 3.0,
+          "gates": "distribution-deleveraging"
+        },
+        {
+          "signal": "long_pct",
+          "op": ">=",
+          "cutoff": 55.0,
+          "value": 56.1,
+          "holds": true,
+          "distance": 1.1,
+          "gates": "distribution-deleveraging"
+        },
+        {
+          "signal": "st",
+          "op": "<",
+          "cutoff": 45.0,
+          "value": 47.0,
+          "holds": false,
+          "distance": 2.0,
+          "gates": "distribution-deleveraging"
+        },
+        {
+          "signal": "st",
+          "op": "<",
+          "cutoff": 30.0,
+          "value": 47.0,
+          "holds": false,
+          "distance": 17.0,
+          "gates": "capitulation"
+        },
+        {
+          "signal": "vol_score",
+          "op": ">=",
+          "cutoff": 60.0,
+          "value": 51.5,
+          "holds": false,
+          "distance": 8.5,
+          "gates": "capitulation"
+        },
+        {
+          "signal": "vol_pct_compressed",
+          "op": ">=",
+          "cutoff": 40.0,
+          "value": 18.5,
+          "holds": false,
+          "distance": 21.5,
+          "gates": "bottoming"
+        },
+        {
+          "signal": "vol_score",
+          "op": "<=",
+          "cutoff": 40.0,
+          "value": 51.5,
+          "holds": false,
+          "distance": 11.5,
+          "gates": "bottoming"
+        },
+        {
+          "signal": "btc_dom",
+          "op": ">=",
+          "cutoff": 56.0,
+          "value": 59.1,
+          "holds": true,
+          "distance": 3.1,
+          "gates": "btc-led-bull"
+        },
+        {
+          "signal": "lt",
+          "op": "<",
+          "cutoff": 40.0,
+          "value": 77.0,
+          "holds": false,
+          "distance": 37.0,
+          "gates": "condition:bear_market"
+        },
+        {
+          "signal": "st",
+          "op": "<",
+          "cutoff": 40.0,
+          "value": 47.0,
+          "holds": false,
+          "distance": 7.0,
+          "gates": "condition:bear_market"
+        },
+        {
+          "signal": "lt",
+          "op": ">",
+          "cutoff": 25.0,
+          "value": 77.0,
+          "holds": true,
+          "distance": 52.0,
+          "gates": "condition:early_recovery"
+        },
+        {
+          "signal": "lt",
+          "op": ">=",
+          "cutoff": 50.0,
+          "value": 77.0,
+          "holds": true,
+          "distance": 27.0,
+          "gates": "condition:early_bull"
+        },
+        {
+          "signal": "st",
+          "op": ">=",
+          "cutoff": 50.0,
+          "value": 47.0,
+          "holds": false,
+          "distance": 3.0,
+          "gates": "condition:early_bull"
+        },
+        {
+          "signal": "lt",
+          "op": ">=",
+          "cutoff": 70.0,
+          "value": 77.0,
+          "holds": true,
+          "distance": 7.0,
+          "gates": "condition:confirmed_bull"
+        },
+        {
+          "signal": "st",
+          "op": ">=",
+          "cutoff": 70.0,
+          "value": 47.0,
+          "holds": false,
+          "distance": 23.0,
+          "gates": "condition:confirmed_bull"
+        },
+        {
+          "signal": "lt",
+          "op": ">=",
+          "cutoff": 60.0,
+          "value": 77.0,
+          "holds": true,
+          "distance": 17.0,
+          "gates": "condition:topping_out"
+        }
+      ]
+    }
+  },
+  "regimes": [
+    {
+      "id": 1,
+      "regime": "structural_shock_crisis",
+      "anchor": "structural-shock",
+      "name": "Structural Shock / Crisis",
+      "description": "An exceptional market-wide disruption caused by macro news, exchange failure, protocol exploit, depeg, geopolitical shock or a major liquidation event. An emergency override rather than a normal cycle stage.",
+      "typical_duration": "Hours-Days",
+      "directional_bias": "Risk-off, then reversal"
+    },
+    {
+      "id": 2,
+      "regime": "established_bear",
+      "anchor": "established-bear",
+      "name": "Established Bear Market",
+      "description": "A sustained declining market with lower highs, lower lows, weak breadth and failing rallies.",
+      "typical_duration": "Weeks-Months",
+      "directional_bias": "Short"
+    },
+    {
+      "id": 3,
+      "regime": "capitulation",
+      "anchor": "capitulation",
+      "name": "Capitulation / Bear Exhaustion",
+      "description": "The late, violent stage of a bear market, characterised by forced selling, extreme volatility and large liquidation events.",
+      "typical_duration": "Days-Weeks",
+      "directional_bias": "Short (extreme)"
+    },
+    {
+      "id": 4,
+      "regime": "bottoming_accumulation",
+      "anchor": "bottoming",
+      "name": "Bottoming / Accumulation",
+      "description": "Selling pressure has weakened and the market is forming a base, but no durable positive trend has been confirmed.",
+      "typical_duration": "Weeks-Months",
+      "directional_bias": "Neutral"
+    },
+    {
+      "id": 5,
+      "regime": "early_recovery",
+      "anchor": "early-recovery",
+      "name": "Early Recovery",
+      "description": "Major assets begin reclaiming trend levels, making higher lows and attracting new capital, but false recoveries remain possible.",
+      "typical_duration": "Weeks",
+      "directional_bias": "Long (cautious)"
+    },
+    {
+      "id": 6,
+      "regime": "btc_led_bull",
+      "anchor": "btc-led-bull",
+      "name": "BTC-Led Bull Market",
+      "description": "BTC is in a confirmed uptrend and receives most of the new capital while ETH and the broader alt market lag.",
+      "typical_duration": "Weeks-Months",
+      "directional_bias": "Long BTC"
+    },
+    {
+      "id": 7,
+      "regime": "broadening_bull",
+      "anchor": "broadening-bull",
+      "name": "Broadening Bull Market",
+      "description": "Leadership expands from BTC into ETH, SOL, large-cap alts and major sectors.",
+      "typical_duration": "Weeks",
+      "directional_bias": "Long large-caps"
+    },
+    {
+      "id": 8,
+      "regime": "broad_bull_alt_expansion",
+      "anchor": "broad-bull",
+      "name": "Broad Bull / Alt Expansion",
+      "description": "A broad range of large-, mid- and selected lower-cap assets trend upward. Breadth and market participation are strong.",
+      "typical_duration": "Months",
+      "directional_bias": "Long"
+    },
+    {
+      "id": 9,
+      "regime": "speculative_euphoria",
+      "anchor": "speculative-euphoria",
+      "name": "Speculative Euphoria",
+      "description": "Altcoins, memes and low-cap assets lead; leverage, funding, attention and retail participation become excessive. An internal euphoria_score separates an ordinary alt expansion from a terminal blow-off.",
+      "typical_duration": "Days-Weeks",
+      "directional_bias": "Long alts / fade risk"
+    },
+    {
+      "id": 10,
+      "regime": "distribution_post_peak",
+      "anchor": "distribution-deleveraging",
+      "name": "Distribution / Post-Peak Deleveraging",
+      "description": "Market breadth deteriorates, breakouts fail, alts begin falling faster than BTC and leveraged positions are unwound. Exposes an internal stage from early_distribution to active_deleveraging.",
+      "typical_duration": "Days-Weeks",
+      "directional_bias": "Short setup, then short"
+    }
+  ],
+  "count": 10,
+  "as_of": "2026-10-14T06:15:57.702482+00:00"
+}

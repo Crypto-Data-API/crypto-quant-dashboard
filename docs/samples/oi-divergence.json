@@ -1,0 +1,150 @@
+{
+  "as_of": 1791958750,
+  "universe_size": 25,
+  "rows": [
+    {
+      "coin": "PONS",
+      "price": 0.327975,
+      "open_interest_usd": 30915430.75,
+      "price_change_1h_pct": -3.442,
+      "price_change_4h_pct": 2.849,
+      "price_change_24h_pct": 13.073,
+      "oi_change_1h_pct": -3.534,
+      "oi_change_4h_pct": 4.308,
+      "oi_change_24h_pct": 15.513,
+      "divergence_4h": 1.459
+    },
+    {
+      "coin": "XMR",
+      "price": 553.895,
+      "open_interest_usd": 66377885.01,
+      "price_change_1h_pct": -0.322,
+      "price_change_4h_pct": 0.543,
+      "price_change_24h_pct": 3.034,
+      "oi_change_1h_pct": -0.073,
+      "oi_change_4h_pct": 1.243,
+      "oi_change_24h_pct": -0.457,
+      "divergence_4h": 0.7
+    },
+    {
+      "coin": "ZRO",
+      "price": 2.0519,
+      "open_interest_usd": 80864391.91,
+      "price_change_1h_pct": 0.675,
+      "price_change_4h_pct": 0.279,
+      "price_change_24h_pct": -2.335,
+      "oi_change_1h_pct": 0.903,
+      "oi_change_4h_pct": 0.723,
+      "oi_change_24h_pct": -9.153,
+      "divergence_4h": 0.444
+    },
+    {
+      "coin": "XPL",
+      "price": 0.082151,
+      "open_interest_usd": 53657924.47,
+      "price_change_1h_pct": -0.274,
+      "price_change_4h_pct": -1.135,
+      "price_change_24h_pct": -1.71,
+      "oi_change_1h_pct": -0.34,
+      "oi_change_4h_pct": -0.854,
+      "oi_change_24h_pct": 5.429,
+      "divergence_4h": 0.281
+    },
+    {
+      "coin": "LIT",
+      "price": 3.35505,
+      "open_interest_usd": 157357099.38,
+      "price_change_1h_pct": -0.565,
+      "price_change_4h_pct": -0.441,
+      "price_change_24h_pct": -2.858,
+      "oi_change_1h_pct": -0.322,
+      "oi_change_4h_pct": -0.199,
+      "oi_change_24h_pct": -4.201,
+      "divergence_4h": 0.242
+    },
+    {
+      "coin": "HYPE",
+      "price": 81.9235,
+      "open_interest_usd": 1663226420.22,
+      "price_change_1h_pct": 0.196,
+      "price_change_4h_pct": -0.424,
+      "price_change_24h_pct": -1.069,
+      "oi_change_1h_pct": 0.061,
+      "oi_change_4h_pct": -0.33,
+      "oi_change_24h_pct": -0.056,
+      "divergence_4h": 0.094
+    },
+    {
+      "coin": "ETH",
+      "price": 2506.75,
+      "open_interest_usd": 2703313305.78,
+      "price_change_1h_pct": 0.1,
+      "price_change_4h_pct": 0.06,
+      "price_change_24h_pct": -0.788,
+      "oi_change_1h_pct": 0.175,
+      "oi_change_4h_pct": 0.084,
+      "oi_change_24h_pct": -4.028,
+      "divergence_4h": 0.024
+    },
+    {
+      "coin": "RENDER",
+      "price": 2.0027,
+      "open_interest_usd": 3883705.63,
+      "price_change_1h_pct": -1.089,
+      "price_change_4h_pct": -3.307,
+      "price_change_24h_pct": null,
+      "oi_change_1h_pct": -1.554,
+      "oi_change_4h_pct": -3.4,
+      "oi_change_24h_pct": null,
+      "divergence_4h": -0.093
+    },
+    {
+      "coin": "AAVE",
+      "price": 160.39,
+      "open_interest_usd": 68188823.71,
+      "price_change_1h_pct": -0.641,
+      "price_change_4h_pct": -0.749,
+      "price_change_24h_pct": -0.332,
+      "oi_change_1h_pct": -0.553,
+      "oi_change_4h_pct": -0.868,
+      "oi_change_24h_pct": 0.066,
+      "divergence_4h": -0.119
+    },
+    {
+      "coin": "SUI",
+      "price": 1.05105,
+      "open_interest_usd": 67519677.45,
+      "price_change_1h_pct": -0.195,
+      "price_change_4h_pct": -0.455,
+      "price_change_24h_pct": -1.808,
+      "oi_change_1h_pct": -0.171,
+      "oi_change_4h_pct": -0.582,
+      "oi_change_24h_pct": -1.279,
+      "divergence_4h": -0.127
+    },
+    {
+      "coin": "CRV",
+      "price": 0.33628,
+      "open_interest_usd": 18149111.35,
+      "price_change_1h_pct": -0.698,
+      "price_change_4h_pct": -1.542,
+      "price_change_24h_pct": null,
+      "oi_change_1h_pct": -1.088,
+      "oi_change_4h_pct": -1.689,
+      "oi_change_24h_pct": null,
+      "divergence_4h": -0.147
+    },
+    {
+      "coin": "ZEC",
+      "price": 1252.45,
+      "open_interest_usd": 608248045.9,
+      "price_change_1h_pct": 0.0,
+      "price_change_4h_pct": -1.657,
+      "price_change_24h_pct": 3.078,
+      "oi_change_1h_pct": -0.001,
+      "oi_change_4h_pct": -1.828,
+      "oi_change_24h_pct": 9.198,
+      "divergence_4h": -0.171
+    }
+  ]
+}

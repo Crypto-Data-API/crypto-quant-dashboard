@@ -1,0 +1,823 @@
+{
+  "items": [
+    {
+      "event_type": "mint",
+      "title": "USDE redeemed $96M (1.92% of supply)",
+      "date": "2026-10-08",
+      "days_until": -6,
+      "symbols": [
+        "USDE"
+      ],
+      "bias": "short",
+      "magnitude": 0.3843,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": -95670313.0,
+      "pct_of_supply": 0.01921,
+      "source": "defillama"
+    },
+    {
+      "event_type": "mint",
+      "title": "USDS minted $60M (0.88% of supply)",
+      "date": "2026-10-08",
+      "days_until": -6,
+      "symbols": [
+        "USDS"
+      ],
+      "bias": "long",
+      "magnitude": 0.175,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": 59841947.0,
+      "pct_of_supply": 0.00875,
+      "source": "defillama"
+    },
+    {
+      "event_type": "mint",
+      "title": "USDC redeemed $456M (0.61% of supply)",
+      "date": "2026-10-08",
+      "days_until": -6,
+      "symbols": [
+        "USDC"
+      ],
+      "bias": "short",
+      "magnitude": 0.1228,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": -456082852.0,
+      "pct_of_supply": 0.00614,
+      "source": "defillama"
+    },
+    {
+      "event_type": "mint",
+      "title": "USD1 redeemed $114M (2.58% of supply)",
+      "date": "2026-10-09",
+      "days_until": -5,
+      "symbols": [
+        "USD1"
+      ],
+      "bias": "short",
+      "magnitude": 0.5162,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": -114392940.0,
+      "pct_of_supply": 0.02581,
+      "source": "defillama"
+    },
+    {
+      "event_type": "mint",
+      "title": "USDE redeemed $62M (1.26% of supply)",
+      "date": "2026-10-09",
+      "days_until": -5,
+      "symbols": [
+        "USDE"
+      ],
+      "bias": "short",
+      "magnitude": 0.253,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": -61785152.0,
+      "pct_of_supply": 0.01265,
+      "source": "defillama"
+    },
+    {
+      "event_type": "mint",
+      "title": "USDS redeemed $66M (0.96% of supply)",
+      "date": "2026-10-09",
+      "days_until": -5,
+      "symbols": [
+        "USDS"
+      ],
+      "bias": "short",
+      "magnitude": 0.1921,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": -66234451.0,
+      "pct_of_supply": 0.0096,
+      "source": "defillama"
+    },
+    {
+      "event_type": "mint",
+      "title": "USDC redeemed $583M (0.79% of supply)",
+      "date": "2026-10-09",
+      "days_until": -5,
+      "symbols": [
+        "USDC"
+      ],
+      "bias": "short",
+      "magnitude": 0.1579,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": -583091131.0,
+      "pct_of_supply": 0.0079,
+      "source": "defillama"
+    },
+    {
+      "event_type": "mint",
+      "title": "USDS minted $97M (1.42% of supply)",
+      "date": "2026-10-12",
+      "days_until": -2,
+      "symbols": [
+        "USDS"
+      ],
+      "bias": "long",
+      "magnitude": 0.2834,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": 96632546.0,
+      "pct_of_supply": 0.01417,
+      "source": "defillama"
+    },
+    {
+      "event_type": "macro_print",
+      "title": "CPI release",
+      "date": "2026-10-14",
+      "days_until": 0,
+      "symbols": [],
+      "bias": "risk_flag",
+      "magnitude": 0.9,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": "CPI",
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "fred"
+    },
+    {
+      "event_type": "unlock",
+      "title": "STRK token unlock (2.26% of FDV)",
+      "date": "2026-10-14",
+      "days_until": 0,
+      "symbols": [
+        "STRK"
+      ],
+      "bias": "short",
+      "magnitude": 0.4527128616209231,
+      "unlocked_value_usd": 18919323.2,
+      "pct_of_fdv": 0.02264,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "macro_print",
+      "title": "PPI release",
+      "date": "2026-10-15",
+      "days_until": 1,
+      "symbols": [],
+      "bias": "risk_flag",
+      "magnitude": 0.6,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": "PPI",
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "fred"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ARB token unlock (0.93% of FDV)",
+      "date": "2026-10-15",
+      "days_until": 1,
+      "symbols": [
+        "ARB"
+      ],
+      "bias": "short",
+      "magnitude": 0.18529166666666666,
+      "unlocked_value_usd": 17786888.25,
+      "pct_of_fdv": 0.00926,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "W token unlock (0.50% of FDV)",
+      "date": "2026-10-16",
+      "days_until": 2,
+      "symbols": [
+        "W"
+      ],
+      "bias": "short",
+      "magnitude": 0.10082278475570168,
+      "unlocked_value_usd": 820733.26,
+      "pct_of_fdv": 0.00504,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ZK token unlock (0.82% of FDV)",
+      "date": "2026-10-17",
+      "days_until": 3,
+      "symbols": [
+        "ZK"
+      ],
+      "bias": "short",
+      "magnitude": 0.1647983331340043,
+      "unlocked_value_usd": 2808935.1,
+      "pct_of_fdv": 0.00824,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "KAITO token unlock (0.92% of FDV)",
+      "date": "2026-10-19",
+      "days_until": 5,
+      "symbols": [
+        "KAITO"
+      ],
+      "bias": "short",
+      "magnitude": 0.18499999999999997,
+      "unlocked_value_usd": 2866353.0,
+      "pct_of_fdv": 0.00925,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ZRO token unlock (2.36% of FDV)",
+      "date": "2026-10-20",
+      "days_until": 6,
+      "symbols": [
+        "ZRO"
+      ],
+      "bias": "short",
+      "magnitude": 0.47250000000000003,
+      "unlocked_value_usd": 48903750.0,
+      "pct_of_fdv": 0.02363,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "GRAM token unlock (0.69% of FDV)",
+      "date": "2026-10-23",
+      "days_until": 9,
+      "symbols": [
+        "GRAM"
+      ],
+      "bias": "short",
+      "magnitude": 0.13894489480925878,
+      "unlocked_value_usd": 50485000.0,
+      "pct_of_fdv": 0.00695,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "AVAX token unlock (0.23% of FDV)",
+      "date": "2026-10-24",
+      "days_until": 10,
+      "symbols": [
+        "AVAX"
+      ],
+      "bias": "neutral",
+      "magnitude": 0.04630555555555555,
+      "unlocked_value_usd": 17236780.0,
+      "pct_of_fdv": 0.00232,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "XPL token unlock (2.28% of FDV)",
+      "date": "2026-10-25",
+      "days_until": 11,
+      "symbols": [
+        "XPL"
+      ],
+      "bias": "short",
+      "magnitude": 0.45555555576860846,
+      "unlocked_value_usd": 19006461.12,
+      "pct_of_fdv": 0.02278,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ALT token unlock (1.88% of FDV)",
+      "date": "2026-10-26",
+      "days_until": 12,
+      "symbols": [
+        "ALT"
+      ],
+      "bias": "short",
+      "magnitude": 0.37569333457425613,
+      "unlocked_value_usd": 1574316.62,
+      "pct_of_fdv": 0.01878,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "RESOLV token unlock (1.82% of FDV)",
+      "date": "2026-10-27",
+      "days_until": 13,
+      "symbols": [
+        "RESOLV"
+      ],
+      "bias": "short",
+      "magnitude": 0.36482936510338226,
+      "unlocked_value_usd": 331534.49,
+      "pct_of_fdv": 0.01824,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "macro_print",
+      "title": "FOMC release",
+      "date": "2026-10-28",
+      "days_until": 14,
+      "symbols": [],
+      "bias": "risk_flag",
+      "magnitude": 0.567,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": "FOMC",
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "fed_calendar"
+    },
+    {
+      "event_type": "unlock",
+      "title": "B2 token unlock (1.51% of FDV)",
+      "date": "2026-10-28",
+      "days_until": 14,
+      "symbols": [
+        "B2"
+      ],
+      "bias": "short",
+      "magnitude": 0.30238909812220993,
+      "unlocked_value_usd": 1395243.71,
+      "pct_of_fdv": 0.01512,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "GRASS token unlock (0.76% of FDV)",
+      "date": "2026-10-28",
+      "days_until": 14,
+      "symbols": [
+        "GRASS"
+      ],
+      "bias": "short",
+      "magnitude": 0.15203777776564945,
+      "unlocked_value_usd": 5571439.57,
+      "pct_of_fdv": 0.0076,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "macro_print",
+      "title": "PCE release",
+      "date": "2026-10-29",
+      "days_until": 15,
+      "symbols": [],
+      "bias": "risk_flag",
+      "magnitude": 0.373,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": "PCE",
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "fred"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ZORA token unlock (1.25% of FDV)",
+      "date": "2026-10-30",
+      "days_until": 16,
+      "symbols": [
+        "ZORA"
+      ],
+      "bias": "short",
+      "magnitude": 0.25,
+      "unlocked_value_usd": 855678.75,
+      "pct_of_fdv": 0.0125,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "REZ token unlock (0.83% of FDV)",
+      "date": "2026-10-30",
+      "days_until": 16,
+      "symbols": [
+        "REZ"
+      ],
+      "bias": "short",
+      "magnitude": 0.16666666666666666,
+      "unlocked_value_usd": 323160.0,
+      "pct_of_fdv": 0.00833,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "W token unlock (0.50% of FDV)",
+      "date": "2026-10-30",
+      "days_until": 16,
+      "symbols": [
+        "W"
+      ],
+      "bias": "short",
+      "magnitude": 0.10082278475570168,
+      "unlocked_value_usd": 820733.26,
+      "pct_of_fdv": 0.00504,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ASTER token unlock (0.03% of FDV)",
+      "date": "2026-10-30",
+      "days_until": 16,
+      "symbols": [
+        "ASTER"
+      ],
+      "bias": "neutral",
+      "magnitude": 0.005624999999999999,
+      "unlocked_value_usd": 1582582.5,
+      "pct_of_fdv": 0.00028,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "EIGEN token unlock (1.99% of FDV)",
+      "date": "2026-10-31",
+      "days_until": 17,
+      "symbols": [
+        "EIGEN"
+      ],
+      "bias": "short",
+      "magnitude": 0.39764237246853085,
+      "unlocked_value_usd": 9061568.33,
+      "pct_of_fdv": 0.01988,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ACX token unlock (0.31% of FDV)",
+      "date": "2026-10-31",
+      "days_until": 17,
+      "symbols": [
+        "ACX"
+      ],
+      "bias": "neutral",
+      "magnitude": 0.062499999454860844,
+      "unlocked_value_usd": 143312.03,
+      "pct_of_fdv": 0.00312,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "CELO token unlock (0.08% of FDV)",
+      "date": "2026-10-31",
+      "days_until": 17,
+      "symbols": [
+        "CELO"
+      ],
+      "bias": "neutral",
+      "magnitude": 0.01666666009765924,
+      "unlocked_value_usd": 76114.97,
+      "pct_of_fdv": 0.00083,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ZETA token unlock (1.25% of FDV)",
+      "date": "2026-11-01",
+      "days_until": 18,
+      "symbols": [
+        "ZETA"
+      ],
+      "bias": "short",
+      "magnitude": 0.2493055564158377,
+      "unlocked_value_usd": 1177292.6,
+      "pct_of_fdv": 0.01247,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "M token unlock (0.44% of FDV)",
+      "date": "2026-11-01",
+      "days_until": 18,
+      "symbols": [
+        "M"
+      ],
+      "bias": "neutral",
+      "magnitude": 0.08888888889683098,
+      "unlocked_value_usd": 37307066.67,
+      "pct_of_fdv": 0.00444,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "SUI token unlock (0.14% of FDV)",
+      "date": "2026-11-01",
+      "days_until": 18,
+      "symbols": [
+        "SUI"
+      ],
+      "bias": "neutral",
+      "magnitude": 0.02870003697368421,
+      "unlocked_value_usd": 15268419.67,
+      "pct_of_fdv": 0.00144,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "QUAI token unlock (1.44% of FDV)",
+      "date": "2026-11-06",
+      "days_until": 23,
+      "symbols": [
+        "QUAI"
+      ],
+      "bias": "short",
+      "magnitude": 0.28731102020972343,
+      "unlocked_value_usd": 146254.62,
+      "pct_of_fdv": 0.01437,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "macro_print",
+      "title": "NFP release",
+      "date": "2026-11-06",
+      "days_until": 23,
+      "symbols": [],
+      "bias": "risk_flag",
+      "magnitude": 0.213,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": "NFP",
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "fred"
+    },
+    {
+      "event_type": "unlock",
+      "title": "GMT token unlock (0.54% of FDV)",
+      "date": "2026-11-07",
+      "days_until": 24,
+      "symbols": [
+        "GMT"
+      ],
+      "bias": "short",
+      "magnitude": 0.10887199842046233,
+      "unlocked_value_usd": 267434.81,
+      "pct_of_fdv": 0.00544,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "macro_print",
+      "title": "CPI release",
+      "date": "2026-11-10",
+      "days_until": 27,
+      "symbols": [],
+      "bias": "risk_flag",
+      "magnitude": 0.12,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": "CPI",
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "fred"
+    },
+    {
+      "event_type": "unlock",
+      "title": "ME token unlock (0.38% of FDV)",
+      "date": "2026-11-10",
+      "days_until": 27,
+      "symbols": [
+        "ME"
+      ],
+      "bias": "neutral",
+      "magnitude": 0.07546439413728051,
+      "unlocked_value_usd": 260012.57,
+      "pct_of_fdv": 0.00377,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "LAYER token unlock (1.76% of FDV)",
+      "date": "2026-11-11",
+      "days_until": 28,
+      "symbols": [
+        "LAYER"
+      ],
+      "bias": "short",
+      "magnitude": 0.35287500035336183,
+      "unlocked_value_usd": 1248277.67,
+      "pct_of_fdv": 0.01764,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "PUMP token unlock (0.69% of FDV)",
+      "date": "2026-11-11",
+      "days_until": 28,
+      "symbols": [
+        "PUMP"
+      ],
+      "bias": "short",
+      "magnitude": 0.13749999999999998,
+      "unlocked_value_usd": 34938406.25,
+      "pct_of_fdv": 0.00688,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "STRK token unlock (2.26% of FDV)",
+      "date": "2026-11-13",
+      "days_until": 30,
+      "symbols": [
+        "STRK"
+      ],
+      "bias": "short",
+      "magnitude": 0.4527128616209231,
+      "unlocked_value_usd": 18919323.2,
+      "pct_of_fdv": 0.02264,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "SEI token unlock (1.20% of FDV)",
+      "date": "2026-11-13",
+      "days_until": 30,
+      "symbols": [
+        "SEI"
+      ],
+      "bias": "short",
+      "magnitude": 0.23972221992426887,
+      "unlocked_value_usd": 7881946.73,
+      "pct_of_fdv": 0.01199,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "unlock",
+      "title": "W token unlock (0.50% of FDV)",
+      "date": "2026-11-13",
+      "days_until": 30,
+      "symbols": [
+        "W"
+      ],
+      "bias": "short",
+      "magnitude": 0.10082278475570168,
+      "unlocked_value_usd": 820733.26,
+      "pct_of_fdv": 0.00504,
+      "deviation_bps": null,
+      "macro_class": null,
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "defillama"
+    },
+    {
+      "event_type": "macro_print",
+      "title": "PPI release",
+      "date": "2026-11-13",
+      "days_until": 30,
+      "symbols": [],
+      "bias": "risk_flag",
+      "magnitude": 0.02,
+      "unlocked_value_usd": null,
+      "pct_of_fdv": null,
+      "deviation_bps": null,
+      "macro_class": "PPI",
+      "delta_usd": null,
+      "pct_of_supply": null,
+      "source": "fred"
+    }
+  ],
+  "count": 46,
+  "window_days": 30,
+  "event_risk_score": 54.3,
+  "band": "elevated",
+  "timestamp": "2026-10-14T06:15:58.276408+00:00"
+}
