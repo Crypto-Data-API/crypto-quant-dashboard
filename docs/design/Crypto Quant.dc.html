@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<script src="./cq-engine.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#06080b;overflow:hidden;color:#e6edf5;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#7fb6ff;text-decoration:none}a:hover{color:#b8d6ff}
+input,select,button{font:inherit;color:inherit}
+select option{background:#0b0f14;color:#e6edf5}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#1a222d;border-radius:9px;border:2px solid #06080b}::-webkit-scrollbar-track{background:transparent}
+</style>
+</helmet>
+<div style="display:flex; height:100vh; width:100%; background:#06080b; color:#e6edf5; font-family:'Geist',system-ui,sans-serif; font-size:13px; overflow:hidden;">
+  <aside style="width:{{ sbW }}; flex:none; display:flex; flex-direction:column; background:#080b0f; border-right:1px solid #131a23; transition:width .25s ease; overflow:hidden;">
+    <div style="display:flex; align-items:center; gap:11px; padding:18px 15px 16px; border-bottom:1px solid #111821;">
+      <div style="position:relative; width:36px; height:36px; flex:none; border-radius:10px; background:radial-gradient(circle at 50% 40%, #121a2a 0%, #080b12 75%); border:1px solid rgba(169,139,255,0.45); display:flex; align-items:center; justify-content:center; box-shadow:0 0 18px -2px rgba(124,108,255,0.55), inset 0 0 12px rgba(46,230,230,0.12);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" style="overflow:visible;">
+          <defs>
+            <linearGradient id="cqBrainG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ff3ff"></stop><stop offset="0.55" stop-color="#7c8cff"></stop><stop offset="1" stop-color="#d36bff"></stop></linearGradient>
+            <filter id="cqGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.1" result="b"></feGaussianBlur><feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+          </defs>
+          <g stroke="url(#cqBrainG)" stroke-width="1.5" filter="url(#cqGlow)">
+            <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"></path>
+            <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"></path>
+            <path d="M17.6 6.5a3 3 0 0 0 .4-1.4M6 5.1a3 3 0 0 0 .4 1.4M3.5 10.9a4 4 0 0 1 .6-.4M19.9 10.5a4 4 0 0 1 .6.4M6 18a4 4 0 0 1-2-.5M20 17.5a4 4 0 0 1-2 .5"></path>
+          </g>
+          <g stroke="#ffffff" stroke-width="1.6" filter="url(#cqGlow)">
+            <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" stroke-dasharray="2.5 44" stroke-dashoffset="46"><animate attributeName="stroke-dashoffset" from="46" to="0" dur="2.6s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0;1;1;0" dur="2.6s" repeatCount="indefinite"></animate></path>
+            <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" stroke-dasharray="2.5 44" stroke-dashoffset="46"><animate attributeName="stroke-dashoffset" from="46" to="0" dur="2.6s" begin="1.3s" repeatCount="indefinite"></animate><animate attributeName="opacity" values="0;1;1;0" dur="2.6s" begin="1.3s" repeatCount="indefinite"></animate></path>
+          </g>
+          <circle cx="12" cy="10.2" r="1" fill="#3ff3ff" filter="url(#cqGlow)"><animate attributeName="opacity" values="0.35;1;0.35" dur="1.8s" repeatCount="indefinite"></animate></circle>
+        </svg>
+      </div>
+      <sc-if value="{{ sbOpen }}" hint-placeholder-val="{{ true }}"><div style="white-space:nowrap;">
+        <div style="font-size:14px; font-weight:600; letter-spacing:-0.01em;">Crypto QuantDesk</div>
+        <div style="font-family:'Geist Mono',monospace; font-size:10px; color:#5b6878; margin-top:1px;">powered by CryptoDataApi</div>
+      </div></sc-if>
+    </div>
+    <nav style="display:flex; flex-direction:column; gap:2px; padding:12px 10px; flex:1; overflow-y:auto; overflow-x:hidden;">
+      <sc-if value="{{ sbOpen }}" hint-placeholder-val="{{ true }}"><div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.12em; color:#3f4a57; padding:4px 10px 8px;">WORKSPACE</div></sc-if>
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="8">
+        <button onClick="{{ n.onClick }}" title="{{ n.label }}" style="position:relative; display:flex; align-items:center; justify-content:{{ sbJust }}; gap:11px; width:100%; padding:9px 10px; border:none; border-radius:9px; background:{{ n.bg }}; color:{{ n.color }}; cursor:pointer; text-align:left; font-size:13px; font-weight:500; transition:background .2s, color .2s;" style-hover="background:rgba(255,255,255,0.035); color:#e6edf5;">
+          <span style="position:absolute; left:-10px; top:8px; bottom:8px; width:3px; border-radius:0 3px 3px 0; background:{{ n.bar }}; box-shadow:0 0 12px {{ n.bar }};"></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ n.ic }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="{{ n.icon }}"></path></svg>
+          <sc-if value="{{ sbOpen }}" hint-placeholder-val="{{ true }}"><span style="flex:1; white-space:nowrap;">{{ n.label }}</span></sc-if>
+          <sc-if value="{{ n.showBadge }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:'Geist Mono',monospace; font-size:9.5px; font-weight:600; color:{{ n.bc }}; background:{{ n.bbg }}; padding:2px 6px; border-radius:5px; white-space:nowrap;">{{ n.badge }}</span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="padding:12px 12px 14px; border-top:1px solid #111821; display:flex; flex-direction:column; gap:10px;">
+      <sc-if value="{{ sbOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; flex-direction:column; gap:8px; padding:0 4px 10px; border-bottom:1px solid #111821; font-family:'Geist Mono',monospace; font-size:10.5px; color:#9aa8b8;">
+          <span style="font-size:9.5px; letter-spacing:0.1em; color:#5b6878;">SYSTEM</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><span style="display:flex; align-items:center; gap:7px;"><x-import component-from-global-scope="cq-pulse" from="./cq-charts.js" color="#2ee6a6" hint-size="7px,7px"></x-import>Worker · redis</span><span style="color:#2ee6a6;">ok</span></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><span style="display:flex; align-items:center; gap:7px;"><span style="width:7px; height:7px; border-radius:50%; background:#2ee6a6;"></span>Plan</span><span style="color:#e6edf5;">{{ plan }}</span></div>
+          <div style="display:flex; flex-direction:column; gap:5px;"><div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><span>API budget</span><b style="color:#e6edf5; font-weight:600;">{{ budget }}</b></div><span style="display:block; height:4px; border-radius:4px; background:#18202b; overflow:hidden;"><span style="display:block; height:100%; width:{{ budgetW }}; background:#4c9bff; transition:width .6s;"></span></span></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;"><span>UTC</span><b style="color:#e6edf5; font-weight:500;">{{ clock }}</b></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; padding:0 4px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878;">STREAM</span>
+            <span style="font-family:'Geist Mono',monospace; font-size:11px; color:#c9d3df;">{{ rate }}<span style="color:#5b6878">/min</span></span>
+          </div>
+          <div style="height:34px;"><x-import component-from-global-scope="cq-spark" from="./cq-charts.js" src="status.rateHist" color="#4c9bff" fill="1" live="1" style="width:100%;height:100%" hint-size="100%,34px"></x-import></div>
+          <div style="font-size:10.5px; line-height:1.5; color:#4f5b6a; text-wrap:pretty;">Data from CryptoDataApi. The browser reads our cache; one server-side poller spends the API budget.</div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button onClick="{{ toggleSb }}" title="Hide sidebar" style="flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:8px; background:{{ toggleSbBg }}; border:1px solid #1a2330; border-radius:8px; color:#9aa8b8; cursor:pointer; font-size:11.5px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M4 4h16v16H4zM9 4v16M15 10l-2 2 2 2"></path></svg>Hide</button>
+          <button onClick="{{ toggleSettings }}" title="Settings" style="flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:8px; background:{{ toggleSettingsBg }}; border:1px solid #1a2330; border-radius:8px; color:#9aa8b8; cursor:pointer; font-size:11.5px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path></svg>Settings</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ sbClosed }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <button onClick="{{ toggleSb }}" title="Show sidebar" style="flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:8px; background:{{ toggleSbBg }}; border:1px solid #1a2330; border-radius:8px; color:#9aa8b8; cursor:pointer; font-size:11.5px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M4 4h16v16H4zM9 4v16M13 10l2 2-2 2"></path></svg></button>
+          <button onClick="{{ toggleSettings }}" title="Settings" style="flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:8px; background:{{ toggleSettingsBg }}; border:1px solid #1a2330; border-radius:8px; color:#9aa8b8; cursor:pointer; font-size:11.5px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path></svg></button>
+        </div>
+      </sc-if>
+    </div>
+  </aside>
+
+  <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ toggleSettings }}" style="position:fixed; inset:0; z-index:60; background:rgba(3,5,8,0.35);"></div>
+    <div style="position:fixed; left:{{ popLeft }}; bottom:14px; z-index:61; width:300px; background:#0b0f14; border:1px solid #222c39; border-radius:14px; padding:16px 18px 10px; box-shadow:0 24px 60px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(76,155,255,0.06);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;"><span style="font-size:13.5px; font-weight:600;">Settings</span><button onClick="{{ toggleSettings }}" style="background:none; border:none; color:#8b98a9; cursor:pointer; font-size:16px; line-height:1; padding:2px 4px;">×</button></div>
+      <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid #121922;"><div style="flex:1; min-width:0;"><div style="font-size:12.5px; color:#e6edf5;">Live feed</div><div style="font-size:11px; color:#5b6878; margin-top:2px;">Stream ticks, liquidations and book updates</div></div><button onClick="{{ set.live }}" style="position:relative; width:34px; height:20px; flex:none; border:none; border-radius:20px; background:{{ sw.live.bg }}; cursor:pointer; padding:0; transition:background .2s;"><span style="position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:#fff; transform:{{ sw.live.tx }}; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.4);"></span></button></div>
+      <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid #121922;"><div style="flex:1; min-width:0;"><div style="font-size:12.5px; color:#e6edf5;">Auto-rotate 3D views</div><div style="font-size:11px; color:#5b6878; margin-top:2px;">Slow camera orbit and sway on all scenes</div></div><button onClick="{{ set.motion }}" style="position:relative; width:34px; height:20px; flex:none; border:none; border-radius:20px; background:{{ sw.motion.bg }}; cursor:pointer; padding:0; transition:background .2s;"><span style="position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:#fff; transform:{{ sw.motion.tx }}; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.4);"></span></button></div>
+      <div style="padding:10px 0 8px; border-top:1px solid #121922;"><div style="font-size:12.5px; color:#e6edf5;">Tape rows</div><div style="display:flex; gap:4px; margin-top:8px; padding:3px; background:#080b10; border:1px solid #1c2531; border-radius:9px;"><sc-for list="{{ rowOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.onClick }}" style="flex:1; padding:5px 0; border:none; border-radius:7px; background:{{ o.bg }}; color:{{ o.c }}; cursor:pointer; font-family:'Geist Mono',monospace; font-size:11px;">{{ o.n }}</button></sc-for></div></div>
+    </div>
+  </sc-if>
+
+  <main style="flex:1; min-width:0; display:flex; flex-direction:column; overflow:hidden; background-color:#06080b; background-image:radial-gradient(900px 420px at 75% -12%, rgba(76,155,255,0.07), transparent 65%), linear-gradient(rgba(255,255,255,0.016) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.016) 1px, transparent 1px); background-size:auto, 44px 44px, 44px 44px;">
+    <sc-if value="{{ showHeader }}" hint-placeholder-val="{{ false }}">
+    <header style="display:flex; align-items:center; gap:16px; padding:14px 22px; border-bottom:1px solid #131a23; background:rgba(6,8,11,0.75);">
+      <div style="min-width:0;">
+        <h1 style="margin:0; font-size:19px; font-weight:600; letter-spacing:-0.025em;">{{ pageTitle }}</h1>
+        <div style="font-size:12px; color:#8b98a9; margin-top:2px;">{{ pageSub }}</div>
+      </div>
+    </header>
+    </sc-if>
+
+    <div style="display:flex; overflow-x:auto; overflow-y:hidden; border-bottom:1px solid #131a23; background:rgba(8,11,15,0.7); scrollbar-width:none;">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="9">
+        
+      </sc-for>
+    </div>
+
+    <div ref="{{ scrollRef }}" style="flex:1; overflow:auto; padding:20px 22px 48px;">
+
+      <sc-if value="{{ pg.overview }}" hint-placeholder-val="{{ true }}">
+        <div data-screen-label="01 Overview" style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start;">
+          <section style="flex:1 1 100%; min-width:0;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin:0 2px 10px;"><span style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.12em; color:#5b6878;">ALL VIEWS · LIVE</span><span style="font-family:'Geist Mono',monospace; font-size:10px; color:#4f5b6a;">every view has fullscreen in its corner · drag 3D views to orbit</span></div>
+          <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px;">
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Market Quant Regime</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ regime.name }} · {{ regime.conf }} confidence</div></div>
+                <button onClick="{{ goTo.regimes }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><x-import component-from-global-scope="cq-galaxy" from="./cq-scenes.js" regime="{{ rgFocus }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div>
+            </div>
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Market Monte Carlo Simulation</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">24h return · p5 {{ regime.p5 }}% · median {{ regime.p50 }}% · p95 {{ regime.p95 }}%</div></div>
+                <button onClick="{{ goTo.regimes }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><x-import component-from-global-scope="cq-fan" from="./cq-charts.js" p5="{{ regime.p5 }}" p50="{{ regime.p50 }}" p95="{{ regime.p95 }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div>
+            </div>
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Market Regime Cycle</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Phase {{ cycle.phase }}/{{ cycle.of }} · {{ cycle.sub }}</div></div>
+                <button onClick="{{ goTo.cycle }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><x-import component-from-global-scope="cq-cycle" from="./cq-scenes.js" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div>
+            </div>
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Gex Gamma Landscape</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ gSel.coin }} · score {{ gSel.score }} · fuel {{ gSel.fuel }}</div></div>
+                <button onClick="{{ goTo.gamma }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><x-import component-from-global-scope="cq-gamma3d" from="./cq-scenes.js" coin="{{ gCoin }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div>
+            </div>
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Volume Anomaly Field</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">height = multiplier vs 30d mean</div></div>
+                <button onClick="{{ goTo.volume }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><x-import component-from-global-scope="cq-bubbles3d" from="./cq-scenes.js" band="{{ vBand }}" sel="{{ vOpen }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div>
+            </div>
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Liquidity Terrain</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ focus.coin }} ±50 bps · bid {{ focus.bid25 }} · ask {{ focus.ask25 }}</div></div>
+                <button onClick="{{ goTo.books }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><x-import component-from-global-scope="cq-depth3d" from="./cq-scenes.js" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div>
+            </div>
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Market Health</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">combined · long-term · short-term</div></div>
+                <button onClick="{{ goTo.cycle }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><div style="position:absolute; inset:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); align-items:center; padding:10px;"><sc-for list="{{ health }}" as="h" hint-placeholder-count="3"><div style="display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0;"><div style="width:100%; max-width:160px; height:120px;"><x-import component-from-global-scope="cq-gauge" from="./cq-charts.js" value="{{ h.v }}" color="{{ h.c }}" style="width:100%;height:100%" hint-size="100%,120px"></x-import></div><div style="font-size:11.5px; color:#9aa8b8;">{{ h.k }}</div><span style="font-family:'Geist Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:0.08em; color:{{ h.c }}; background:{{ h.bg }}; border:1px solid {{ h.bd }}; padding:2px 8px; border-radius:5px;">{{ h.tag }}</span></div></sc-for></div></div>
+            </div>
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Squeeze Radar</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ squeezeMsg }}</div></div>
+                <button onClick="{{ goTo.liqs }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:10px;"><div style="width:min(100%, 300px); aspect-ratio:1 / 1; max-height:100%;"><x-import component-from-global-scope="cq-radar" from="./cq-charts.js" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div></div></div>
+            </div>
+            <div style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:12px; min-width:0; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:2px 4px 0;">
+                <div style="min-width:0;"><div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">News Catalysts</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">risk {{ cal.score }} {{ cal.label }} · {{ cal.next7 }} in next 7d</div></div>
+                <button onClick="{{ goTo.calendar }}" style="flex:none; background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#9aa8b8; cursor:pointer; font-size:11px; white-space:nowrap;" style-hover="color:#e6edf5; border-color:#2a3748;">Open →</button>
+              </div>
+              <div style="position:relative; height:320px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><x-import component-from-global-scope="cq-horizon3d" from="./cq-scenes.js" filter="{{ calType }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div>
+            </div>
+            
+          </div>
+        </section>
+                    <div style="flex:999 1 640px; min-width:0; display:flex; flex-direction:column; gap:16px;">
+
+            </div>
+            
+
+            <div style="display:flex; flex-wrap:wrap; gap:16px;">
+              
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:16px;">
+              
+            </div>
+          </div>
+
+          
+        </sc-if></div>
+      
+
+      <sc-if value="{{ pg.regimes }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="02 Market Regimes" style="display:flex; flex-direction:column; gap:16px;">
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+              <div><div style="font-size:13.5px; font-weight:600;">Regime map · every perp</div></div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <sc-for list="{{ rgGroups }}" as="g" hint-placeholder-count="6">
+                  <button onClick="{{ g.onFocus }}" style="display:flex; align-items:center; gap:6px; padding:5px 10px; background:{{ g.focusBg }}; border:1px solid {{ g.focusBd }}; border-radius:7px; cursor:pointer; font-family:'Geist Mono',monospace; font-size:10.5px; color:#c9d3df; transition:all .2s;"><span style="width:7px; height:7px; border-radius:50%; background:{{ g.c }}; box-shadow:0 0 8px {{ g.c }};"></span>{{ g.code }}<span style="color:#5b6878;">{{ g.count }}</span></button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="position:relative; height:clamp(620px, 76vh, 860px); background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;">
+              <x-import component-from-global-scope="cq-galaxy" from="./cq-scenes.js" regime="{{ rgFocus }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import>
+              <div style="position:absolute; left:14px; bottom:12px; font-family:'Geist Mono',monospace; font-size:9.5px; color:#4f5b6a; pointer-events:none;">drag to orbit · click a perp to open it in Perp Regimes</div>
+            </div>
+          </section>
+          <div style="display:flex; flex-wrap:wrap; gap:16px;">
+            <section style="flex:2 1 560px; min-width:0; background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:16px;">
+                <div><div style="font-size:13.5px; font-weight:600;">Market regime · short-term HMM</div></div>
+                <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.regime }}</div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:8px;"><span style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878;">SIMULATED 24H RETURN RANGE · MONTE CARLO</span><span style="font-family:'Geist Mono',monospace; font-size:10px; color:#5b6878;">p5 / median / p95</span></div>
+              <div style="position:relative; height:clamp(300px, 40vh, 420px); background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden; margin-bottom:20px;"><x-import component-from-global-scope="cq-fan" from="./cq-charts.js" p5="{{ regime.p5 }}" p50="{{ regime.p50 }}" p95="{{ regime.p95 }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import></div>
+              <div style="display:flex; flex-wrap:wrap; gap:26px;">
+                <div style="flex:1 1 280px; min-width:0; display:flex; flex-direction:column; gap:14px;">
+                  <div style="display:flex; gap:14px;"><div style="width:4px; border-radius:4px; background:#4c9bff; box-shadow:0 0 18px rgba(76,155,255,0.75);"></div><div><div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;"><span style="font-size:24px; font-weight:600; letter-spacing:-0.03em;">{{ regime.name }}</span><span style="font-family:'Geist Mono',monospace; font-size:10px; font-weight:600; letter-spacing:0.06em; color:#4c9bff; background:rgba(76,155,255,0.1); border:1px solid rgba(76,155,255,0.4); padding:2px 7px; border-radius:5px;">{{ regime.code }}</span></div><div style="font-size:12px; color:#8b98a9; margin-top:6px;">Confidence <b style="color:#e6edf5; font-family:'Geist Mono',monospace;">{{ regime.conf }}</b> · in regime <b style="color:#e6edf5; font-family:'Geist Mono',monospace; font-weight:500;">{{ regime.inRegime }}</b></div></div></div>
+                  <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px;">
+                    <div style="background:#0d1219; border:1px solid #151c26; border-radius:10px; padding:12px 14px;"><div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878;">VOL SPIKE ODDS 24H</div><div style="font-family:'Geist Mono',monospace; font-size:20px; font-weight:600; margin-top:6px;">{{ regime.volSpike }}</div></div>
+                    <div style="background:#0d1219; border:1px solid #151c26; border-radius:10px; padding:12px 14px;"><div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878;">&gt;5% DROP ODDS 24H</div><div style="font-family:'Geist Mono',monospace; font-size:20px; font-weight:600; margin-top:6px;">{{ regime.drop5 }}</div></div>
+                  </div>
+                </div>
+                <div style="flex:1 1 300px; min-width:0; display:flex; flex-direction:column; gap:20px;">
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:9px;"><span style="font-size:12px; color:#c9d3df; font-weight:500;">24h outcome distribution</span><span style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">head conf {{ regime.headConf }}</span></div>
+                    <div style="display:flex; gap:3px; height:10px;"><sc-for list="{{ outcome }}" as="o" hint-placeholder-count="5"><div style="flex:{{ o.v }} 1 0%; background:{{ o.c }}; border-radius:3px;"></div></sc-for></div>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:9px;"><sc-for list="{{ outcome }}" as="o" hint-placeholder-count="5"><span style="display:flex; align-items:center; gap:5px; font-size:10.5px; color:#8b98a9;"><span style="width:7px; height:7px; border-radius:2px; background:{{ o.c }};"></span>{{ o.k }} <b style="font-family:'Geist Mono',monospace; color:#e6edf5;">{{ o.pct }}</b></span></sc-for></div>
+                  </div>
+                  <div>
+                    <div style="font-size:12px; color:#c9d3df; font-weight:500; margin-bottom:9px;">Regime in 24h · transition odds</div>
+                    <div style="display:flex; gap:3px; height:10px;"><sc-for list="{{ next24 }}" as="o" hint-placeholder-count="6"><div style="flex:{{ o.v }} 1 0%; background:{{ o.c }}; border-radius:3px;"></div></sc-for></div>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:9px;"><sc-for list="{{ next24 }}" as="o" hint-placeholder-count="6"><span style="display:flex; align-items:center; gap:5px; font-size:10.5px; color:#8b98a9;"><span style="width:7px; height:7px; border-radius:2px; background:{{ o.c }};"></span>{{ o.k }} <b style="font-family:'Geist Mono',monospace; color:#e6edf5;">{{ o.pct }}</b></span></sc-for></div>
+                  </div>
+                  <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px;">
+                    <div><div style="font-size:12px; color:#c9d3df; font-weight:500; margin-bottom:9px;">Volatility</div><div style="display:flex; gap:3px; height:8px;"><sc-for list="{{ volMix }}" as="o" hint-placeholder-count="3"><div style="flex:{{ o.v }} 1 0%; background:{{ o.c }}; border-radius:3px;"></div></sc-for></div><div style="display:flex; gap:9px; margin-top:8px; flex-wrap:wrap;"><sc-for list="{{ volMix }}" as="o" hint-placeholder-count="3"><span style="font-size:10.5px; color:#8b98a9;">{{ o.k }} <b style="font-family:'Geist Mono',monospace; color:#e6edf5;">{{ o.pct }}</b></span></sc-for></div></div>
+                    <div><div style="font-size:12px; color:#c9d3df; font-weight:500; margin-bottom:9px;">Liquidation risk</div><div style="display:flex; gap:3px; height:8px;"><sc-for list="{{ liqMix }}" as="o" hint-placeholder-count="3"><div style="flex:{{ o.v }} 1 0%; background:{{ o.c }}; border-radius:3px;"></div></sc-for></div><div style="display:flex; gap:9px; margin-top:8px; flex-wrap:wrap;"><sc-for list="{{ liqMix }}" as="o" hint-placeholder-count="3"><span style="font-size:10.5px; color:#8b98a9;">{{ o.k }} <b style="font-family:'Geist Mono',monospace; color:#e6edf5;">{{ o.pct }}</b></span></sc-for></div></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:16px 20px 18px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:12px;">
+              <div style="display:flex; align-items:baseline; gap:10px;"><span style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878;">METADATA · MODEL CARD</span><span style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a;">/quant/model</span></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.model }}</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:0 24px;">
+              <sc-for list="{{ model }}" as="m" hint-placeholder-count="10">
+                <div style="display:grid; grid-template-columns:104px minmax(0,1fr); gap:10px; padding:7px 0; border-top:1px solid #10161e; font-size:11.5px; align-items:baseline; min-width:0;">
+                  <span style="color:#5b6878;">{{ m.k }}</span>
+                  <sc-if value="{{ m.ok }}" hint-placeholder-val="{{ false }}"><span><span style="font-family:'Geist Mono',monospace; font-size:10px; color:#2ee6a6; background:rgba(46,230,166,0.1); border:1px solid rgba(46,230,166,0.4); padding:1px 7px; border-radius:5px;">{{ m.v }}</span></span></sc-if>
+                  <sc-if value="{{ m.mono }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Geist Mono',monospace; font-size:10px; color:#8b98a9; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ m.v }}">{{ m.v }}</span></sc-if>
+                  <sc-if value="{{ m.plain }}" hint-placeholder-val="{{ true }}"><span style="color:#c9d3df; text-wrap:pretty;">{{ m.v }}</span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ pg.perps }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="03 Perp Regimes" style="display:flex; flex-direction:column; gap:16px;">
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px;">
+              <div><div style="font-size:13.5px; font-weight:600;">Quant Regime Grid · every hyperliquid&nbsp;perp</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/quant/coins/risk</div></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.grid }}</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+              <div style="position:relative;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5b6878" stroke-width="2" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input value="{{ rgSearch }}" onChange="{{ onRgSearch }}" placeholder="Find coin" style="width:160px; background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:7px 10px 7px 30px; font-size:12px; outline:none; font-family:'Geist Mono',monospace;"></div>
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Min confidence<select value="{{ rgMin }}" onChange="{{ onRgMin }}" style="background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 8px; font-size:12px; outline:none;"><option value="0">Any</option><option value="50">50%+</option><option value="75">75%+</option><option value="90">90%+</option></select></label>
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9; cursor:pointer;"><input type="checkbox" checked="{{ rgHide }}" onChange="{{ onRgHide }}" style="accent-color:#4c9bff;">Hide warming / new listings</label>
+              <sc-if value="{{ rgHasQuery }}" hint-placeholder-val="{{ false }}"><button onClick="{{ rgClear }}" style="background:none; border:1px solid #1c2531; border-radius:7px; padding:5px 9px; color:#8b98a9; cursor:pointer; font-size:11px;">Clear</button></sc-if>
+              <span style="margin-left:auto; font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">{{ rgCount }}</span>
+            </div>
+            <div style="display:flex; gap:2px; height:6px; margin-bottom:18px;"><sc-for list="{{ rgGroups }}" as="g" hint-placeholder-count="6"><div style="flex:{{ g.w }} 1 0%; background:{{ g.c }}; border-radius:2px; box-shadow:0 0 10px {{ g.cbg }};"></div></sc-for></div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap:14px; align-items:start;">
+              <sc-for list="{{ rgGrid }}" as="g" hint-placeholder-count="4">
+                <div style="background:#0a0e13; border:1px solid #151c26; border-radius:12px; padding:14px; min-width:0;">
+                  <div style="display:flex; align-items:center; gap:9px; margin-bottom:12px;"><span style="width:8px; height:8px; border-radius:50%; background:{{ g.c }}; box-shadow:0 0 10px {{ g.c }};"></span><span style="font-size:13px; font-weight:600;">{{ g.label }}</span><span style="font-family:'Geist Mono',monospace; font-size:9.5px; color:#8b98a9; border:1px solid #1c2531; padding:1px 6px; border-radius:4px;">{{ g.code }}</span><span style="margin-left:auto; font-family:'Geist Mono',monospace; font-size:11px; color:#8b98a9;">{{ g.count }} · {{ g.pct }}</span></div>
+                  <div style="display:flex; flex-wrap:wrap; gap:5px;">
+                    <sc-for list="{{ g.tiles }}" as="t" hint-placeholder-count="12">
+                      <div style="flex:1 0 76px; max-width:120px; position:relative; padding:7px 8px 9px; background:{{ t.bg }}; border:1px {{ t.bs }} {{ t.bd }}; border-radius:7px; opacity:{{ t.op }}; box-shadow:{{ t.sh }}; transition:opacity .25s, box-shadow .25s; overflow:hidden;">
+                        <div style="font-size:11px; font-weight:600; letter-spacing:0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ t.coin }}</div>
+                        <div style="font-family:'Geist Mono',monospace; font-size:10px; color:#9aa8b8; margin-top:3px;">{{ t.conf }}</div>
+                        <div style="position:absolute; left:0; bottom:0; height:2px; width:{{ t.bw }}; background:{{ t.c }};"></div>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ g.empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#5b6878; padding:6px 0;">No perps in this regime.</div></sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ pg.cycle }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="04 Cycle Regimes" style="display:flex; flex-direction:column; gap:16px;">
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:16px;">
+              <div><div style="font-size:13.5px; font-weight:600;">Cycle ring</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/regimes · long-horizon model</div></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.cycle }}</div>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:22px;">
+              <div style="flex:3 1 640px; min-width:0; position:relative; height:clamp(600px, 72vh, 820px); background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;">
+                <x-import component-from-global-scope="cq-cycle" from="./cq-scenes.js" style="width:100%;height:100%" hint-size="100%,100%"></x-import>
+                <div style="position:absolute; left:16px; top:14px; pointer-events:none;"><div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878;">PHASE</div><div style="font-family:'Geist Mono',monospace; font-size:34px; font-weight:600; letter-spacing:-0.04em; color:#ff7a3d; text-shadow:0 0 24px rgba(255,122,61,0.5);">{{ cycle.phase }}<span style="font-size:16px; color:#5b6878;"> / {{ cycle.of }}</span></div></div>
+                <div style="position:absolute; left:16px; bottom:12px; font-family:'Geist Mono',monospace; font-size:9.5px; color:#4f5b6a; pointer-events:none;">drag to orbit · hover a segment</div>
+              </div>
+              <div style="flex:2 1 320px; min-width:0; display:flex; flex-direction:column; gap:18px;">
+                <div>
+                  <span style="font-family:'Geist Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:0.08em; color:#ff7a3d; background:rgba(255,122,61,0.1); border:1px solid rgba(255,122,61,0.4); padding:2px 7px; border-radius:5px;">{{ cycle.group }}</span>
+                  <div style="font-size:26px; font-weight:600; letter-spacing:-0.03em; line-height:1.15; margin-top:12px; text-wrap:pretty;">{{ cycle.name }}</div>
+                  <div style="font-size:13px; color:#9aa8b8; margin-top:6px;">{{ cycle.sub }} · since {{ cycle.since }} · day {{ cycle.daysIn }}</div>
+                </div>
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-family:'Geist Mono',monospace; font-size:10px; color:#5b6878; margin-bottom:6px;"><span>PROGRESS THROUGH PHASE</span><span style="color:#e6edf5;">{{ cycle.prog }}</span></div>
+                  <div style="height:6px; background:#151c26; border-radius:6px; overflow:hidden;"><div style="height:100%; width:{{ cycle.prog }}; background:#ff7a3d; box-shadow:0 0 12px rgba(255,122,61,0.7); border-radius:6px;"></div></div>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px;">
+                  <sc-for list="{{ health }}" as="h" hint-placeholder-count="3">
+                    <div style="background:#0d1219; border:1px solid #151c26; border-radius:10px; padding:10px 12px;"><div style="font-size:10.5px; color:#8b98a9;">{{ h.k }}</div><div style="display:flex; align-items:baseline; gap:6px; margin-top:4px;"><span style="font-family:'Geist Mono',monospace; font-size:20px; font-weight:600; color:{{ h.c }};">{{ h.v }}</span><span style="font-family:'Geist Mono',monospace; font-size:9px; color:{{ h.c }};">{{ h.tag }}</span></div></div>
+                  </sc-for>
+                </div>
+                <div>
+                  <div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878; margin-bottom:8px;">PLAYBOOK</div>
+                  <div style="display:flex; flex-direction:column;">
+                    <sc-for list="{{ playbook }}" as="p" hint-placeholder-count="4">
+                      <div style="display:grid; grid-template-columns:92px minmax(0,1fr); gap:12px; padding:9px 0; border-top:1px solid #121922; font-size:12px; line-height:1.5;"><span style="color:#ff7a3d; font-weight:500;">{{ p.k }}</span><span style="color:#c9d3df; text-wrap:pretty;">{{ p.v }}</span></div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px;">
+              <div><div style="font-size:13.5px; font-weight:600;">Phase map</div><div style="font-size:12px; color:#8b98a9; margin-top:4px;">Ten phases, grouped into accumulation → markup → peak → distribution → markdown.</div></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">last {{ cycleHistTotal }}</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(118px, 1fr)); gap:8px;">
+              <sc-for list="{{ cyclePhases }}" as="p" hint-placeholder-count="10">
+                <div style="padding:11px 12px; background:{{ p.bg }}; border:1px solid {{ p.bd }}; border-radius:10px; opacity:{{ p.op }}; min-width:0;">
+                  <div style="height:3px; border-radius:3px; background:{{ p.bar }}; margin-bottom:10px;"></div>
+                  <div style="font-family:'Geist Mono',monospace; font-size:11px; color:#8b98a9;">{{ p.n }}</div>
+                  <div style="font-size:12px; font-weight:500; margin-top:3px; line-height:1.3; text-wrap:pretty;">{{ p.name }}</div>
+                  <div style="font-size:10.5px; color:{{ p.c }}; margin-top:5px;">{{ p.group }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878; margin:20px 0 8px;">RECENT PHASE DURATIONS</div>
+            <div style="display:flex; gap:3px; height:34px;">
+              <sc-for list="{{ cycleHist }}" as="h" hint-placeholder-count="5">
+                <div style="flex:{{ h.g }} 1 0%; background:{{ h.bg }}; border-radius:5px; display:flex; align-items:center; justify-content:space-between; padding:0 10px; font-family:'Geist Mono',monospace; font-size:10.5px; min-width:0; overflow:hidden; white-space:nowrap;"><span style="color:#e6edf5; font-weight:600;">{{ h.n }}</span><span style="color:#c9d3df;">{{ h.d }}</span></div>
+              </sc-for>
+            </div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ pg.gamma }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="05 Quant Gamma" style="display:flex; flex-direction:column; gap:16px;">
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+              <div><div style="font-size:13.5px; font-weight:600;">{{ gSel.coin }} · gamma profile and positioning</div></div>
+              <div style="display:flex; gap:2px; padding:3px; background:#080b10; border:1px solid #1c2531; border-radius:9px;">
+                <button onClick="{{ tab3d }}" style="padding:6px 12px; border:none; border-radius:7px; background:{{ t3bg }}; color:{{ t3c }}; cursor:pointer; font-size:12px; font-weight:500;">3D landscape</button>
+                <button onClick="{{ tabCurve }}" style="padding:6px 12px; border:none; border-radius:7px; background:{{ tcbg }}; color:{{ tcc }}; cursor:pointer; font-size:12px; font-weight:500;">Cumulative fuel</button>
+              </div>
+            </div>
+            
+            
+            <sc-if value="{{ g3d }}" hint-placeholder-val="{{ true }}">
+              <div style="position:relative; height:clamp(560px, 68vh, 760px); background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;">
+                <x-import component-from-global-scope="cq-gamma3d" from="./cq-scenes.js" coin="{{ gCoin }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import>
+                <div style="position:absolute; left:14px; top:12px; display:flex; gap:14px; flex-wrap:wrap; font-family:'Geist Mono',monospace; font-size:10.5px; color:#9aa8b8; pointer-events:none;"><span style="display:flex; align-items:center; gap:6px;"><span style="width:9px; height:9px; border-radius:2px; background:#2ee6a6;"></span>Long liquidations</span><span style="display:flex; align-items:center; gap:6px;"><span style="width:9px; height:9px; border-radius:2px; background:#ff5c6c;"></span>Short liquidations</span><span style="display:flex; align-items:center; gap:6px;"><span style="width:2px; height:11px; background:#ffb547;"></span>Gamma flip</span><span style="display:flex; align-items:center; gap:6px;"><span style="width:2px; height:11px; background:#eef3f8;"></span>Mark</span></div>
+                <div style="position:absolute; left:14px; bottom:12px; font-family:'Geist Mono',monospace; font-size:9.5px; color:#4f5b6a; pointer-events:none;">bar height = √ notional · drag to orbit · hover a bar</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ gCurve }}" hint-placeholder-val="{{ false }}">
+              <div style="position:relative; height:clamp(460px, 56vh, 620px); background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;"><x-import component-from-global-scope="cq-cum" from="./cq-charts.js" coin="{{ gCoin }}" style="width:100%;height:100%" hint-size="100%,360px"></x-import></div>
+            </sc-if>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin:22px 0 10px;"><span style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878;">TODAY VS 30 DAYS</span><span style="font-family:'Geist Mono',monospace; font-size:10px; color:#4f5b6a;">30 days · 720 samples</span></div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:10px;">
+              <sc-for list="{{ gPct }}" as="p" hint-placeholder-count="5">
+                <div style="background:#0d1219; border:1px solid #151c26; border-radius:10px; padding:11px 13px 14px;">
+                  <div style="display:flex; justify-content:space-between; align-items:baseline;"><span style="font-size:11px; color:#8b98a9;">{{ p.label }}</span><span style="font-family:'Geist Mono',monospace; font-size:14px; font-weight:600; color:{{ p.c }};">{{ p.p }}</span></div>
+                  <div style="position:relative; height:4px; background:#151c26; border-radius:4px; margin-top:12px;"><div style="position:absolute; left:0; top:0; bottom:0; width:{{ p.left }}; background:{{ p.c }}; opacity:0.35; border-radius:4px; transition:width .6s;"></div><div style="position:absolute; top:50%; left:{{ p.left }}; width:10px; height:10px; margin:-5px 0 0 -5px; border-radius:50%; background:{{ p.c }}; box-shadow:0 0 10px {{ p.c }}; transition:left .6s;"></div></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878; margin:24px 0 8px;">NEAREST LIQUIDATION CLUSTERS · ALL ACCOUNTS</div>
+            <div style="overflow-x:auto;"><div style="min-width:620px;">
+              <div style="display:grid; grid-template-columns:1fr 1.4fr 0.8fr 1.6fr 0.6fr; gap:14px; padding:8px 10px; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878; border-bottom:1px solid #131a23;"><span>PRICE</span><span style="text-align:right;">FROM MARK</span><span>SIDE</span><span style="text-align:right;">NOTIONAL</span><span style="text-align:right;">ACCTS</span></div>
+              <sc-for list="{{ gClusters }}" as="c" hint-placeholder-count="6">
+                <div style="display:grid; grid-template-columns:1fr 1.4fr 0.8fr 1.6fr 0.6fr; gap:14px; padding:9px 10px; align-items:center; font-family:'Geist Mono',monospace; font-size:12px; border-bottom:1px solid #0f141b;">
+                  <span>{{ c.price }}</span>
+                  <div style="display:flex; align-items:center; gap:10px; justify-content:flex-end;"><div style="position:relative; width:90px; height:6px; background:#121922; border-radius:3px;"><div style="position:absolute; left:50%; top:-3px; bottom:-3px; width:1px; background:#3a4553;"></div><div style="position:absolute; top:0; bottom:0; left:{{ c.dl }}; width:{{ c.dw }}; background:{{ c.c }}; border-radius:3px;"></div></div><span style="width:52px; text-align:right;">{{ c.d }}</span></div>
+                  <span style="color:{{ c.c }};">{{ c.side }}</span>
+                  <div style="position:relative; display:flex; justify-content:flex-end; align-items:center; height:18px;"><div style="position:absolute; right:0; top:3px; bottom:3px; width:{{ c.nw }}; background:{{ c.nbg }}; border-radius:3px;"></div><span style="position:relative; padding-right:6px; font-weight:600;">{{ c.n }}</span></div>
+                  <span style="text-align:right; color:#9aa8b8;">{{ c.acc }}</span>
+                </div>
+              </sc-for>
+            </div></div>
+          </section>
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px;">
+              <div><div style="font-size:13.5px; font-weight:600;">Dealer gamma · perp GEX analog</div></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.gamma }}</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px;">
+              <sc-for list="{{ gCards }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.onClick }}" style="text-align:left; padding:10px 12px; background:{{ c.bg }}; border:1px solid {{ c.bd }}; box-shadow:{{ c.sh }}; border-radius:10px; cursor:pointer; color:#e6edf5; transition:border-color .25s, box-shadow .25s, background .25s; display:flex; flex-direction:column; gap:6px; min-width:0;" style-hover="border-color:#2f3d50;">
+                  <div style="display:flex; align-items:center; gap:8px;"><span style="font-size:13px; font-weight:600;">{{ c.coin }}</span><span style="font-family:'Geist Mono',monospace; font-size:9px; color:#4c9bff; background:rgba(76,155,255,0.1); border:1px solid rgba(76,155,255,0.35); padding:0 5px; border-radius:4px;">Dampen</span><span style="margin-left:auto; font-family:'Geist Mono',monospace; font-size:12.5px; font-weight:600;">{{ c.price }}</span></div>
+                  <div style="display:grid; grid-template-columns:1fr auto; gap:3px 10px; font-size:10.5px;">
+                    <span style="color:#8b98a9;">MM net inventory</span><span style="font-family:'Geist Mono',monospace; color:{{ c.invC }}; text-align:right;">{{ c.inv }}</span>
+                    <span style="color:#8b98a9;">Gamma flip</span><span style="font-family:'Geist Mono',monospace; text-align:right;">{{ c.flip }} <span style="color:#ffb547;">{{ c.flipPct }}</span></span>
+                    <span style="color:#8b98a9;">Dealers</span><span style="font-family:'Geist Mono',monospace; text-align:right;">{{ c.dealers }}</span>
+                    <span style="color:#8b98a9;">Funding</span><span style="font-family:'Geist Mono',monospace; text-align:right;">{{ c.funding }}</span>
+                  </div>
+                  <div>
+                    <div style="display:flex; justify-content:space-between; font-family:'Geist Mono',monospace; font-size:9.5px; margin-bottom:4px;"><span style="color:#2ee6a6;">L {{ c.L }} · {{ c.lp }}</span><span style="color:#ff5c6c;">{{ c.sp }} · {{ c.S }} S</span></div>
+                    <div style="display:flex; gap:2px; height:4px;"><div style="width:{{ c.lw }}; min-width:2px; background:#2ee6a6; border-radius:3px 0 0 3px;"></div><div style="flex:1; background:#ff5c6c; border-radius:0 3px 3px 0;"></div></div>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+            
+          </section>
+
+
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878; margin-bottom:12px;">30-DAY HISTORY · HOURLY</div>
+            <div style="border:1px dashed #222c39; border-radius:12px; padding:34px 20px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; background:repeating-linear-gradient(135deg, rgba(255,181,71,0.025) 0 10px, transparent 10px 20px);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffb547" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"></circle><path d="m10.7 12.3 9.8-9.8M17 6l3 3M14.5 8.5l2 2"></path></svg>
+              <div style="font-size:14px; font-weight:600;">API key not configured</div>
+              <div style="font-size:12px; color:#8b98a9; max-width:440px; line-height:1.55; text-wrap:pretty;">Set <span style="font-family:'Geist Mono',monospace; color:#e6edf5;">CDA_API_KEY</span> in the repo-root .env and restart the worker. The key stays on the server; the browser only reads our cache.</div>
+            </div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ pg.volume }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="06 Volume Scanner" style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px;">
+            <sc-for list="{{ vStats }}" as="s" hint-placeholder-count="5">
+              <div style="background:#0b0f14; border:1px solid #17202b; border-radius:12px; padding:14px 16px; min-width:0;"><div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5b6878;">{{ s.k }}</div><div style="font-family:'Geist Mono',monospace; font-size:22px; font-weight:600; letter-spacing:-0.02em; margin-top:6px;">{{ s.v }}</div><div style="font-size:11px; color:#5b6878; margin-top:3px;">{{ s.s }}</div></div>
+            </sc-for>
+          </div>
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+              <div><div style="font-size:13.5px; font-weight:600;">Volume anomaly field</div><div style="font-size:12px; color:#8b98a9; margin-top:4px; max-width:620px; text-wrap:pretty;">Each sphere is a perp: across = 24h price change, height = multiplier vs its 30-day mean, depth = open interest, size = 24h notional (log). Anything floating above the orange plane trades 2× normal.</div></div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <sc-for list="{{ vBands }}" as="b" hint-placeholder-count="5">
+                  <button onClick="{{ b.onClick }}" style="display:flex; align-items:center; gap:6px; padding:5px 10px; background:{{ b.bg }}; border:1px solid {{ b.bd }}; border-radius:7px; cursor:pointer; font-family:'Geist Mono',monospace; font-size:10.5px; color:#c9d3df;"><span style="width:7px; height:7px; border-radius:50%; background:{{ b.c }};"></span>{{ b.b }}<span style="color:#5b6878;">{{ b.n }}</span></button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="position:relative; height:clamp(480px, 62vh, 680px); background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;">
+              <x-import component-from-global-scope="cq-bubbles3d" from="./cq-scenes.js" band="{{ vBand }}" sel="{{ vOpen }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import>
+              <div style="position:absolute; left:14px; bottom:12px; font-family:'Geist Mono',monospace; font-size:9.5px; color:#4f5b6a; pointer-events:none;">drag to orbit · hover a sphere · click for its 30-day series</div>
+            </div>
+          </section>
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px;">
+              <div><div style="font-size:13.5px; font-weight:600;">Volume scanner · every Hyperliquid perp</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/volume/scanner</div></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.volume }}</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+              <div style="position:relative;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5b6878" stroke-width="2" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input value="{{ vSearch }}" onChange="{{ onVSearch }}" placeholder="Find perp" style="width:150px; background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:7px 10px 7px 30px; font-size:12px; outline:none; font-family:'Geist Mono',monospace; text-transform:uppercase;"></div>
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Band<select value="{{ vBand }}" onChange="{{ onVBand }}" style="background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 8px; font-size:12px; outline:none;"><option>All bands</option><option>extreme</option><option>surging</option><option>elevated</option><option>normal</option><option>quiet</option></select></label>
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Min multiplier<select value="{{ vMin }}" onChange="{{ onVMin }}" style="background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 8px; font-size:12px; outline:none;"><option value="0">Any</option><option value="1">1×</option><option value="1.5">1.5×</option><option value="2">2×</option><option value="5">5×</option></select></label>
+              <span style="margin-left:auto; font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">{{ vShown }}</span>
+            </div>
+            <div style="overflow-x:auto;"><div style="min-width:1080px;">
+              <div style="display:grid; grid-template-columns:0.9fr 0.9fr 0.7fr 0.9fr 0.8fr 1.1fr 0.9fr 0.9fr 1.4fr 0.8fr 0.8fr; gap:12px; padding:8px 12px; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.06em; color:#5b6878; border-bottom:1px solid #131a23;">
+                <button onClick="{{ vSortBy.coin }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:left; color:inherit; font:inherit;">PERP {{ vArrow.coin }}</button>
+                <button onClick="{{ vSortBy.price }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:right; color:inherit; font:inherit;">PRICE {{ vArrow.price }}</button>
+                <button onClick="{{ vSortBy.chg }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:right; color:inherit; font:inherit;">24H PX {{ vArrow.chg }}</button>
+                <button onClick="{{ vSortBy.n24 }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:right; color:inherit; font:inherit;">24H NOTIONAL {{ vArrow.n24 }}</button>
+                <button onClick="{{ vSortBy.dDay }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:right; color:inherit; font:inherit;">VS LAST DAY {{ vArrow.dDay }}</button>
+                <span style="padding-left:6px;">7D NOTIONAL</span>
+                <button onClick="{{ vSortBy.mean }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:right; color:inherit; font:inherit;">30D MEAN {{ vArrow.mean }}</button>
+                <button onClick="{{ vSortBy.med }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:right; color:inherit; font:inherit;">30D MEDIAN {{ vArrow.med }}</button>
+                <button onClick="{{ vSortBy.mult }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:right; color:#c9d3df; font:inherit;">MULTIPLIER {{ vArrow.mult }}</button>
+                <button onClick="{{ vSortBy.oi }}" style="background:none; border:none; padding:0; cursor:pointer; text-align:right; color:inherit; font:inherit;">OI {{ vArrow.oi }}</button>
+                <span style="padding-left:8px;">BAND</span>
+              </div>
+              <sc-for list="{{ vRows }}" as="r" hint-placeholder-count="12">
+                <div>
+                  <button onClick="{{ r.onClick }}" style="display:grid; grid-template-columns:0.9fr 0.9fr 0.7fr 0.9fr 0.8fr 1.1fr 0.9fr 0.9fr 1.4fr 0.8fr 0.8fr; gap:12px; width:100%; padding:7px 12px; background:{{ r.rowBg }}; border:none; border-bottom:1px solid #0f141b; cursor:pointer; color:#e6edf5; font-family:'Geist Mono',monospace; font-size:11.5px; text-align:right; align-items:center;" style-hover="background:rgba(255,255,255,0.025);">
+                    <span style="text-align:left; font-weight:600; font-family:'Geist',sans-serif; font-size:12.5px;">{{ r.coin }}</span>
+                    <span>{{ r.price }}</span>
+                    <span style="color:{{ r.chgC }};">{{ r.chg }}</span>
+                    <span style="font-weight:600;">{{ r.n24 }}</span>
+                    <span style="color:{{ r.dDayC }};">{{ r.dDay }}</span>
+                    <div style="height:24px; padding-left:6px;"><x-import component-from-global-scope="cq-spark" from="./cq-charts.js" data="{{ r.spark }}" color="{{ r.sparkC }}" style="width:100%;height:100%" hint-size="100%,24px"></x-import></div>
+                    <span style="color:#9aa8b8;">{{ r.mean }}</span>
+                    <span style="color:#9aa8b8;">{{ r.med }}</span>
+                    <div style="display:flex; align-items:center; gap:8px; justify-content:flex-end;"><div style="flex:1; max-width:90px; height:4px; background:#121922; border-radius:4px; overflow:hidden;"><div style="height:100%; width:{{ r.multW }}; background:{{ r.mbg }}; border-radius:4px;"></div></div><span style="color:{{ r.multC }}; font-weight:600; min-width:46px;">{{ r.mult }}</span></div>
+                    <span style="color:#9aa8b8;">{{ r.oi }}</span>
+                    <span style="text-align:left; padding-left:8px;"><span style="font-size:10px; color:{{ r.bc }}; background:{{ r.bbg }}; border:1px solid {{ r.bbd }}; padding:1px 7px; border-radius:5px;">{{ r.band }}</span></span>
+                  </button>
+                  <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; gap:20px; flex-wrap:wrap; padding:14px 16px 18px; background:#080b10; border-bottom:1px solid #131a23;">
+                      <div style="flex:1 1 520px; min-width:0;">
+                        <div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878; margin-bottom:8px;">30-DAY DAILY NOTIONAL · {{ r.coin }}</div>
+                        <div style="height:120px;"><x-import component-from-global-scope="cq-spark" from="./cq-charts.js" mode="bars" data="{{ r.s30 }}" mean="{{ r.refMean }}" color="{{ r.bc }}" style="width:100%;height:100%" hint-size="100%,120px"></x-import></div>
+                      </div>
+                      <div style="flex:0 1 220px; display:grid; grid-template-columns:1fr auto; gap:8px 14px; align-content:start; font-size:12px;">
+                        <span style="color:#8b98a9;">Multiplier</span><span style="font-family:'Geist Mono',monospace; color:{{ r.multC }}; font-weight:600;">{{ r.mult }}</span>
+                        <span style="color:#8b98a9;">24h notional</span><span style="font-family:'Geist Mono',monospace;">{{ r.n24 }}</span>
+                        <span style="color:#8b98a9;">30d mean</span><span style="font-family:'Geist Mono',monospace;">{{ r.mean }}</span>
+                        <span style="color:#8b98a9;">30d median</span><span style="font-family:'Geist Mono',monospace;">{{ r.med }}</span>
+                        <span style="color:#8b98a9;">Open interest</span><span style="font-family:'Geist Mono',monospace;">{{ r.oi }}</span>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <sc-if value="{{ vEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:28px; text-align:center; font-size:12px; color:#5b6878;">No perps match these filters.</div></sc-if>
+            </div></div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ pg.books }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="07 Order Books" style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:12px; color:#8b98a9;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4c9bff" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><path d="M12 1v4M12 19v4M1 12h4M19 12h4"></path></svg>
+            <span>Focused</span><b style="color:#e6edf5; font-size:14px;">{{ focus.coin }}</b>
+            <span style="display:flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:10.5px; color:{{ focus.hc }}; background:{{ focus.hbg }}; border:1px solid {{ focus.hbd }}; padding:2px 8px; border-radius:6px;"><span style="width:6px; height:6px; border-radius:50%; background:{{ focus.hc }};"></span>HMM {{ focus.hmm }} · {{ focus.conf }}</span>
+            <span style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#c9d3df; border:1px solid #1c2531; padding:2px 8px; border-radius:6px;">Liquidity: {{ focus.liq }}</span>
+            <span style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#c9d3df; border:1px solid #1c2531; padding:2px 8px; border-radius:6px;">mid {{ focus.mid }} · spread {{ focus.spread }}</span>
+            <div style="display:flex; gap:4px; margin-left:auto; flex-wrap:wrap;">
+              <sc-for list="{{ bookChips }}" as="c" hint-placeholder-count="8"><button onClick="{{ c.onClick }}" style="padding:4px 9px; background:{{ c.bg }}; border:1px solid {{ c.bd }}; border-radius:6px; color:{{ c.col }}; cursor:pointer; font-family:'Geist Mono',monospace; font-size:10.5px;">{{ c.c }}</button></sc-for>
+            </div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:16px;">
+            <section style="flex:0 1 380px; min-width:300px; background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:16px 16px 12px; display:flex; flex-direction:column;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+                  <div style="position:relative; width:42px; height:42px; flex:none; border-radius:50%; background:{{ focus.hbg }}; border:1px solid {{ focus.hbd }}; display:flex; align-items:center; justify-content:center; box-shadow:0 0 24px -6px {{ focus.hc }};"><span style="font-family:'Geist Mono',monospace; font-size:13px; font-weight:600; color:{{ focus.hc }};">{{ focus.mono }}</span><div style="position:absolute; left:5px; top:5px; width:30px; height:30px; border-radius:50%; background-image:{{ focus.logoBg }}; background-size:contain; background-position:center; background-repeat:no-repeat;"></div></div>
+                  <div style="min-width:0;"><div style="display:flex; align-items:baseline; gap:9px;"><span style="font-size:24px; font-weight:700; letter-spacing:-0.035em; line-height:1;">{{ focus.coin }}</span><span style="font-family:'Geist Mono',monospace; font-size:13px; color:#c9d3df;">{{ focus.mid }}</span></div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:5px;">L2 ladder · /hyperliquid/l2-book</div></div>
+                </div>
+                <span style="display:flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:10px; color:#2ee6a6;"><x-import component-from-global-scope="cq-pulse" from="./cq-charts.js" color="#2ee6a6" hint-size="7px,7px"></x-import>live</span>
+              </div>
+              <div style="height:580px;"><x-import component-from-global-scope="cq-ladder" from="./cq-charts.js" style="width:100%;height:100%" hint-size="100%,580px"></x-import></div>
+            </section>
+            <section style="flex:1 1 560px; min-width:0; background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:16px 18px; display:flex; flex-direction:column;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px;">
+                <div><div style="font-size:13.5px; font-weight:600;">Liquidity terrain ±50 bps · last 6h · {{ focus.coin }}</div></div>
+                <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.heat }}</div>
+              </div>
+              <div style="position:relative; flex:1; min-height:500px; background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;">
+                <x-import component-from-global-scope="cq-depth3d" from="./cq-scenes.js" style="width:100%;height:100%" hint-size="100%,500px"></x-import>
+                <div style="position:absolute; left:14px; top:12px; display:flex; gap:16px; font-family:'Geist Mono',monospace; font-size:10.5px; pointer-events:none;"><span style="color:#2ee6a6;">Bid depth 25 bps <b style="color:#e6edf5;">{{ focus.bid25 }}</b></span><span style="color:#ff5c6c;">Ask depth 25 bps <b style="color:#e6edf5;">{{ focus.ask25 }}</b></span></div>
+                <div style="position:absolute; left:14px; bottom:12px; font-family:'Geist Mono',monospace; font-size:9.5px; color:#4f5b6a; pointer-events:none;">height = depth (compressed) · live edge streams in at right · drag to orbit</div>
+              </div>
+              <sc-if value="{{ focus.sat }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; gap:8px; align-items:flex-start; margin-top:12px; font-size:11.5px; color:#ffb547; line-height:1.5;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffb547" stroke-width="2" style="flex:none; margin-top:2px;"><path d="M12 3 2 21h20L12 3zM12 10v5M12 18h.01"></path></svg><span style="text-wrap:pretty;">Bands beyond 10 bps are saturated: Hyperliquid returns ~20 levels, which fit inside 10 bps on this book, so outer depth is a lower bound (flat slate area).</span></div>
+              </sc-if>
+            </section>
+          </div>
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px;">
+              <div><div style="font-size:13.5px; font-weight:600;">Depth across the top 25 perps</div></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.depth }}</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+              <div style="position:relative;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5b6878" stroke-width="2" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input value="{{ bkSearch }}" onChange="{{ onBkSearch }}" placeholder="Find coin" style="width:160px; background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:7px 10px 7px 30px; font-size:12px; outline:none; font-family:'Geist Mono',monospace; text-transform:uppercase;"></div>
+              <span style="margin-left:auto; font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">{{ bkShown }}</span>
+            </div>
+            <div style="overflow-x:auto;"><div style="min-width:1020px;">
+              <div style="display:grid; grid-template-columns:0.7fr 0.9fr 0.7fr 0.9fr 0.9fr 0.9fr 1.3fr 0.8fr 1.2fr 0.7fr; gap:12px; padding:8px 12px; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.06em; color:#5b6878; border-bottom:1px solid #131a23; text-align:right;"><span style="text-align:left;">COIN</span><span>MID</span><span>SPREAD BPS</span><span>±10 BPS</span><span>±25 BPS</span><span>±100 BPS</span><span style="text-align:center;">IMBALANCE 10 BPS</span><span>OI</span><span style="text-align:left; padding-left:10px;">LIQUIDITY</span><span style="text-align:left;">HMM</span></div>
+              <sc-for list="{{ bookRows }}" as="b" hint-placeholder-count="12">
+                <button onClick="{{ b.onClick }}" style="position:relative; display:grid; grid-template-columns:0.7fr 0.9fr 0.7fr 0.9fr 0.9fr 0.9fr 1.3fr 0.8fr 1.2fr 0.7fr; gap:12px; width:100%; padding:7px 12px; background:{{ b.bg }}; border:none; border-bottom:1px solid #0f141b; cursor:pointer; color:#e6edf5; font-family:'Geist Mono',monospace; font-size:11.5px; text-align:right; align-items:center;" style-hover="background:rgba(255,255,255,0.025);">
+                  <span style="position:absolute; left:0; top:4px; bottom:4px; width:2px; background:{{ b.bar }};"></span>
+                  <span style="text-align:left; font-weight:600; font-family:'Geist',sans-serif; font-size:12.5px;">{{ b.coin }}</span>
+                  <span>{{ b.mid }}</span>
+                  <span style="color:#9aa8b8;">{{ b.spread }}</span>
+                  <span>{{ b.d10 }}</span>
+                  <span>{{ b.d25 }}</span>
+                  <span>{{ b.d100 }}</span>
+                  <div style="display:flex; align-items:center; gap:8px; justify-content:center;"><div style="position:relative; width:110px; height:6px; background:#121922; border-radius:3px;"><div style="position:absolute; left:50%; top:-3px; bottom:-3px; width:1px; background:#3a4553;"></div><div style="position:absolute; top:0; bottom:0; left:{{ b.il }}; width:{{ b.iw }}; background:{{ b.ic }}; border-radius:3px;"></div></div><span style="color:{{ b.ic }}; width:40px; text-align:right; font-size:10.5px;">{{ b.imb }}</span></div>
+                  <span style="color:#9aa8b8;">{{ b.oi }}</span>
+                  <span style="text-align:left; padding-left:10px;"><span style="font-size:10px; color:{{ b.lc }}; background:{{ b.lbg }}; border:1px solid {{ b.lbd }}; padding:1px 7px; border-radius:5px; white-space:nowrap;">{{ b.liq }}</span></span>
+                  <span style="text-align:left; display:flex; align-items:center; gap:6px; font-size:10.5px;"><span style="width:6px; height:6px; border-radius:50%; background:{{ b.hc }}; box-shadow:0 0 6px {{ b.hc }};"></span>{{ b.hmm }}</span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ bkEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:28px; text-align:center; font-size:12px; color:#5b6878;">No books match this search.</div></sc-if>
+            </div></div>
+            <div style="font-size:11px; color:#4f5b6a; margin-top:12px; text-wrap:pretty;">Depth is bid plus ask USD within the band. Click a row to focus its live ladder and terrain. Each book carries its HMM regime from the Market Regimes model as corroboration.</div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ pg.liqs }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="08 Liquidations" style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start;">
+          <section style="flex:1 1 100%; min-width:0; background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; flex-wrap:wrap;">
+              <div><div style="display:flex; align-items:center; gap:8px;"><span style="font-size:13.5px; font-weight:600;">Liquidation flow · last 6 minutes</span><span style="display:flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:0.08em; color:#2ee6a6; background:rgba(46,230,166,0.08); border:1px solid rgba(46,230,166,0.35); padding:2px 7px; border-radius:5px;"><sc-if value="{{ live }}" hint-placeholder-val="{{ true }}"><x-import component-from-global-scope="cq-pulse" from="./cq-charts.js" color="#2ee6a6" hint-size="7px,7px"></x-import></sc-if>{{ liveLabel }}</span></div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/stream (type=liquidation) · every forced close as it prints</div></div>
+              <div style="text-align:right; font-family:'Geist Mono',monospace; font-size:10.5px; color:#8b98a9; line-height:1.5;">{{ tapeStats.buffered }} buffered · {{ rate }}/min all types<br><span style="color:#2ee6a6;">L {{ tapeStats.L }}</span> · <span style="color:#ff5c6c;">S {{ tapeStats.S }}</span></div>
+            </div>
+            <div style="position:relative; height:clamp(460px, 58vh, 660px); background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;">
+              <x-import component-from-global-scope="cq-liqstream" from="./cq-scenes.js" coin="{{ tapeCoin }}" min="{{ tapeMin }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import>
+              <div style="position:absolute; left:14px; top:12px; display:flex; gap:16px; font-family:'Geist Mono',monospace; font-size:10.5px; color:#9aa8b8; pointer-events:none;"><span style="display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:#2ee6a6; box-shadow:0 0 8px #2ee6a6;"></span>Long liq · forced sell</span><span style="display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:#ff5c6c; box-shadow:0 0 8px #ff5c6c;"></span>Short liq · forced buy</span></div>
+              <div style="position:absolute; left:14px; bottom:12px; font-family:'Geist Mono',monospace; font-size:9.5px; color:#4f5b6a; pointer-events:none;">height = log size · coin and min-size filters on the tape apply here · drag to orbit</div>
+            </div>
+          </section>
+          <div style="flex:999 1 640px; min-width:0; display:flex; flex-direction:column; gap:16px;">
+            
+            <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px;">
+                <div><div style="font-size:13.5px; font-weight:600;">Rolling totals · all tracked coins</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/market-intelligence/liquidations</div></div>
+                <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.liq }}</div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px;">
+                <sc-for list="{{ liqRoll }}" as="w" hint-placeholder-count="4">
+                  <div style="background:#0d1219; border:1px solid #151c26; border-radius:11px; padding:13px 14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline;"><span style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878; text-transform:uppercase;">{{ w.label }}</span><span style="font-family:'Geist Mono',monospace; font-size:20px; font-weight:600; letter-spacing:-0.02em;">{{ w.total }}</span></div>
+                    <div style="display:flex; justify-content:space-between; gap:6px; font-family:'Geist Mono',monospace; font-size:10px; margin:10px 0 5px; white-space:nowrap;"><span style="color:#2ee6a6;">L {{ w.L }} · {{ w.lp }}</span><span style="color:#ff5c6c;">{{ w.sp }} · {{ w.S }} S</span></div>
+                    <div style="display:flex; gap:2px; height:6px;"><div style="width:{{ w.lw }}; min-width:2px; background:#2ee6a6; border-radius:3px 0 0 3px; transition:width .8s;"></div><div style="flex:1; background:#ff5c6c; border-radius:0 3px 3px 0;"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:11px; color:#4f5b6a; margin-top:12px; text-wrap:pretty;">Each window is a trailing level from one response, summed across 100 coins; never summed across polls. Venues: okx, bybit, hyperliquid. Binance geo-blocks its stream, so totals run under an all-exchange figure.</div>
+            </section>
+            <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px;">
+                <div><div style="font-size:13.5px; font-weight:600;">Heatmap · top coins by 24h liquidations</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/market-intelligence/liquidations</div></div>
+                <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.heat }}</div>
+              </div>
+              <div style="position:relative; height:420px; margin:-2px;">
+                <sc-for list="{{ heat }}" as="t" hint-placeholder-count="12">
+                  <div style="position:absolute; left:{{ t.x }}; top:{{ t.y }}; width:{{ t.w }}; height:{{ t.h }}; padding:2px;">
+                    <div style="width:100%; height:100%; background:{{ t.bg }}; border:1px solid {{ t.bd }}; border-radius:8px; padding:8px 10px; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; transition:transform .2s;" style-hover="transform:scale(1.02);">
+                      <div style="min-width:0;"><div style="font-weight:600; font-size:{{ t.fs }}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ t.coin }}</div><div style="font-family:'Geist Mono',monospace; font-size:11px; color:#c9d3df; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ t.v }}</div></div>
+                      <sc-if value="{{ t.big }}" hint-placeholder-val="{{ true }}"><div style="min-width:0;"><div style="display:flex; gap:2px; height:4px;"><div style="width:{{ t.lw }}; background:#2ee6a6; border-radius:2px 0 0 2px;"></div><div style="flex:1; background:#ff5c6c; border-radius:0 2px 2px 0;"></div></div><div style="display:flex; justify-content:space-between; gap:4px; font-family:'Geist Mono',monospace; font-size:9.5px; color:#c9d3df; margin-top:4px; white-space:nowrap; overflow:hidden;"><span>{{ t.l }}</span><span>{{ t.s }}</span></div></div></sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:11px; color:#4f5b6a; margin-top:12px; text-wrap:pretty;">Tile area and brightness scale with 24h notional (compressed). Tint marks the dominant side: aqua = long liquidations, red = short. The bar splits long (L) and short (S).</div>
+            </section>
+            <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:16px;">
+                <div><div style="font-size:13.5px; font-weight:600;">By exchange · BTC, trailing 4h</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/market-intelligence/liquidations/by-exchange</div></div>
+                <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.exch }}</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <sc-for list="{{ exRows }}" as="e" hint-placeholder-count="3">
+                  <div style="display:grid; grid-template-columns:92px minmax(0,1fr); gap:12px; align-items:center;"><span style="font-size:12px; color:#c9d3df; text-align:right;">{{ e.k }}</span><div style="display:flex; height:18px; background:#0d1219; border-radius:4px; overflow:hidden;"><div style="width:{{ e.lw }}; background:#2ee6a6; opacity:0.9; transition:width .8s;"></div><div style="width:{{ e.sw }}; background:#ff5c6c; opacity:0.9; transition:width .8s;"></div></div></div>
+                </sc-for>
+                <div style="display:grid; grid-template-columns:92px minmax(0,1fr); gap:12px;"><span></span><div style="display:flex; justify-content:space-between; font-family:'Geist Mono',monospace; font-size:10px; color:#5b6878;"><sc-for list="{{ exTicks }}" as="t" hint-placeholder-count="5"><span>{{ t.t }}</span></sc-for></div></div>
+              </div>
+              <div style="margin-top:16px; border-top:1px solid #131a23;">
+                <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr; gap:12px; padding:9px 4px; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878; text-align:right; border-bottom:1px solid #131a23;"><span style="text-align:left;">EXCHANGE</span><span>LONG</span><span>SHORT</span><span>TOTAL</span></div>
+                <sc-for list="{{ exRows }}" as="e" hint-placeholder-count="3">
+                  <div style="display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr; gap:12px; padding:9px 4px; font-family:'Geist Mono',monospace; font-size:12px; text-align:right; border-bottom:1px solid #0f141b;"><span style="text-align:left; font-family:'Geist',sans-serif;">{{ e.k }}</span><span style="color:#2ee6a6;">{{ e.L }}</span><span style="color:#ff5c6c;">{{ e.S }}</span><span style="font-weight:600;">{{ e.T }}</span></div>
+                </sc-for>
+              </div>
+            </section>
+          </div>
+
+          <section style="flex:1 1 380px; min-width:0; background:#0b0f14; border:1px solid #17202b; border-radius:14px; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="padding:16px 18px 12px; display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+              <div><div style="display:flex; align-items:center; gap:8px;"><span style="font-size:13.5px; font-weight:600;">Live liquidation tape</span><span style="display:flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:0.08em; color:#2ee6a6; background:rgba(46,230,166,0.08); border:1px solid rgba(46,230,166,0.35); padding:2px 7px; border-radius:5px;"><sc-if value="{{ live }}" hint-placeholder-val="{{ true }}"><x-import component-from-global-scope="cq-pulse" from="./cq-charts.js" color="#2ee6a6" hint-size="7px,7px"></x-import></sc-if>{{ liveLabel }}</span></div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/stream (type=liquidation) via worker fan-out</div></div>
+              <button onClick="{{ togglePause }}" style="display:flex; align-items:center; gap:6px; padding:6px 11px; background:#0d1219; border:1px solid #1c2531; border-radius:8px; cursor:pointer; font-size:12px; color:#c9d3df;" style-hover="border-color:#2a3748; color:#fff;"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>{{ pauseLabel }}</button>
+            </div>
+            <div style="display:flex; gap:10px; padding:12px 18px; align-items:center; flex-wrap:wrap; border-bottom:1px solid #131a23;">
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Coin<input value="{{ tapeCoin }}" onChange="{{ onTapeCoin }}" placeholder="ALL" style="width:84px; background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 9px; font-size:12px; outline:none; font-family:'Geist Mono',monospace; text-transform:uppercase;"></label>
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Min size<select value="{{ tapeMin }}" onChange="{{ onTapeMin }}" style="background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 8px; font-size:12px; outline:none;"><option value="0">Any</option><option value="500">$500+</option><option value="1000">$1K+</option><option value="5000">$5K+</option><option value="10000">$10K+</option></select></label>
+              <div style="margin-left:auto; text-align:right; font-family:'Geist Mono',monospace; font-size:10.5px; color:#8b98a9; line-height:1.5;">{{ tapeStats.buffered }} buffered · {{ rate }}/min all types<br><span style="color:#2ee6a6;">L {{ tapeStats.L }}</span> · <span style="color:#ff5c6c;">S {{ tapeStats.S }}</span></div>
+            </div>
+            <div style="display:grid; grid-template-columns:66px minmax(0,1fr) 62px minmax(0,1fr) 72px; gap:8px; padding:9px 18px; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878; border-bottom:1px solid #131a23;"><span>TIME</span><span>COIN</span><span>SIDE</span><span style="text-align:right;">SIZE</span><span style="text-align:right;">VENUE</span></div>
+            <div style="max-height:900px; overflow:auto;">
+              <sc-for list="{{ tapeRows }}" as="r" hint-placeholder-count="14">
+                <div style="display:grid; grid-template-columns:66px minmax(0,1fr) 62px minmax(0,1fr) 72px; gap:8px; padding:7px 18px; align-items:center; font-family:'Geist Mono',monospace; font-size:11.5px; border-bottom:1px solid #0f141b; background:{{ r.bg }}; transition:background 1.4s;">
+                  <span style="color:#8b98a9;">{{ r.time }}</span>
+                  <span style="font-weight:600; color:#e6edf5;">{{ r.coin }}</span>
+                  <span style="color:{{ r.sc }};">{{ r.side }}</span>
+                  <div style="position:relative; display:flex; justify-content:flex-end; align-items:center; height:18px;"><div style="position:absolute; right:0; top:2px; bottom:2px; width:{{ r.sw }}; background:{{ r.sbg }}; border-radius:3px;"></div><span style="position:relative; font-weight:{{ r.fw }}; padding-right:5px;">{{ r.size }}</span></div>
+                  <span style="text-align:right; color:#9aa8b8;">{{ r.venue }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ tapeEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:28px 18px; text-align:center; font-size:12px; color:#5b6878;">No events match this filter yet.</div></sc-if>
+            </div>
+            <div style="padding:11px 18px; font-size:10.5px; color:#4f5b6a; border-top:1px solid #131a23;">Side is the liquidated position: a long liquidation is a forced sell, a short liquidation a forced buy.</div>
+          </section>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ pg.calendar }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="09 Calendar" style="display:flex; flex-direction:column; gap:16px;">
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+              <div><div style="font-size:13.5px; font-weight:600;">Event horizon · next 30 days</div><div style="font-size:12px; color:#8b98a9; margin-top:4px;">Thirty days of catalysts laid out as a runway toward NOW. Unlocks rise as pillars, macro prints span the track as arches, and the canyon walls swell where risk clusters. Events inside 48h pulse.</div></div>
+              <div style="display:flex; gap:14px; font-family:'Geist Mono',monospace; font-size:10.5px; color:#9aa8b8;"><span style="display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:#a98bff;"></span>Unlock</span><span style="display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:#ffb547;"></span>Macro</span><span style="display:flex; align-items:center; gap:6px;"><span style="width:8px; height:8px; border-radius:50%; background:#ff5c6c;"></span>Depeg</span></div>
+            </div>
+            <div style="position:relative; height:clamp(480px, 60vh, 680px); background:#080b10; border:1px solid #141b24; border-radius:10px; overflow:hidden;">
+              <x-import component-from-global-scope="cq-horizon3d" from="./cq-scenes.js" filter="{{ calType }}" style="width:100%;height:100%" hint-size="100%,100%"></x-import>
+              <div style="position:absolute; left:14px; bottom:12px; font-family:'Geist Mono',monospace; font-size:9.5px; color:#4f5b6a; pointer-events:none;">pillar height = magnitude · amber arches = market-wide macro prints · canyon walls = rolling risk density · drag to orbit</div>
+            </div>
+          </section>
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px;">
+              <div><div style="font-size:13.5px; font-weight:600;">Event risk</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/event/regime/score</div></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.risk }}</div>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:center;">
+              <div style="flex:0 0 180px; display:flex; flex-direction:column; align-items:center; gap:6px;">
+                <div style="width:170px; height:136px;"><x-import component-from-global-scope="cq-gauge" from="./cq-charts.js" value="{{ cal.score }}" color="#ffb547" style="width:100%;height:100%" hint-size="170px,136px"></x-import></div>
+                <div style="font-size:12px; color:#9aa8b8;">Event risk score</div>
+                <span style="font-family:'Geist Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:0.08em; color:#ffb547; background:rgba(255,181,71,0.1); border:1px solid rgba(255,181,71,0.4); padding:2px 8px; border-radius:5px;">{{ cal.label }}</span>
+              </div>
+              <div style="flex:1 1 340px; min-width:0; display:flex; flex-direction:column; gap:14px;">
+                <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px;">
+                  <div style="background:#0d1219; border:1px solid #151c26; border-radius:10px; padding:12px 14px;"><div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878;">NEXT 7 DAYS</div><div style="font-family:'Geist Mono',monospace; font-size:24px; font-weight:600; margin-top:4px;">{{ cal.next7 }}</div></div>
+                  <div style="background:#0d1219; border:1px solid #151c26; border-radius:10px; padding:12px 14px;"><div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.08em; color:#5b6878;">NEXT 30 DAYS</div><div style="font-family:'Geist Mono',monospace; font-size:24px; font-weight:600; margin-top:4px;">{{ cal.next30 }}</div></div>
+                </div>
+                <div>
+                  <div style="font-size:12px; color:#c9d3df; font-weight:500; margin-bottom:8px;">Feed mix</div>
+                  <div style="display:flex; gap:3px; height:8px;"><sc-for list="{{ calMix }}" as="m" hint-placeholder-count="3"><div style="flex:{{ m.v }} 1 0%; background:{{ m.c }}; border-radius:3px;"></div></sc-for></div>
+                  <div style="display:flex; gap:14px; margin-top:8px;"><sc-for list="{{ calMix }}" as="m" hint-placeholder-count="3"><span style="display:flex; align-items:center; gap:6px; font-size:11px; color:#8b98a9;"><span style="width:8px; height:8px; border-radius:2px; background:{{ m.c }};"></span>{{ m.k }} <b style="font-family:'Geist Mono',monospace; color:#e6edf5;">{{ m.v }}</b></span></sc-for></div>
+                </div>
+              </div>
+              <div style="flex:1 1 300px; min-width:0; display:flex; flex-direction:column; gap:14px;">
+                <sc-for list="{{ calSub }}" as="s" hint-placeholder-count="3">
+                  <div><div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;"><span style="color:#9aa8b8;">{{ s.k }}</span><span style="font-family:'Geist Mono',monospace; font-weight:600;">{{ s.v }}</span></div><div style="height:5px; background:#151c26; border-radius:5px; overflow:hidden;"><div style="height:100%; width:{{ s.w }}; background:#4c9bff; box-shadow:0 0 10px rgba(76,155,255,0.6); border-radius:5px; transition:width .8s;"></div></div></div>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+
+          <section style="background:#0b0f14; border:1px solid #17202b; border-radius:14px; padding:18px 20px; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px;">
+              <div><div style="font-size:13.5px; font-weight:600;">Catalysts · 30-day window</div><div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#4f5b6a; margin-top:3px;">/event/calendar</div></div>
+              <div style="font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">as of {{ ago.cal }}</div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Type<select value="{{ calType }}" onChange="{{ onCalType }}" style="background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 8px; font-size:12px; outline:none;"><option>All types</option><option>Unlock</option><option>Macro</option><option>Depeg</option></select></label>
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Bias<select value="{{ calBias }}" onChange="{{ onCalBias }}" style="background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 8px; font-size:12px; outline:none;"><option>Any bias</option><option>short</option><option>neutral</option><option>risk flag</option></select></label>
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Symbol<input value="{{ calSym }}" onChange="{{ onCalSym }}" placeholder="ANY" style="width:90px; background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 9px; font-size:12px; outline:none; font-family:'Geist Mono',monospace; text-transform:uppercase;"></label>
+              <label style="display:flex; align-items:center; gap:7px; font-size:11.5px; color:#8b98a9;">Min magnitude<select value="{{ calMag }}" onChange="{{ onCalMag }}" style="background:#080b10; border:1px solid #1c2531; border-radius:8px; color:#e6edf5; padding:6px 8px; font-size:12px; outline:none;"><option value="0">Any</option><option value="0.1">0.10+</option><option value="0.25">0.25+</option><option value="0.5">0.50+</option></select></label>
+              <span style="margin-left:auto; font-family:'Geist Mono',monospace; font-size:10.5px; color:#5b6878;">{{ cal.total }} catalysts · risk score <span style="color:#ffb547;">{{ cal.scoreExact }} ({{ cal.label }})</span></span>
+            </div>
+            <div style="font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.1em; color:#5b6878; margin-bottom:6px;">{{ calCount }}</div>
+            <div style="overflow-x:auto;"><div style="min-width:980px;">
+              <div style="display:grid; grid-template-columns:0.7fr 0.7fr 2.2fr 0.9fr 0.8fr 1.1fr 1.5fr 0.8fr; gap:14px; padding:8px 12px; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:0.06em; color:#5b6878; border-bottom:1px solid #131a23;"><span>DATE</span><span>TYPE</span><span>EVENT</span><span>SYMBOLS</span><span>BIAS</span><span>MAGNITUDE</span><span>SIZE</span><span>SOURCE</span></div>
+              <sc-for list="{{ calRows }}" as="e" hint-placeholder-count="12">
+                <div style="display:grid; grid-template-columns:0.7fr 0.7fr 2.2fr 0.9fr 0.8fr 1.1fr 1.5fr 0.8fr; gap:14px; padding:9px 12px; align-items:center; font-size:12px; border-bottom:1px solid #0f141b; background:{{ e.rowBg }};">
+                  <div><div style="font-family:'Geist Mono',monospace;">{{ e.date }}</div><div style="font-family:'Geist Mono',monospace; font-size:10px; color:#5b6878; margin-top:1px;">{{ e.rel }}</div></div>
+                  <span style="display:flex; align-items:center; gap:7px;"><span style="width:7px; height:7px; border-radius:2px; background:{{ e.tc }};"></span>{{ e.type }}</span>
+                  <span style="color:#e6edf5;">{{ e.name }}</span>
+                  <span><sc-if value="{{ e.chip }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Geist Mono',monospace; font-size:10px; font-weight:600; border:1px solid #2a3442; background:#0d1219; padding:2px 6px; border-radius:4px;">{{ e.sym }}</span></sc-if><sc-if value="{{ e.plain }}" hint-placeholder-val="{{ false }}"><span style="color:#8b98a9;">{{ e.sym }}</span></sc-if></span>
+                  <span><span style="font-family:'Geist Mono',monospace; font-size:10px; color:{{ e.bc }}; background:{{ e.bbg }}; border:1px solid {{ e.bbd }}; padding:1px 7px; border-radius:5px; white-space:nowrap;">{{ e.bias }}</span></span>
+                  <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; max-width:70px; height:4px; background:#151c26; border-radius:4px; overflow:hidden;"><div style="height:100%; width:{{ e.mw }}; background:{{ e.mc }}; border-radius:4px;"></div></div><span style="font-family:'Geist Mono',monospace; font-size:11px;">{{ e.mag }}</span></div>
+                  <span style="font-family:'Geist Mono',monospace; font-size:11px; color:#9aa8b8;">{{ e.size }}</span>
+                  <span style="font-family:'Geist Mono',monospace; font-size:11px; color:#8b98a9;">{{ e.src }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ calEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:28px; text-align:center; font-size:12px; color:#5b6878;">No catalysts match these filters.</div></sc-if>
+            </div></div>
+          </section>
+        </div>
+      </sc-if>
+    </main></div>
+  
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;tapeRows&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:28,&quot;min&quot;:10,&quot;max&quot;:60,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Live tape&quot;},&quot;kpiSparks&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Header&quot;}}">
+class Component extends DCLogic {
+  state = {
+    page: (() => { try { return localStorage.getItem('cq.page') || 'overview'; } catch (e) { return 'overview'; } })(),
+    v: 0, tapeCoin: '', tapeMin: '0', paused: false, frozen: null,
+    rgSearch: '', rgMin: '0', rgHide: true, rgFocus: '',
+    gCoin: 'BTC', gTab: '3d',
+    vSearch: '', vBand: 'All bands', vMin: '0', vSort: 'mult', vDir: -1, vOpen: '',
+    calType: 'All types', calBias: 'Any bias', calSym: '', calMag: '0', bkSearch: '', ...(() => { try { return JSON.parse(localStorage.getItem('cq.ui') || '{}'); } catch (e) { return {}; } })(), settingsOpen: false
+  };
+  scrollRef = React.createRef();
+  componentDidMount() {
+    const boot = () => { if (!window.CQ) { this._bt = setTimeout(boot, 40); return; } this.unsub = window.CQ.on(t => { if (t !== 'book' && t !== 'depth') this.bump(); }); this.forceUpdate(); };
+    boot();
+    this.onVol = e => this.setState(s => ({ vOpen: s.vOpen === e.detail ? '' : e.detail }));
+    this.onCoin = e => { this.setState({ rgSearch: e.detail, page: 'perps' }); try { localStorage.setItem('cq.page', 'perps'); } catch (x) {} const el = this.scrollRef.current; if (el) el.scrollTop = 0; };
+    window.addEventListener('cq:vol', this.onVol); window.addEventListener('cq:coin', this.onCoin);
+  }
+  componentWillUnmount() { clearTimeout(this._bt); clearTimeout(this._p); this.unsub && this.unsub(); window.removeEventListener('cq:vol', this.onVol); window.removeEventListener('cq:coin', this.onCoin); }
+  bump() { if (this._p) return; this._p = setTimeout(() => { this._p = null; this.setState(s => ({ v: s.v + 1 })); }, 300); }
+  squarify(items, W, H) {
+    const out = []; let x = 0, y = 0, w = W, h = H, rest = items.slice();
+    while (rest.length) {
+      const short = Math.min(w, h); let row = [], best = Infinity;
+      while (rest.length) { const cand = row.concat([rest[0]]), s = cand.reduce((a, b) => a + b.a, 0), mx = Math.max(...cand.map(c => c.a)), mn = Math.min(...cand.map(c => c.a)), worst = Math.max(short * short * mx / (s * s), (s * s) / (short * short * mn)); if (worst <= best) { best = worst; row = cand; rest.shift(); } else break; }
+      const s = row.reduce((a, b) => a + b.a, 0);
+      if (w >= h) { const cw = s / h; let cy = y; row.forEach(r => { const rh = r.a / cw; out.push({ ...r, x, y: cy, w: cw, h: rh }); cy += rh; }); x += cw; w -= cw; }
+      else { const ch = s / w; let cx = x; row.forEach(r => { const rw = r.a / ch; out.push({ ...r, x: cx, y, w: rw, h: ch }); cx += rw; }); y += ch; h -= ch; }
+    }
+    return out;
+  }
+  renderVals() {
+    const st = this.state, P = this.props || {}, set = o => this.setState(o);
+    const PAGES = [
+      ['overview', 'Overview', 'Regime, health, squeezes and the live liquidation tape', 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z'],
+      ['regimes', 'Market Regimes', 'Short-term HMM regime for the market and every perp', 'M12 21a9 9 0 1 1 9-9M12 16a4 4 0 1 1 4-4M12 12h.01'],
+      ['perps', 'Perp Regimes', 'HMM regime, confidence and filters for every perp', 'M4 4h4v4H4zM10 4h4v4h-4zM16 4h4v4h-4zM4 10h4v4H4zM10 10h4v4h-4zM16 10h4v4h-4zM4 16h4v4H4zM10 16h4v4h-4z'],
+      ['cycle', 'Cycle Regimes', 'Long-horizon cycle phase, ring and playbook', 'M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5'],
+      ['gamma', 'Quant Gamma', 'Dealer GEX analog: flip levels, gamma profile, positioning', 'M18 5H6l6 7-6 7h12'],
+      ['volume', 'Volume Scanner', '24h notional vs 30-day baseline for every perp', 'M5 20V11M10 20V5M15 20v-6M20 20V8'],
+      ['books', 'Order Books', 'Depth, spreads, live L2 ladder and OI divergence', 'M12 3l9 5-9 5-9-5zM3 12.5l9 5 9-5M3 17l9 5 9-5'],
+      ['liqs', 'Liquidations', 'Rolling totals, heatmap, exchanges and the live tape', 'M12 22c4 0 7-3 7-7 0-4-3-6-4-9-1 2-2 3-3 3 0-2 0-4-2-6-2 3-5 6-5 12 0 4 3 7 7 7z'],
+      ['calendar', 'Calendar', 'Event risk, unlocks, macro prints and depegs', 'M4 6h16v15H4zM4 10h16M8 3v4M16 3v4']
+    ];
+    const go = id => () => { try { localStorage.setItem('cq.page', id); } catch (e) {} this.setState({ page: id }); const el = this.scrollRef.current; if (el) el.scrollTop = 0; };
+    const pg = {}; PAGES.forEach(p => { pg[p[0]] = st.page === p[0]; });
+    const cur = PAGES.find(p => p[0] === st.page) || PAGES[0];
+    const CQ = window.CQ;
+    const A = (hex, a) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')'; };
+    const badges = {};
+    const ui = { sb: st.sb !== false, live: st.live !== false, motion: st.motion !== false, rows: st.rows ?? (P.tapeRows ?? 28) };
+    const save = o => { this.setState(o, () => { try { const s2 = this.state; localStorage.setItem('cq.ui', JSON.stringify({ sb: s2.sb, live: s2.live, motion: s2.motion, rows: s2.rows })); } catch (e) {} }); };
+    if (window.CQ) { window.CQ.paused = !ui.live; window.CQ.ui = { motion: ui.motion }; }
+    const sw = {}; ['live', 'motion'].forEach(k => { sw[k] = { bg: ui[k] ? '#4c9bff' : '#1f2833', tx: ui[k] ? 'translateX(14px)' : 'none' }; });
+    const out = { showHeader: st.page !== 'overview', sbOpen: ui.sb, sbClosed: !ui.sb, sbW: ui.sb ? '224px' : '64px', sbJust: ui.sb ? 'flex-start' : 'center', popLeft: ui.sb ? '234px' : '74px', settingsOpen: st.settingsOpen, toggleSb: () => save({ sb: !ui.sb }), toggleSettings: () => this.setState(s => ({ settingsOpen: !s.settingsOpen })), toggleSbBg: 'transparent', toggleSettingsBg: st.settingsOpen ? 'rgba(76,155,255,0.12)' : 'transparent', sw, set: { live: () => save({ live: !ui.live }), motion: () => save({ motion: !ui.motion }) }, rowOpts: [16, 28, 40, 60].map(n => ({ n, bg: ui.rows === n ? '#1a2230' : 'transparent', c: ui.rows === n ? '#eef3f8' : '#8b98a9', onClick: () => save({ rows: n }) })), scrollRef: this.scrollRef, pg, pageTitle: cur[1], pageSub: cur[2], kpiSparks: P.kpiSparks ?? true, goCycle: go('cycle'), goLiqs: go('liqs'), goTo: { regimes: go('regimes'), cycle: go('cycle'), gamma: go('gamma'), volume: go('volume'), books: go('books'), liqs: go('liqs'), calendar: go('calendar') } };
+    if (CQ) {
+      const S0 = CQ.state, n0 = Date.now();
+      badges.regimes = [S0.regime.code, '#4c9bff']; badges.perps = [S0.regimeCoins.length + '', '#8b98a9']; badges.cycle = [S0.cycle.phase + '/10', '#ff7a3d'];
+      badges.volume = [S0.volRows.filter(r => r.band === 'extreme' || r.band === 'surging').length + ' hot', '#ff7a3d'];
+      badges.liqs = [S0.tape.filter(e => n0 - e.ts < 60000).length + '/m', '#ff5c6c'];
+      const td = S0.events.find(e => e.day === 0 && e.type === 'Macro'); if (td) badges.calendar = [td.size, '#ffb547'];
+    }
+    out.nav = PAGES.map(p => { const on = st.page === p[0], b = badges[p[0]]; return { label: p[1], icon: p[3], onClick: go(p[0]), bg: on ? 'rgba(76,155,255,0.09)' : 'transparent', color: on ? '#eef3f8' : '#8b98a9', ic: on ? '#4c9bff' : '#56626f', bar: on ? '#4c9bff' : 'transparent', badge: b ? b[0] : '', bc: b ? b[1] : '#5b6878', bbg: b ? A(b[1], 0.1) : 'transparent', hasBadge: !!b, showBadge: !!b && ui.sb }; });
+    if (!CQ) return out;
+
+    const S = CQ.state, f = CQ.fmt, C = CQ.C, REG = CQ.REG, BAND = CQ.BAND, now = Date.now(), el = (now - S.t0) / 1000;
+    const ago = {}; Object.entries({ regime: 720, health: 120, cycle: 1200, liq: 240, squeeze: 24, model: 1320, grid: 120, gamma: 120, volume: 21, depth: 120, heat: 60, exch: 180, risk: 1320, cal: 2820 }).forEach(([k, v]) => { ago[k] = f.ago(v + el); });
+    const d = new Date(now), ss = S.status;
+    Object.assign(out, { ago, clock: [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()].map(n => String(n).padStart(2, '0')).join(':'), rate: Math.round(ss.rate), budget: ss.budget, budgetW: Math.round(ss.budget / ss.budgetMax * 100) + '%', plan: ss.plan });
+    out.kpis = S.kpis.map(k => { const h = S.kpiHist[k.key], dl = (k.v - h[0]) / h[0] * 100, c = dl >= 0 ? C.long : C.short; return { label: k.label, val: k.f(k.v), delta: (dl >= 0 ? '▲ ' : '▼ ') + Math.abs(dl).toFixed(2) + '%', dc: c, sc: c, src: 'kpiHist.' + k.key }; });
+
+    const R = S.regime;
+    out.regime = { name: R.name, code: R.code, conf: R.conf + '%', raw: R.raw + '%', inRegime: f.dur(R.inRegime), volSpike: R.volSpike.toFixed(1) + '%', drop5: R.drop5.toFixed(1) + '%', volSpikeW: R.volSpike * 5 + '%', drop5W: R.drop5 * 5 + '%', p5: R.p5, p50: R.p50, p95: R.p95, headConf: R.headConf + '%', barAge: R.barAge + 'm' };
+    out.outcome = R.outcome.map(o => ({ k: o.k, c: o.c, v: o.v, pct: o.v + '%' }));
+    out.next24 = R.next24.map(n => ({ k: n.k, v: n.v, pct: n.v + '%', c: REG[n.code].color }));
+    const blues = ['#2f6fd6', '#4c9bff', '#9fd0ff'];
+    out.volMix = R.vol.map((o, i) => ({ k: o.k, v: o.v, pct: o.v + '%', c: blues[i] }));
+    out.liqMix = R.liqRisk.map((o, i) => ({ k: o.k, v: o.v, pct: o.v + '%', c: blues[i] }));
+    out.model = S.model.map(([k, v]) => ({ k, v, mono: k === 'sha256', ok: k === 'Status', plain: k !== 'sha256' && k !== 'Status' }));
+    out.health = S.health.map(h => ({ k: h.k, v: h.v, c: h.c, tag: h.tag, bg: A(h.c, 0.1), bd: A(h.c, 0.35) }));
+
+    const cy = S.cycle, cp = cy.phases[cy.phase - 1];
+    out.cycle = { name: cp.name, sub: cy.sub, group: cp.group, phase: cy.phase, of: cy.phases.length, since: cy.since, daysIn: cy.daysIn, prog: Math.round(cy.progress * 100) + '%' };
+    out.cyclePhases = cy.phases.map(p => { const on = p.n === cy.phase; return { n: String(p.n).padStart(2, '0'), name: p.name, group: p.group, c: p.c, bg: on ? A(p.c, 0.1) : 'transparent', bd: on ? A(p.c, 0.6) : '#17202b', op: on ? 1 : (p.n < cy.phase ? 0.8 : 0.55), bar: on ? p.c : A(p.c, 0.45) }; });
+    out.cycleHist = cy.history.map(h => { const p = cy.phases[h.p - 1]; return { n: 'P' + String(h.p).padStart(2, '0'), d: h.d + 'd', g: h.d, bg: A(p.c, h.p === cy.phase ? 0.55 : 0.22) }; });
+    out.cycleHistTotal = cy.history.reduce((a, h) => a + h.d, 0) + ' days';
+    out.playbook = cy.playbook;
+
+    out.liqRoll = S.liqRolling.map(w => { const t = w.L + w.S, lp = Math.round(w.L / t * 100); return { k: w.k, label: 'Last ' + w.k, total: f.usd(t), L: f.usd(w.L), S: f.usd(w.S), lp: lp + '%', sp: (100 - lp) + '%', lw: lp + '%' }; });
+    const sq = S.squeeze, al = sq.coins.filter(c => c.sev >= sq.threshold);
+    out.squeezeMsg = 'No one-sided cascades in the last ' + sq.window + '. ' + al.length + ' coins evaluated at severity ' + sq.threshold + '% or more (' + sq.venues + ' aggregate).';
+    out.squeezeTop = [...sq.coins].sort((a, b) => b.sev - a.sev).slice(0, 6).map(c => { const hot = c.sev >= sq.threshold, col = hot ? (c.side === 'L' ? C.long : C.short) : '#56626f'; return { coin: c.coin, sev: Math.round(c.sev) + '%', w: Math.min(100, c.sev / 60 * 100) + '%', c: col, tc: hot ? '#e6edf5' : '#8b98a9' }; });
+    out.sqThreshW = sq.threshold / 60 * 100 + '%';
+
+    const src = st.paused && st.frozen ? st.frozen : S.tape, cf = st.tapeCoin.trim().toUpperCase(), mn = +st.tapeMin || 0, nRows = ui.rows;
+    const filt = src.filter(e => (!cf || cf === 'ALL' || e.coin.includes(cf)) && e.size >= mn);
+    out.tapeRows = filt.slice(0, nRows).map(e => { const age = (now - e.ts) / 1000, c = e.side === 'L' ? C.long : C.short, fresh = !st.paused && age < 2.2; return { time: f.time(e.ts), coin: e.coin, side: e.side === 'L' ? 'L long' : 'S short', sc: c, size: f.usd(e.size), sw: Math.max(4, Math.min(100, Math.log10(e.size / 100) / 3.4 * 100)) + '%', sbg: A(c, e.size >= 10000 ? 0.3 : 0.12), venue: e.venue, bg: fresh ? A(c, 0.15) : 'rgba(0,0,0,0)', fw: e.size >= 10000 ? 600 : 400 }; });
+    const sumL = filt.filter(e => e.side === 'L').reduce((a, e) => a + e.size, 0), sumS = filt.filter(e => e.side === 'S').reduce((a, e) => a + e.size, 0);
+    out.tapeStats = { buffered: filt.length, L: f.usd(sumL), S: f.usd(sumS) };
+    Object.assign(out, { tapeCoin: st.tapeCoin, tapeMin: st.tapeMin, live: !st.paused, pauseLabel: st.paused ? 'Resume' : 'Pause', liveLabel: st.paused ? 'PAUSED' : 'LIVE', tapeEmpty: out.tapeRows.length === 0 });
+    out.onTapeCoin = e => set({ tapeCoin: e.target.value }); out.onTapeMin = e => set({ tapeMin: e.target.value });
+    out.togglePause = () => this.setState(s => ({ paused: !s.paused, frozen: !s.paused ? S.tape.slice() : null }));
+
+    const q = st.rgSearch.trim().toUpperCase(), rmin = +st.rgMin || 0, warming = [{ coin: 'XAN', code: 'RANGE', conf: 31, w: 1 }, { coin: 'NIGHT', code: 'RANGE', conf: 27, w: 1 }];
+    const allC = st.rgHide ? S.regimeCoins : S.regimeCoins.concat(warming), tot = allC.length;
+    out.rgGroups = S.regimeOrder.map(code => {
+      const col = REG[code].color, all = allC.filter(c => c.code === code);
+      const tiles = all.filter(c => c.conf >= rmin).map(c => { const hit = !!q && c.coin.toUpperCase().includes(q); return { coin: c.coin, conf: c.conf + '%', bw: c.conf + '%', bg: A(col, 0.05 + c.conf / 100 * 0.18), bd: hit ? '#ffffff' : A(col, 0.18 + c.conf / 100 * 0.3), bs: c.w ? 'dashed' : 'solid', op: q && !hit ? 0.22 : 1, sh: hit ? '0 0 0 1px #fff, 0 0 22px ' + A(col, 0.7) : 'none', c: col }; });
+      return { code, label: REG[code].label, c: col, cbg: A(col, 0.4), count: all.length, pct: Math.round(all.length / tot * 100) + '%', tiles, empty: tiles.length === 0, w: all.length, focusBg: st.rgFocus === code ? A(col, 0.16) : 'transparent', focusBd: st.rgFocus === code ? col : '#1c2531', onFocus: () => this.setState(s => ({ rgFocus: s.rgFocus === code ? '' : code })) };
+    });
+    out.rgGrid = out.rgGroups.slice().sort((a, b) => (a.empty ? 1 : 0) - (b.empty ? 1 : 0));
+    Object.assign(out, { rgCount: tot + ' of 178 perps · universe 178 · horizon 24h', rgSearch: st.rgSearch, rgMin: st.rgMin, rgHide: st.rgHide, rgFocus: st.rgFocus, rgHasQuery: !!(q || st.rgFocus) });
+    out.onRgSearch = e => set({ rgSearch: e.target.value }); out.onRgMin = e => set({ rgMin: e.target.value }); out.onRgHide = e => set({ rgHide: e.target.checked }); out.rgClear = () => set({ rgSearch: '', rgFocus: '' });
+
+    const gm = S.gamma, gc = st.gCoin, g = gm.coins[gc];
+    out.gCards = gm.order.map(c => { const x = gm.coins[c], p = S.px[c], fp = (x.flip / p - 1) * 100, t = x.L + x.S, lp = Math.round(x.L / t * 100), on = c === gc; return { coin: c, price: f.px(p), inv: (x.inv < 0 ? 'S −' : 'L +') + f.usd(Math.abs(x.inv)), invC: x.inv < 0 ? C.short : C.long, flip: f.px(x.flip), flipPct: (fp > 0 ? '+' : '') + fp.toFixed(1) + '%', dealers: x.dealers, funding: x.funding.toFixed(4) + '%/h', L: f.usd(x.L), S: f.usd(x.S), lp: lp + '%', sp: (100 - lp) + '%', lw: lp + '%', bd: on ? A(C.blue, 0.65) : '#17202b', bg: on ? 'rgba(76,155,255,0.06)' : '#0b0f14', sh: on ? '0 0 0 1px rgba(76,155,255,0.25), 0 14px 40px -14px rgba(76,155,255,0.45)' : 'none', onClick: () => set({ gCoin: c }) }; });
+    out.gCoin = gc;
+    out.gSel = { coin: gc, score: g.score.toFixed(2), conf: g.conf.toFixed(2), fuel: g.fuel, since: g.since, note: g.note };
+    out.gPct = gm.pctLabels.map((l, i) => ({ label: l, p: 'p' + g.pct[i], left: g.pct[i] + '%', c: g.pct[i] > 80 || g.pct[i] < 20 ? C.amber : C.blue }));
+    const cls = CQ.genClusters(gc), cmax = Math.max(...cls.map(c => c[3]));
+    out.gClusters = cls.map(([p, dd, side, n, acc]) => { const c = side === 'L' ? C.long : C.short, w = Math.abs(dd) / 2.5 * 50; return { price: f.px(p), d: (dd > 0 ? '+' : '') + dd.toFixed(2) + '%', side: side === 'L' ? 'L long' : 'S short', c, n: f.usd(n), nw: (n / cmax * 100) + '%', nbg: A(c, 0.35), acc, dl: dd < 0 ? (50 - w) + '%' : '50%', dw: w + '%' }; });
+    Object.assign(out, { g3d: st.gTab === '3d', gCurve: st.gTab === 'curve', tab3d: () => set({ gTab: '3d' }), tabCurve: () => set({ gTab: 'curve' }), t3bg: st.gTab === '3d' ? '#1a2230' : 'transparent', t3c: st.gTab === '3d' ? '#eef3f8' : '#8b98a9', tcbg: st.gTab === 'curve' ? '#1a2230' : 'transparent', tcc: st.gTab === 'curve' ? '#eef3f8' : '#8b98a9' });
+
+    const vq = st.vSearch.trim().toUpperCase(), vmin = +st.vMin || 0, sk = st.vSort, dir = st.vDir;
+    const vr = S.volRows.filter(r => (!vq || r.coin.includes(vq)) && (st.vBand === 'All bands' || r.band === st.vBand) && r.mult >= vmin).sort((a, b) => { const x = a[sk], y = b[sk]; return (typeof x === 'string' ? x.localeCompare(y) : x - y) * dir; });
+    out.vRows = vr.map(r => { const bc = BAND[r.band].c, open = st.vOpen === r.coin; return { coin: r.coin, price: f.px(r.price), chg: f.pct(r.chg), chgC: r.chg >= 0 ? C.long : C.short, n24: f.usd(r.n24), dDay: f.pct(r.dDay), dDayC: r.dDay >= 0 ? C.long : C.short, spark: r.s7.map(v => v.toFixed(3)).join(','), sparkC: r.mult >= 2 ? bc : '#4c9bff', mean: f.usd(r.mean), med: f.usd(r.med), mult: r.mult.toFixed(2) + '×', multC: r.mult >= 2 ? bc : '#e6edf5', multW: Math.max(2, Math.min(100, Math.log(r.mult / 0.35) / Math.log(14 / 0.35) * 100)) + '%', mbg: bc, oi: f.usd(r.oi), band: r.band, bc, bbg: A(bc, 0.1), bbd: A(bc, 0.4), open, rowBg: open ? 'rgba(76,155,255,0.07)' : 'transparent', s30: r.s30.map(v => (v * r.mean).toFixed(0)).join(','), refMean: Math.round(r.mean), onClick: () => this.setState(s => ({ vOpen: s.vOpen === r.coin ? '' : r.coin })) }; });
+    out.vArrow = {}; out.vSortBy = {};
+    ['coin', 'price', 'chg', 'n24', 'dDay', 'mean', 'med', 'mult', 'oi'].forEach(k => { out.vArrow[k] = st.vSort === k ? (st.vDir < 0 ? '↓' : '↑') : '↕'; out.vSortBy[k] = () => this.setState(s => ({ vSort: k, vDir: s.vSort === k ? -s.vDir : -1 })); });
+    Object.assign(out, { vSearch: st.vSearch, vBand: st.vBand, vMin: st.vMin, vOpen: st.vOpen, vShown: vr.length + ' shown · click a row or bubble for the 30-day series', vEmpty: vr.length === 0 });
+    out.onVSearch = e => set({ vSearch: e.target.value }); out.onVBand = e => set({ vBand: e.target.value }); out.onVMin = e => set({ vMin: e.target.value });
+    const vs = S.volStats;
+    out.vStats = [{ k: 'Total 24h notional', v: f.usd(vs.total), s: vs.perps + ' perps, ' + vs.perps + ' with a baseline' }, { k: 'Market multiplier', v: vs.mult.toFixed(2) + '×', s: 'Universe 24h vs 30-day mean' }, { k: 'At 2× or more', v: String(vs.at2x), s: 'Perps trading 2× their 30d mean' }, { k: 'Surging or extreme', v: String(vs.surging), s: 'CDA band count' }, { k: 'Most active vs normal', v: vs.top + ' ' + vs.topMult + '×', s: f.usd(vs.topN) + ' vs ' + f.usd(vs.topMean) + ' mean' }];
+    out.vBands = ['extreme', 'surging', 'elevated', 'normal', 'quiet'].map(b => ({ b, c: BAND[b].c, n: S.volRows.filter(r => r.band === b).length, bg: st.vBand === b ? A(BAND[b].c, 0.15) : 'transparent', bd: st.vBand === b ? BAND[b].c : '#1c2531', onClick: () => this.setState(s => ({ vBand: s.vBand === b ? 'All bands' : b })) }));
+
+    const bk = S.books, fr = S.bookRows.find(b => b.coin === bk.focus), rc = S.regimeCoins.find(c => c.coin === bk.focus);
+    const bq = st.bkSearch.trim().toUpperCase(), bkF = S.bookRows.filter(b => !bq || b.coin.includes(bq));
+    out.bookRows = bkF.map(b => { const on = b.coin === bk.focus, ic = b.imb >= 0 ? C.long : C.short, iw = Math.min(50, Math.abs(b.imb) * 80), lq = b.liq === 'Deep' ? ['Deep book', C.long] : b.liq === 'Withdrawal' ? ['Depth withdrawal', C.orange] : ['Neutral', '#8b98a9']; return { coin: b.coin, mid: f.px(S.px[b.coin]), spread: b.spread.toFixed(2), d10: (b.sat10 ? '≥' : '') + f.usd(b.d10), d25: (b.sat25 ? '≥' : '') + f.usd(b.d25), d100: (b.sat100 ? '≥' : '') + f.usd(b.d100), imb: (b.imb > 0 ? '+' : '') + b.imb.toFixed(2), ic, il: b.imb >= 0 ? '50%' : (50 - iw) + '%', iw: iw + '%', oi: f.usd(b.oi), liq: lq[0], lc: lq[1], lbg: A(lq[1], 0.1), lbd: A(lq[1], 0.4), hmm: b.hmm, hc: REG[b.hmm].color, bg: on ? 'rgba(76,155,255,0.08)' : 'transparent', bar: on ? C.blue : 'transparent', onClick: () => CQ.setFocus(b.coin) }; });
+    out.focus = { coin: bk.focus, hmm: fr.hmm, hmmLabel: REG[fr.hmm].label, hc: REG[fr.hmm].color, hbg: A(REG[fr.hmm].color, 0.1), hbd: A(REG[fr.hmm].color, 0.4), conf: rc ? rc.conf + '%' : '—', liq: fr.liq === 'Deep' ? 'Deep book' : fr.liq === 'Withdrawal' ? 'Depth withdrawal' : 'Neutral', bid25: f.usd(fr.d25 * (1 + fr.imb) / 2), ask25: f.usd(fr.d25 * (1 - fr.imb) / 2), sat: fr.sat10, spread: fr.spread.toFixed(2) + ' bps', mid: f.px(S.px[bk.focus]) };
+    Object.assign(out, { bkSearch: st.bkSearch, onBkSearch: e => set({ bkSearch: e.target.value }), bkShown: bkF.length + ' of ' + S.bookRows.length + ' books · click a row to focus', bkEmpty: bkF.length === 0, hideImg: e => { e.target.style.opacity = 0; }, showImg: e => { e.target.style.opacity = 1; } });
+    out.focus.logoBg = 'url(https://app.hyperliquid.xyz/coins/' + bk.focus + '.svg)'; out.focus.mono = bk.focus.slice(0, 3);
+    out.bookChips = ['BTC', 'ETH', 'SOL', 'HYPE', 'XRP', 'SUI', 'ZEC', 'PUMP'].map(c => ({ c, bg: c === bk.focus ? '#1a2230' : 'transparent', col: c === bk.focus ? '#eef3f8' : '#8b98a9', bd: c === bk.focus ? '#2f3d50' : '#1c2531', onClick: () => CQ.setFocus(c) }));
+
+    const items = S.liqHeat.map(h => ({ ...h, a: Math.pow(h.v, 0.6) })).sort((a, b) => b.a - a.a), VW = 240, VH = 100, sA = items.reduce((a, b) => a + b.a, 0);
+    items.forEach(it => { it.a = it.a / sA * VW * VH; });
+    const hmax = items[0].v;
+    out.heat = this.squarify(items, VW, VH).map(r => { const c = r.l >= 50 ? C.long : C.short, k = Math.sqrt(r.v / hmax), big = r.w > 26 && r.h > 17; return { coin: r.coin, v: f.usd(r.v), l: 'L ' + r.l + '%', s: 'S ' + (100 - r.l) + '%', lw: r.l + '%', x: (r.x / VW * 100) + '%', y: (r.y / VH * 100) + '%', w: (r.w / VW * 100) + '%', h: (r.h / VH * 100) + '%', bg: A(c, 0.06 + k * 0.3), bd: A(c, 0.22 + k * 0.45), big, small: !big, fs: r.w > 50 ? '15px' : '12px' }; });
+    const ex = S.byExchange, exMax = Math.ceil(Math.max(...ex.map(e => e.L + e.S)) / 80e3) * 80e3;
+    out.exRows = ex.map(e => ({ k: e.k, L: f.usd(e.L), S: f.usd(e.S), T: f.usd(e.L + e.S), lw: (e.L / exMax * 100) + '%', sw: (e.S / exMax * 100) + '%' }));
+    out.exTicks = [0, 1, 2, 3, 4].map(i => ({ t: f.usd(exMax * i / 4) }));
+
+    const cal = S.calendar;
+    out.cal = { score: cal.score, label: cal.label, next7: cal.next7, next30: cal.next30, total: cal.total, scoreExact: cal.scoreExact };
+    out.calMix = cal.mix.map(m => ({ k: m.k, v: m.v, c: m.c }));
+    out.calSub = cal.sub.map(s => ({ k: s.k, v: s.v.toFixed(1), w: s.v + '%' }));
+    const cs = st.calSym.trim().toUpperCase(), cmn = +st.calMag || 0;
+    const evs = S.events.filter(e => (st.calType === 'All types' || e.type === st.calType) && (st.calBias === 'Any bias' || (st.calBias === 'risk flag' ? e.bias === 'risk' : e.bias === st.calBias)) && (!cs || cs === 'ANY' || e.sym.toUpperCase().includes(cs)) && e.mag >= cmn);
+    out.calRows = evs.map(e => { const tc = e.type === 'Macro' ? C.amber : e.type === 'Depeg' ? C.short : C.violet, bc = e.bias === 'risk' ? C.amber : e.bias === 'short' ? C.short : '#8b98a9'; return { date: e.date, rel: e.rel, type: e.type, tc, name: e.name, sym: e.sym, chip: e.sym !== 'market-wide', plain: e.sym === 'market-wide', bias: e.bias === 'risk' ? 'risk flag' : e.bias, bc, bbg: A(bc, 0.1), bbd: A(bc, 0.4), mag: e.mag.toFixed(2), mw: e.mag * 100 + '%', mc: e.mag >= 0.5 ? C.amber : C.blue, size: e.size, src: e.src, rowBg: e.day === 0 ? 'rgba(255,181,71,0.045)' : 'transparent' }; });
+    Object.assign(out, { calCount: 'UPCOMING (' + evs.length + ')', calType: st.calType, calBias: st.calBias, calSym: st.calSym, calMag: st.calMag, calEmpty: evs.length === 0 });
+    out.onCalType = e => set({ calType: e.target.value }); out.onCalBias = e => set({ calBias: e.target.value }); out.onCalSym = e => set({ calSym: e.target.value }); out.onCalMag = e => set({ calMag: e.target.value });
+    return out;
+  }
+}
+</script>
+</body>
+</html>
