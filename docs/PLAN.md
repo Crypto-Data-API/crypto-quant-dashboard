@@ -20,7 +20,7 @@ Updated 2026-10-14: the key is **Pro Plus** (confirmed via `GET /api/v1/auth/key
 | Key introspection | `GET /api/v1/auth/keys/me` reports tier, per-minute and daily limits, and account-wide `requests_today` | The worker reads it every 10 minutes: it caps the limiter at the key's per-minute limit minus 2, caps our daily budget at 95% of the key's daily limit, pauses if the whole account nears its limit, and skips endpoints above the key's tier without spending a call. |
 | Live stream | `GET /api/v1/stream` (SSE), Pro and Pro Plus, max 3 concurrent streams per key | Server opens one SSE connection to CDA and fans out to all browser clients over our own SSE endpoint. |
 | Pro-gated endpoints | regimes, GEX, whales, depth, positioning return 403 on Free | Poller handles 403 gracefully and shows a "Higher plan required" state rather than retry-spamming. |
-| Pro Plus only | `/quant/history`, `/quant/regimes/history`, `/quant/whales/history`, `/quant/positioning/ladder`, `/backtesting/*` | **Available on this key, so Phase 3 is unblocked.** `quant-history`, `quant-whales-history` and `positioning-ladder` are already in the dataset registry as on-demand datasets (no polling cost until a page reads them). |
+| Pro Plus only | `/quant/history`, `/quant/regimes/history`, `/quant/whales/history`, `/quant/positioning/ladder`, `/backtesting/*` | **Available on this key, so Phase 2 is unblocked.** `quant-history`, `quant-whales-history` and `positioning-ladder` are already in the dataset registry as on-demand datasets (no polling cost until a page reads them). |
 | Refresh cadences | Regimes 15 min, GEX/whales/depth ~5 min, liquidations rolling, calendar daily | Poll each dataset at its native cadence; faster polling buys nothing. |
 
 ### Polling budget (Pro key, steady state)
@@ -51,7 +51,7 @@ The table above was the original Pro estimate (~350/hour). As built, the schedul
 298 calls/hour (7,152/day) because GEX and positioning use one comma-list call each and several
 endpoints were merged. Against the Pro Plus key that is about 14% of the 50,000/day allowance and
 about a quarter of the dashboard's 30,000/day budget, so on-demand reads (L2 book, drawers, depth
-history, and the Phase 3 history endpoints) have ample room. The header's budget meter shows both
+history, and the Phase 2 history endpoints) have ample room. The header's budget meter shows both
 the dashboard's calls today and the whole key's usage. Liquidation fills arrive live over SSE
 anyway, so the REST poll for liquidations only refreshes the rolling-window totals.
 
@@ -136,16 +136,6 @@ Source: `/event/regime`, `/event/calendar`, `/event/regime/{symbol}`, `/supply/u
 - Upcoming catalysts table: date, type (unlock / macro / depeg / mint-burn), event, bias, magnitude, source. Filters by type, symbol, bias, min magnitude.
 - Recent catalysts list. Per-symbol overlay in the coin drawer.
 
-### 3.8 Extras worth adding (all available on Pro)
-- **Whale Radar** (`/quant/whales`): positioning of accounts at $100k or more, directional net excluding MMs, top coins by whale notional, class split. Pairs naturally with GEX.
-- **Live Event Stream page** (`/stream`): unified real-time feed of liquidations, $1M+ whale transfers, top-trader position changes, funding prints, OI jumps and 1-min price moves. The most exciting single surface the API offers, from one SSE connection.
-- **Top Traders / Copy Signals** (`/hyperliquid/top-traders`, `/copy-signals`, `/wallet-signals`): leaderboard and position-change signals.
-- **Funding & OI** (`/derivatives/summary`, `/hyperliquid/funding-rates`, `/open-interest`): cross-exchange funding table with extremes highlighted.
-- **Volatility Index** (`/volatility/index`, `/volatility/implied`): CVI per coin and BTC/ETH implied vol.
-- **Sentiment strip**: Fear & Greed, stablecoin dry powder, Coinbase premium, ETF flows.
-- **Market-moving news** (`/news/market-moving`, `/news/pulse`): scored headlines, shown next to the liquidation tape so cause and effect sit together.
-- **Technical screener** (`/indicators/technical`, `/indicators/heatmap`): MA state and RSI extremes across the universe.
-
 ---
 
 ## 4. Phased delivery
@@ -161,16 +151,11 @@ Source: `/event/regime`, `/event/calendar`, `/event/regime/{symbol}`, `/supply/u
 Build in this order, since each reuses the previous: Market Regimes, Long-term Regimes, Volume
 Scanner, Liquidations (with live tape), Order Books, Quant Gamma, Calendar.
 
-### Phase 2: Extras and polish
-Whale Radar, Live Stream page, Funding/OI, Volatility, Sentiment strip, News. A coin drawer that
-aggregates everything for one symbol (regime, GEX, whales, depth, liquidations, calendar overlay,
-news). Watchlist in localStorage. Mobile layout pass.
-
-### Phase 3: History and backtesting (requires Pro Plus)
+### Phase 2: History and backtesting (requires Pro Plus)
 **Unblocked (2026-10-14):** the key is Pro Plus, so every endpoint below is available today.
 `quant-history`, `quant-whales-history` and `positioning-ladder` are already registered as
 on-demand datasets with schemas checked against real responses (docs/samples/), so the first
-Phase 3 pages only need UI. The ladder's bins share the GEX profile-bin shape, so the existing
+Phase 2 pages only need UI. The ladder's bins share the GEX profile-bin shape, so the existing
 gamma profile chart can render it.
 
 Regime timeline since 2020, GEX/whale history charts, positioning ladder, liquidation density
@@ -180,9 +165,8 @@ archives, and a "what the model said vs what happened" scorecard from `/quant/hi
 
 ## 5. Open questions
 
-1. **Tier**: resolved. The key is Pro Plus, so Phase 3 (history and backtesting) is unblocked and
-   can move up. Three Pro Plus endpoints are already registered as on-demand datasets; open
-   question is only ordering versus the Phase 2 extras.
+1. **Tier**: resolved. The key is Pro Plus, so Phase 2 (history and backtesting) is unblocked and
+   is the next build. Three Pro Plus endpoints are already registered as on-demand datasets.
 2. **Audience**: private tool or public? Public changes nothing in the data layer (the cache already
    isolates CDA from user count) but adds auth, abuse protection and attribution to CDA.
 3. **Hosting**: Vercel + Fly.io as proposed, or a single VPS running everything?

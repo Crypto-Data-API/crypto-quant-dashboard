@@ -5,9 +5,8 @@ A real-time quant dashboard for Hyperliquid perps and the wider crypto market, p
 API or its live event stream; the app does not model anything CDA already computes.
 
 **Status:** Phase 0 (foundation) and Phase 1 (the seven pages) from [docs/PLAN.md](docs/PLAN.md)
-are built and verified against live data with a Pro Plus key. Phase 2 extras are not started.
-Phase 3 (history and backtesting) is unblocked by the Pro Plus key; its first three datasets are
-already registered.
+are built and verified against live data with a Pro Plus key. Phase 2 (history and
+backtesting) is unblocked by the Pro Plus key; its first three datasets are already registered.
 
 | Route | Page | Main CDA sources |
 |---|---|---|
@@ -184,7 +183,7 @@ enforced in four layers.
 Scheduled load at the registry's intervals is **298 calls/hour (7,152/day)**, about a quarter of the
 dashboard's budget. The L2 ladder is the most expensive on-demand dataset at 240 calls/hour while
 the order-book page is open. Intervals follow CDA's own refresh cadences, so the extra Pro Plus
-headroom is left for on-demand reads and Phase 3 rather than spent on faster polling.
+headroom is left for on-demand reads and Phase 2 rather than spent on faster polling.
 
 | Dataset | Endpoint | Interval | Calls/hour |
 |---|---|---|---|
@@ -210,7 +209,7 @@ headroom is left for on-demand reads and Phase 3 rather than spent on faster pol
 
 On-demand datasets: `quant-coin` (5 min), `quant-gex-coin` (5 min), `gex-history` (30 min),
 `volume-detail` (10 min), `l2-book` (15 s), `depth-history` (2 min), `event-symbol` (30 min), and the
-Pro Plus `quant-history`, `quant-whales-history` and `positioning-ladder` (registered for Phase 3,
+Pro Plus `quant-history`, `quant-whales-history` and `positioning-ladder` (registered for Phase 2,
 not yet used by a page). At most 16 run at once (`ON_DEMAND_MAX`). Tune intervals in
 [packages/schemas/src/datasets.ts](packages/schemas/src/datasets.ts); `budgetPerHour()` recomputes
 the scheduled total.
@@ -298,8 +297,7 @@ crypto-quant-dashboard/
   thin-coverage coins stay nullable; a mismatch is logged as drift, never dropped.
 - No `whale_position` stream event was captured yet, so its schema follows the endpoint
   description.
-- Phase 2 (whale radar, stream page, funding/OI, volatility, sentiment, news, watchlist, mobile
-  pass) is not built. Phase 3 is unblocked by the Pro Plus key; no Phase 3 page exists yet.
+- Phase 2 (history and backtesting) is unblocked by the Pro Plus key; no Phase 2 page exists yet.
 
 ## License
 
