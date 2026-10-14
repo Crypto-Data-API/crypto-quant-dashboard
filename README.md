@@ -50,7 +50,17 @@ computes.
       <b>Calendar.</b> Thirty days of unlocks, macro prints and depegs as a runway toward now, with the event risk score and the catalyst table.
     </td>
     <td width="50%" valign="top">
-      <b>Also in the app:</b> Perp Regimes (the regime grid for every perp), News (the catalyst tape with CDA's bias and Jev's read), Setup (keys and a copyable agent prompt) and Settings.<br><br>
+      <a href="docs/screenshots/settings.png"><img src="docs/screenshots/settings.png" alt="Settings page"></a><br>
+      <b>Settings.</b> Display and live-feed toggles saved in this browser, the default focus coin, Jev's usage today and where the numbers on screen come from.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="docs/screenshots/setup.png"><img src="docs/screenshots/setup.png" alt="Setup page"></a><br>
+      <b>Setup.</b> Which keys are configured (never the keys themselves), what each one unlocks, and the agent prompt that clones, configures and starts the dashboard.
+    </td>
+    <td width="50%" valign="top">
+      <b>Also in the app:</b> Perp Regimes (the regime grid for every perp) and News (the catalyst tape with CDA's bias and Jev's read).<br><br>
       Screenshots are from a local instance with a Pro Plus key, 14 Oct 2026.
     </td>
   </tr>
@@ -73,10 +83,11 @@ computes.
 | `/setup` | Setup | none: keys, demo status and the agent prompt below |
 | `/settings` | Settings | none: display, live feed, Jev, data mode and key status |
 
-Every page shares the sidebar (live badges per page: current regime, perps tracked, cycle phase,
-hot perps, liquidations per minute, today's macro print; the stream-rate graph and a one-line Jev
-read in its footer), the status pills (worker and cache, plan, daily budget, stream rate, UTC
-clock, Jev) and the KPI row, whose sparklines show history the worker records every 5 minutes.
+Every page shares the sidebar: live badges per page (current regime, perps tracked, cycle phase,
+hot perps, liquidations per minute, today's macro print), a SYSTEM block (worker and cache, plan,
+daily API budget, UTC clock and Jev's market read) and the stream-rate graph. Every page but
+Overview also shows its title and the KPI tiles, whose sparklines show history the worker records
+every 5 minutes.
 Every panel shows a "data as of" time, a stale tag, and an explicit state when there is no data:
 waiting for the first poll, Pro plan required, key rejected, rate limited, daily budget reached,
 fetch failed, worker offline, or not in the demo data.
@@ -96,6 +107,8 @@ through small adapters instead of the prototype's mock engine. three.js loads on
 without 3D never download it.
 
 - Every 3D view orbits by drag and has a fullscreen button; auto-rotate follows the setting.
+- Status sits in the sidebar's SYSTEM block, as in the prototype. Overview opens straight onto
+  its views; the other pages add the page title and the KPI tiles.
 - Display settings live in the browser under `cq.ui`: sidebar, live feed (off freezes the tape
   and pauses the L2 ladder), auto-rotate, tape rows, default focus coin, Jev reads and KPI
   sparklines. The sidebar's Settings button opens the quick toggles; `/settings` has all of them
@@ -209,9 +222,9 @@ The dashboard runs without any key, from real responses saved in [docs/samples](
   reads. While CDA itself is in demo, Jev is not called even with a key, because it would only
   classify saved samples.
 - **Live tape.** The tape plays CDA's free `/api/v1/stream/delayed` preview at its original pace
-  (about 30 minutes behind; the stream pill reads Delayed). If the preview fails twice, the worker
-  replays the saved stream captures instead (the pill reads Replay) and retries the preview every
-  10 minutes. `STREAM_SOURCE=replay` forces the replay.
+  (about 30 minutes behind; the sidebar's STREAM label reads DELAYED). If the preview fails twice,
+  the worker replays the saved stream captures instead (the label reads REPLAY) and retries the
+  preview every 10 minutes. `STREAM_SOURCE=replay` forces the replay.
 - **Banner.** Every page shows a demo banner with the capture window and links to `/setup`, and
   `/api/status` reports `worker.demo`.
 - **KPI sparklines.** The keyless worker serves the KPI history a live worker recorded, saved in
@@ -246,7 +259,8 @@ and the deploy. It needs **Settings > Pages > Source: GitHub Actions** once per 
 - **Replayed tape.** The browser replays the saved stream captures itself, re-stamped to now.
 - **Capture times.** Panels show the "Demo sample" badge instead of an as-of time, so nothing turns
   stale; the badge tooltip gives the capture time.
-- **No server.** There are no `/api` routes; the status pill reads a static document.
+- **No server.** There are no `/api` routes; the sidebar's SYSTEM block reads a static status
+  document.
 
 ## Environment variables
 
@@ -292,7 +306,7 @@ Build-time only, for the static export: `NEXT_PUBLIC_DATA_MODE=static` (set by `
   | poller: dataset registry -> fetch -> Zod drift check -> envelope          |
   | stream relay: 1 SSE connection to CDA -> ring buffer (5,000 events)       |
   | demo: docs/samples -> seeded envelopes and stream replay when keyless     |
-  | KPI recorder: header KPIs from the cache every 5 min, 24h kept            |
+  | KPI recorder: KPI values from the cache every 5 min, 24h kept             |
   | HTTP :4100  /healthz  /status  /data/:dataset  /kpi-history  /stream      |
   ---------------------------------------------------------------------------
           | envelopes, heartbeat, call counters        ^ on-demand interest
@@ -303,7 +317,7 @@ Build-time only, for the static export: `NEXT_PUBLIC_DATA_MODE=static` (set by `
   apps/web (Next.js 15) ------------------------------------------------------
   | /api/data/[dataset]  reads Redis; falls back to the worker's /data        |
   | /api/status          worker heartbeat, budget, stream state and rate      |
-  | /api/kpi-history     recorded header KPIs (Redis, then the worker)        |
+  | /api/kpi-history     recorded KPI values (Redis, then the worker)         |
   | /api/stream          same-origin SSE proxy to the worker's /stream        |
   | pages: TanStack Query on /api/data, EventSource on /api/stream            |
   ---------------------------------------------------------------------------
@@ -326,7 +340,7 @@ Build-time only, for the static export: `NEXT_PUBLIC_DATA_MODE=static` (set by `
 - **Redis fallback.** If Redis is unset or down, the worker keeps an in-memory cache and the
   web app reads through the worker's `/data` route. If neither is reachable the UI shows
   "Worker offline".
-- **Recorded history.** CDA has no intraday history for the header KPIs, so the worker samples
+- **Recorded history.** CDA has no intraday history for the KPI tiles, so the worker samples
   them from its own cache every 5 minutes (no extra calls) and keeps 24 hours, in memory and in
   Redis. The stream hub reports events per minute for the last 40 minutes. Both start empty on a
   fresh install and fill in as the worker runs.
@@ -365,12 +379,12 @@ enforced in four layers.
    retried: the envelope records `unauthorized` or `pro_required` and the worker re-checks hourly.
 2. **Daily counter.** Every keyed HTTP attempt increments `cqd:calls:<UTC date>` plus per-dataset
    and per-status hashes (kept 3 days). A restarted worker reads today's count back from Redis.
-   The header's Budget pill shows calls used today.
+   The API budget row in the sidebar's SYSTEM block shows calls used today.
 3. **Governor (per day).** The worker compares calls used with a pace line (the daily budget spread
    evenly over the UTC day, plus 4% slack for startup). Ahead of the line it stretches every
    interval by 2x (4x past 95% of the budget). Within 25 calls of the budget, or when the whole
    key is within 1% of its daily limit, it pauses keyed polling until 00:00 UTC and panels show
-   "Daily budget reached". The Budget pill shows the dashboard's calls and the whole key's usage.
+   "Daily budget reached". The row's tooltip shows the dashboard's calls and the whole key's usage.
 
 Scheduled load at the registry's intervals is **327 calls/hour (7,848/day)**, about a quarter of the
 dashboard's budget. The L2 ladder is the most expensive on-demand dataset at 240 calls/hour while
@@ -440,9 +454,9 @@ caches the answers as three datasets. The web app reads them like any other data
 | `jev-squeeze` | Each active squeeze alert, with the coin's regime probabilities and liquidity regime | `cascade` noul: a genuine cascade likely to continue over the next hour | Every minute; one call per symbol, direction and UTC hour |
 | `jev-market-verdict` | Market regime, market health, cycle regime, news pulse top 10, squeeze summary, event risk | `stance` choice (risk_on, risk_off, neutral), `vol_expansion_24h` noul, `conviction` score 0 to 4 | Every 15 minutes |
 
-Where it shows, kept quiet: a muted "Jev · risk-off 62%" pill in the status row that opens the
-market read (stance, 24h vol expansion, conviction and a "what Jev saw" list of input as-of
-times), a one-line read in the sidebar footer, a small mark beside CDA's bias on each `/news` row
+Where it shows, kept quiet: one muted "Jev  risk-off 62%" row in the sidebar's SYSTEM block that
+opens the market read (stance, 24h vol expansion, conviction and a "what Jev saw" list of input
+as-of times), a small mark beside CDA's bias on each `/news` row
 (with "≠ CDA" when the direction differs from the sign of CDA's bias, and an agree/disagree
 filter), the same mark in coin drawers, and a cascade mark on squeeze alerts. Settings can hide
 all of it.
@@ -452,7 +466,7 @@ event, 1,100 for a squeeze alert and 2,700 for the market verdict. A quiet day i
 96 verdicts (260k tokens) plus a handful of new news events and alerts, so about 0.3M input tokens
 and 150 calls. The first run on a fresh Redis also classifies the whole 7-day news tape once (about
 33 events, 20k tokens). Daily calls and input tokens are counted (`cqd:jev:<date>:*` in Redis) and
-capped by `JEV_DAILY_CALLS` and `JEV_DAILY_INPUT_TOKENS`; the header's Jev pill and
+capped by `JEV_DAILY_CALLS` and `JEV_DAILY_INPUT_TOKENS`; `/settings` and
 `/api/status` (`jev` block) show the counts, the model and the last error.
 
 **Failures.** The SDK retries 408, 429 and 5xx with backoff and honours `Retry-After`; a 429 also
@@ -479,8 +493,8 @@ crypto-quant-dashboard/
     web/                    Next.js 15 App Router, Tailwind v4, shadcn-style UI, TanStack Query
       src/app/              pages and /api routes (route.api.ts: data, status, stream)
       src/cq/               ported prototype views: canvas charts, three.js scenes, adapters, theme
-      src/components/       app shell (sidebar, status pills, KPI row, settings popover, demo
-                            banner), Panel (freshness + states), ui primitives
+      src/components/       app shell (sidebar and its SYSTEM block, KPI tiles, settings popover,
+                            demo banner), Panel (freshness + states), ui primitives
       src/features/         one folder per page area (overview, market, regimes, gamma, volume,
                             books, liquidations, calendar, news, jev, setup, settings)
       src/lib/              hooks (datasets, stream, clock), live tape, settings (cq.ui), mode.ts
@@ -491,7 +505,7 @@ crypto-quant-dashboard/
       src/budget.ts         daily budget governor
       src/cache.ts          memory cache with Redis mirror, demand set, call counters
       src/demo.ts           keyless demo: loads docs/samples, seeds envelopes, stream replay events
-      src/kpi-history.ts    header KPI recorder (every 5 minutes, 24 hours kept)
+      src/kpi-history.ts    KPI tile recorder (every 5 minutes, 24 hours kept)
       src/stream/           CDA SSE relay, delayed preview, demo replay, fan-out hub
       src/jev/              TypeSafe Jev client (SDK wrapper), question sets, state builders, classifier
       src/http.ts           /healthz, /status, /data/:dataset, /stream
@@ -536,8 +550,8 @@ crypto-quant-dashboard/
 - **Depth heatmap from CDA's own history.** The ±50 bps heatmap uses
   `/liquidity/depth/{coin}?minutes=360` instead of snapshots we would have to accumulate, so it is
   complete the moment a coin is focused.
-- **Header KPI row.** None of the Phase 1 endpoints exposes total crypto market cap or total
-  24h volume. The row shows stablecoin market cap and Hyperliquid 24h volume in their place,
+- **KPI tiles.** None of the Phase 1 endpoints exposes total crypto market cap or total
+  24h volume. The tiles show stablecoin market cap and Hyperliquid 24h volume in their place,
   plus BTC dominance and 24h liquidations from `/regimes` signals, BTC OI across venues, Hyperliquid
   OI, the BTC long/short ratio, whale short share and Fear & Greed.
 - **Playbook leverage.** `/regimes` publishes directional bias and typical duration but no leverage
@@ -548,9 +562,10 @@ crypto-quant-dashboard/
   automatically from `/auth/keys/me` if the key's tier changes.
 - **Demo from saved responses.** Keyless runs and the static site show real captured data with a
   badge, rather than empty "API key not configured" panels.
-- **Status pills in the header.** The exported prototype moves worker, plan, budget and clock into
-  a sidebar block and leaves its KPI row empty; the app keeps the status pill row and the KPI row
-  with sparklines shown in the prototype's reference screenshots.
+- **Status in the sidebar.** As in the exported prototype, worker, plan, budget, clock and Jev's
+  read sit in the sidebar's SYSTEM block and Overview has no page header. The prototype's KPI row
+  is an empty template, so the other pages show KPI tiles with recorded sparklines in the style of
+  its reference screenshot (`docs/design/check.jpg`).
 - **Prototype numbers CDA lacks.** The squeeze radar plots only the coins CDA lists (those at or
   above the alert severity); the cycle view shows stability instead of "progress through phase"
   and CDA's bias, horizon, description and rationale instead of a written playbook; the liquidity
