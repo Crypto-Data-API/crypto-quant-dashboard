@@ -127,7 +127,7 @@ export class Poller {
     });
 
     if (!client.hasKey) {
-      log.warn("CDA_API_KEY is not set: keyed endpoints are skipped and panels show 'API key not configured'", {
+      log.warn(this.o.demo ? "CDA_API_KEY is not set: keyed endpoints are skipped and panels show the saved demo samples" : "CDA_API_KEY is not set: keyed endpoints are skipped and panels show 'API key not configured'", {
         skipped: scheduled.filter((id) => (DATASETS[id] as DatasetDef).tier !== "keyless").length,
       });
     }

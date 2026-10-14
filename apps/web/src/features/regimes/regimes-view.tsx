@@ -7,7 +7,7 @@ import { cycleGroup, cycleSlice } from "@/cq/adapters";
 import { CycleView, GaugeView } from "@/cq/react";
 import { A } from "@/cq/theme";
 import { duration, humanize, num, usd } from "@/lib/format";
-import { useDataset, useNow } from "@/lib/hooks";
+import { nowFor, useDataset, useNow } from "@/lib/hooks";
 import { finite, isRecord, toMs } from "@/lib/utils";
 
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -34,12 +34,12 @@ function CycleRing() {
   const slice = useMemo(() => cycleSlice(q.data?.data), [q.data]);
   return (
     <Panel title="Cycle ring" path="/regimes · long-horizon model" env={q.data} isLoading={q.isLoading} mb={16} skeletonHeight={600}>
-      {(d) => {
+      {(d, env) => {
         const c = d.current;
         const info = d.regimes.find((r) => r.id === c.id);
         const g = cycleGroup(c.id);
         const since = toMs(c.in_regime_since);
-        const elapsed = since ? (now - since) / 1000 : null;
+        const elapsed = since ? (nowFor(env, now) - since) / 1000 : null;
         const st = c.stability;
         const h = health.data?.data;
         const tiles = h

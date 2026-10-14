@@ -269,6 +269,15 @@ export function useFilteredEvents(events: RelayedEvent[], filter: { symbol?: str
 }
 
 /** Matches a CSS media query (false during server render). */
+/**
+ * "Now" for elapsed-time labels: the capture time for a saved demo sample (so "in regime 7h"
+ * stays what it was when the sample was taken), the real clock otherwise.
+ */
+export function nowFor(env: { demo?: { capturedAt: string } | null } | null | undefined, now: number): number {
+  const t = env?.demo ? Date.parse(env.demo.capturedAt) : NaN;
+  return Number.isFinite(t) ? t : now;
+}
+
 export function useMediaQuery(query: string): boolean {
   return useSyncExternalStore(
     (cb) => {

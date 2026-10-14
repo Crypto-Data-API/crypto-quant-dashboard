@@ -64,7 +64,8 @@ export function KpiStrip() {
         const vals = hist.map((p) => p.v);
         // Append the current value when it is newer than the last recorded point.
         if (v !== null && (vals.length === 0 || vals[vals.length - 1] !== v)) vals.push(v);
-        const first = hist[0];
+        // A change needs at least two recorded points (one sampling interval) to mean anything.
+        const first = hist.length >= 2 ? hist[0] : undefined;
         const delta = first && v !== null && first.v !== 0 ? ((v - first.v) / Math.abs(first.v)) * 100 : null;
         const color = delta === null || delta >= 0 ? C.long : C.short;
         const env = envs[SOURCE_ENV[def.key]];

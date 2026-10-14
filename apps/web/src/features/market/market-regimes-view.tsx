@@ -6,7 +6,7 @@ import { fanQuantiles, galaxySlice, marketRegimeState, ordinalMix, outcomeMix, r
 import { FanView, GalaxyView } from "@/cq/react";
 import { A, REG, REG_ORDER, regCode, type RegCode } from "@/cq/theme";
 import { dateTime, duration, int, num } from "@/lib/format";
-import { useDataset, useNow } from "@/lib/hooks";
+import { nowFor, useDataset, useNow } from "@/lib/hooks";
 import { finite, isRecord, toMs } from "@/lib/utils";
 
 /** Regime filter chips (dot, code, count) shared by the regime map and the perp grid. */
@@ -92,7 +92,7 @@ function MarketRegime() {
   const now = useNow() || Date.now();
   return (
     <Panel title="Market regime · short-term HMM" env={q.data} isLoading={q.isLoading} mb={16} skeletonHeight={480} style={{ flex: "2 1 560px" }}>
-      {(d) => {
+      {(d, env) => {
         const reg = marketRegimeState(d);
         const code = regCode(reg?.label);
         const color = code ? REG[code].color : "#5b6878";
@@ -148,7 +148,7 @@ function MarketRegime() {
                       </div>
                       <div style={{ fontSize: 12, color: "#8b98a9", marginTop: 6 }}>
                         Confidence <b className="cq-mono" style={{ color: "#e6edf5" }}>{Math.round(reg.confidence * 100)}%</b> · in regime{" "}
-                        <b className="cq-mono" style={{ color: "#e6edf5", fontWeight: 500 }}>{since ? duration((now - since) / 1000) : `${reg.candles_in_regime}h`}</b>
+                        <b className="cq-mono" style={{ color: "#e6edf5", fontWeight: 500 }}>{since ? duration((nowFor(env, now) - since) / 1000) : `${reg.candles_in_regime}h`}</b>
                       </div>
                     </div>
                   </div>
@@ -229,7 +229,7 @@ function ModelCard() {
         <Freshness env={q.data} />
       </div>
       <PanelBody env={q.data} isLoading={q.isLoading} skeletonHeight={140}>
-        {(d) => {
+        {(d, env) => {
           const runtime = isRecord(d.runtime) ? d.runtime : {};
           const universe = isRecord(runtime.universe) ? runtime.universe : {};
           const drift = isRecord(runtime.drift) ? runtime.drift : {};
@@ -247,7 +247,7 @@ function ModelCard() {
           const rows: Array<{ k: string; v: string; kind: "ok" | "bad" | "mono" | "plain" }> = [
             { k: "Status", v: d.loaded ? "loaded" : "not loaded", kind: d.loaded ? "ok" : "bad" },
             { k: "Model", v: `${(d.model_family ?? "?").toUpperCase()} v${d.model_version ?? "?"} (features ${d.feature_version ?? "?"})`, kind: "plain" },
-            { k: "Last retrain", v: retrain ? `${dateTime(retrain)} (${duration((Date.now() - retrain) / 1000)} ago)` : "—", kind: "plain" },
+            { k: "Last retrain", v: retrain ? `${dateTime(retrain)} (${duration((nowFor(env, Date.now()) - retrain) / 1000)} ago)` : "—", kind: "plain" },
             { k: "Last inference", v: lastInference ? dateTime(lastInference) : "—", kind: "plain" },
             { k: "Universe", v: `${int(finite(universe.active))} active / ${int(finite(universe.tracked))} tracked / ${int(finite(universe.warmed_up))} warmed up`, kind: "plain" },
             { k: "Labels", v: (d.labels ?? []).map((l) => regCode(l) ?? l).join(" · "), kind: "plain" },
