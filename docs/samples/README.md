@@ -21,5 +21,9 @@ demo (for example a quiet squeeze-alerts capture), and `stream: true` marks a st
 the demo replays. `check-samples` fails when a registry dataset or the stream has no demo sample,
 so add a sample with every new dataset.
 
+`kpi-history.json` is not a CDA response: it is the header-KPI history a live worker recorded
+(one point every 5 minutes from its own cache), saved with `pnpm --filter @cqd/worker kpi:sample`
+so the demo's KPI sparklines are real recordings. `check-samples` checks its shape.
+
 Known gap: no `whale_position` stream event appeared in the captured windows, so that event's
 schema follows the endpoint description only.

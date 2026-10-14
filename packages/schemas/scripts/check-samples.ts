@@ -12,6 +12,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DATASET_IDS, isDatasetId } from "../src/datasets";
 import { demoCoverageProblems, type SampleIndex } from "../src/demo";
+import { KPI_KEYS } from "../src/kpis";
 import { DelayedStreamResponse, JevResponse, RecentStreamResponse, StreamEventStrict, validateDataset } from "../src/validators";
 
 interface IndexEntry {
@@ -67,6 +68,22 @@ if (existsSync(jevDir)) {
     line(r.success, `jev/${file} -> JevResponse`, r.success ? undefined : r.error.issues.slice(0, 5).map((i) => `${i.path.join(".")}: ${i.message}`));
     jevCount++;
   }
+}
+
+// Optional header-KPI history a live worker recorded (served in demo mode and the static build).
+const kpiPath = join(dir, "kpi-history.json");
+if (existsSync(kpiPath)) {
+  const k = JSON.parse(readFileSync(kpiPath, "utf8")) as { captured_at?: unknown; intervalMs?: unknown; points?: unknown };
+  const points = Array.isArray(k.points) ? (k.points as Array<{ t?: unknown; v?: unknown }>) : [];
+  const problems: string[] = [];
+  if (typeof k.captured_at !== "string" || !Number.isFinite(Date.parse(k.captured_at))) problems.push("captured_at: expected an ISO timestamp");
+  if (typeof k.intervalMs !== "number" || k.intervalMs <= 0) problems.push("intervalMs: expected a positive number");
+  if (points.length < 2) problems.push("points: expected at least two recorded points");
+  points.forEach((p, i) => {
+    if (typeof p.t !== "number" || typeof p.v !== "object" || p.v === null) problems.push(`points[${i}]: expected {t: number, v: object}`);
+    else if (Object.keys(p.v).some((key) => !(KPI_KEYS as readonly string[]).includes(key))) problems.push(`points[${i}]: unknown KPI key`);
+  });
+  line(problems.length === 0, `kpi-history.json (${points.length} recorded points)`, problems.slice(0, 5));
 }
 
 // CI guard: every registry dataset (and the stream) must have a demo sample, so the keyless

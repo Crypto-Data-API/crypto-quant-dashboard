@@ -10,7 +10,8 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint .",
-    "jev:samples": "tsx scripts/jev-samples.ts"
+    "jev:samples": "tsx scripts/jev-samples.ts",
+    "kpi:sample": "tsx scripts/kpi-sample.ts"
   },
   "dependencies": {
     "@cqd/cda-client": "workspace:*",
