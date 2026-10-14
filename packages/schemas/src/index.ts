@@ -26,4 +26,15 @@ export type {
   WhalesHistoryResponse,
   PositioningLadderResponse,
 } from "./permissive";
+export type {
+  NewsEvent,
+  NewsEventsResponse,
+  NewsPulseRow,
+  NewsPulseResponse,
+  NewsSource,
+  NewsFunnelHour,
+  NewsSourcesResponse,
+  NewsCoinResponse,
+  NewsResponseWindow,
+} from "./news";
 export type { StreamEvent, StreamEventStrict, DelayedStreamResponse, RecentStreamResponse } from "./stream";

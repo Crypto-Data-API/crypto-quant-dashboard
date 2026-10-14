@@ -11,6 +11,7 @@ import { liquidationTotals, LIQ_WINDOWS } from "@/lib/derive";
 import { int, multiple, usd } from "@/lib/format";
 import { useDataset } from "@/lib/hooks";
 import { finite } from "@/lib/utils";
+import { NewsPanel } from "@/features/news/news-panel";
 import { LiquidationTape } from "./liquidation-tape";
 import { SqueezeAlerts } from "./squeeze-alerts";
 
@@ -211,7 +212,10 @@ export function LiquidationsView() {
           <Heatmap />
           <ByExchange />
         </div>
-        <LiquidationTape height={720} maxRows={120} />
+        <div className="space-y-4">
+          <LiquidationTape height={440} maxRows={120} />
+          <NewsPanel />
+        </div>
       </div>
       <TopTable />
     </div>

@@ -1,8 +1,8 @@
 # CDA response samples
 
 Real CryptoDataApi responses, saved verbatim with a Pro Plus key on 2026-10-14 (UTC). They
-cover every Phase 1 endpoint, the three Pro Plus history endpoints registered for Phase 3, and
-the event stream (`/stream/recent`, `/stream/delayed`). Nothing was trimmed; it is all public
+cover every Phase 1 endpoint, the four market-moving news endpoints (section 3.8), the three
+Pro Plus history endpoints, and the event stream (`/stream/recent`, `/stream/delayed`). Nothing was trimmed; it is all public
 market data. `/auth/keys/me` was called but deliberately not saved, because it contains the
 account email.
 

@@ -114,6 +114,55 @@
       "bytes": 550
     },
     {
+      "file": "news-coin-BTC.json",
+      "dataset": "news-coin",
+      "endpoint": "/api/v1/news/coin/BTC?hours=168",
+      "captured_at": "2026-10-14T08:44:13.461Z",
+      "bytes": 7209
+    },
+    {
+      "file": "news-coin-MARKET.json",
+      "dataset": "news-coin",
+      "endpoint": "/api/v1/news/coin/MARKET?hours=168",
+      "captured_at": "2026-10-14T08:44:14.426Z",
+      "bytes": 8913
+    },
+    {
+      "file": "news-coin-NEAR.json",
+      "dataset": "news-coin",
+      "endpoint": "/api/v1/news/coin/NEAR?hours=168",
+      "captured_at": "2026-10-14T08:44:55.945Z",
+      "bytes": 1937
+    },
+    {
+      "file": "news-market-moving-MARKET.json",
+      "dataset": "news-market-moving",
+      "endpoint": "/api/v1/news/market-moving?symbol=MARKET&hours=168&limit=200",
+      "captured_at": "2026-10-14T08:44:15.385Z",
+      "bytes": 8905
+    },
+    {
+      "file": "news-market-moving.json",
+      "dataset": "news-market-moving",
+      "endpoint": "/api/v1/news/market-moving?hours=168&limit=200",
+      "captured_at": "2026-10-14T08:44:10.763Z",
+      "bytes": 23948
+    },
+    {
+      "file": "news-pulse.json",
+      "dataset": "news-pulse",
+      "endpoint": "/api/v1/news/pulse?hours=24",
+      "captured_at": "2026-10-14T08:44:11.649Z",
+      "bytes": 20059
+    },
+    {
+      "file": "news-sources.json",
+      "dataset": "news-sources",
+      "endpoint": "/api/v1/news/sources",
+      "captured_at": "2026-10-14T08:44:12.522Z",
+      "bytes": 9510
+    },
+    {
       "file": "policy-regime-score.json",
       "dataset": "score-policy",
       "endpoint": "/api/v1/policy/regime/score",

@@ -6,12 +6,12 @@
  * On-demand datasets (those with a `param`, or `onDemand: true`) are fetched only while a
  * viewer has asked for them within `demandTtlMs`, at a higher limiter priority.
  *
- * Steady-state budget (scheduled only) is 298 calls/hour = 7,152/day. The worker's default
+ * Steady-state budget (scheduled only) is 326 calls/hour = 7,824/day. The worker's default
  * daily budget is 30,000 (the key is Pro Plus: 50,000/day, shared with other tooling), so
  * on-demand reads have ample room; the L2 book alone is 240/hour while the order-book page is
  * open. Run `budgetPerHour()` to recompute after editing intervals.
  *
- * Adding a dataset (for example a Pro Plus history endpoint for Phase 3):
+ * Adding a dataset (for example a Pro Plus history endpoint for Phase 2):
  *   1. add an entry below (path is type-checked against the OpenAPI spec; `tier` gates it
  *      against the key's tier so a lower-tier key never spends calls on it);
  *   2. add its payload type to DatasetDataMap and its Zod schema to validators.ts;
@@ -20,6 +20,7 @@
  */
 import type { GetPath, QueryValue } from "@cqd/cda-client";
 import type * as Cda from "./generated/cda";
+import type * as N from "./news";
 import type * as P from "./permissive";
 
 const SEC = 1_000;
@@ -289,7 +290,49 @@ export const DATASETS = {
     asOfField: "timestamp",
   }),
 
-  // ---- Pro Plus history (Phase 3): registered on-demand, so they cost nothing until a page
+  // ---- 3.8 Market-moving news ----------------------------------------------
+  // Free keys get BTC / ETH / MARKET only; Pro gets every perp; Pro Plus adds the score
+  // components and the measured market response.
+  "news-market-moving": def({
+    id: "news-market-moving",
+    label: "Market-moving news (7d)",
+    path: "/api/v1/news/market-moving",
+    // About 30 qualified events a week in practice; 200 leaves room for a busy week.
+    query: { hours: 168, limit: 200 },
+    intervalMs: 5 * MIN,
+    tier: "free",
+    asOfField: "as_of",
+  }),
+  "news-pulse": def({
+    id: "news-pulse",
+    label: "News pulse (24h)",
+    path: "/api/v1/news/pulse",
+    query: { hours: 24 },
+    intervalMs: 5 * MIN,
+    tier: "free",
+    asOfField: "as_of",
+  }),
+  "news-sources": def({
+    id: "news-sources",
+    label: "News feed health",
+    path: "/api/v1/news/sources",
+    intervalMs: 15 * MIN,
+    tier: "free",
+    asOfField: "last_refresh",
+  }),
+  "news-coin": def({
+    id: "news-coin",
+    label: "Coin news (7d)",
+    path: "/api/v1/news/coin/{symbol}",
+    query: { hours: 168 },
+    intervalMs: 5 * MIN,
+    tier: "free",
+    param: { name: "symbol", in: "path", example: "BTC" },
+    demandTtlMs: 3 * MIN,
+    asOfField: "as_of",
+  }),
+
+  // ---- Pro Plus history (Phase 2): registered on-demand, so they cost nothing until a page
   // reads them. Unlocked by the current key (tier pro_plus).
   "quant-history": def({
     id: "quant-history",
@@ -359,6 +402,10 @@ export interface DatasetDataMap {
   "event-calendar": Cda.EventRegimeResponse;
   "supply-unlocks": Cda.SupplyUnlocksResponse;
   "event-symbol": Cda.EventSymbolOverlayResponse;
+  "news-market-moving": N.NewsEventsResponse;
+  "news-pulse": N.NewsPulseResponse;
+  "news-sources": N.NewsSourcesResponse;
+  "news-coin": N.NewsCoinResponse;
   "quant-history": Cda.QuantHistoryResponse;
   "quant-whales-history": P.WhalesHistoryResponse;
   "positioning-ladder": P.PositioningLadderResponse;

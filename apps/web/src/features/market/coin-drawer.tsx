@@ -9,6 +9,7 @@ import { dateShort, dateTime, frac, multiple, num, pct } from "@/lib/format";
 import { useDataset } from "@/lib/hooks";
 import { finite, isRecord, toMs } from "@/lib/utils";
 import { Freshness } from "@/components/panel";
+import { CoinNews } from "@/features/news/news-parts";
 
 function Section({ title, children, aside }: { title: string; children: React.ReactNode; aside?: React.ReactNode }) {
   return (
@@ -203,6 +204,7 @@ export function CoinDrawer({ symbol, risk, onClose }: { symbol: string | null; r
               }}
             </PanelBody>
             <CatalystOverlay symbol={symbol} />
+            <CoinNews symbol={symbol} compact />
           </div>
         </SheetContent>
       ) : null}

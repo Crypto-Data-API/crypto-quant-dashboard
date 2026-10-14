@@ -6,6 +6,7 @@
 import type { z } from "zod";
 import type { DatasetId } from "./datasets";
 import * as Cda from "./generated/cda";
+import * as N from "./news";
 import * as P from "./permissive";
 
 export const VALIDATORS: Record<DatasetId, z.ZodType> = {
@@ -40,6 +41,10 @@ export const VALIDATORS: Record<DatasetId, z.ZodType> = {
   "event-calendar": Cda.EventRegimeResponse,
   "supply-unlocks": Cda.SupplyUnlocksResponse,
   "event-symbol": Cda.EventSymbolOverlayResponse,
+  "news-market-moving": N.NewsEventsResponse,
+  "news-pulse": N.NewsPulseResponse,
+  "news-sources": N.NewsSourcesResponse,
+  "news-coin": N.NewsCoinResponse,
   "quant-history": Cda.QuantHistoryResponse,
   "quant-whales-history": P.WhalesHistoryResponse,
   "positioning-ladder": P.PositioningLadderResponse,
@@ -55,4 +60,5 @@ export function validateDataset(id: DatasetId, data: unknown, maxIssues = 8): { 
 
 export * as CdaSchemas from "./generated/cda";
 export * as PermissiveSchemas from "./permissive";
+export * as NewsSchemas from "./news";
 export { StreamEvent, StreamEventStrict, DelayedStreamResponse, RecentStreamResponse } from "./stream";

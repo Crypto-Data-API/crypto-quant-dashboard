@@ -48,7 +48,7 @@ const ROOTS = [
   "EventSymbolOverlayResponse",
   "SupplyUnlocksResponse",
   "CrossExchangeSummary",
-  // Pro Plus (registered on-demand for Phase 3)
+  // Pro Plus (registered on-demand for Phase 2)
   "QuantHistoryResponse",
 ];
 

@@ -280,7 +280,7 @@ export type L2Level = z.infer<typeof L2Level>;
 export type L2BookResponse = z.infer<typeof L2BookResponse>;
 
 // ---------------------------------------------------------------------------
-// Pro Plus history (registered as on-demand datasets for Phase 3; no page uses them yet).
+// Pro Plus history (registered as on-demand datasets for Phase 2; no page uses them yet).
 // ---------------------------------------------------------------------------
 
 /** /api/v1/quant/whales/history: daily aggregate whale positioning (early points may be modeled). */

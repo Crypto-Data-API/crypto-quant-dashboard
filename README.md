@@ -4,8 +4,9 @@ A real-time quant dashboard for Hyperliquid perps and the wider crypto market, p
 [CryptoDataApi](https://cryptodataapi.com) (CDA). Every number on screen comes from the CDA REST
 API or its live event stream; the app does not model anything CDA already computes.
 
-**Status:** Phase 0 (foundation) and Phase 1 (the seven pages) from [docs/PLAN.md](docs/PLAN.md)
-are built and verified against live data with a Pro Plus key. Phase 2 (history and
+**Status:** Phase 0 (foundation), Phase 1 (the seven pages) and the market-moving news page
+(PLAN.md section 3.8) from [docs/PLAN.md](docs/PLAN.md) are built and verified against live data
+with a Pro Plus key. Phase 2 (history and
 backtesting) is unblocked by the Pro Plus key; its first three datasets are already registered.
 
 | Route | Page | Main CDA sources |
@@ -18,6 +19,10 @@ backtesting) is unblocked by the Pro Plus key; its first three datasets are alre
 | `/quant-order-books` | Order Books | `/liquidity/depth`, `/liquidity/depth/{coin}`, `/hyperliquid/l2-book`, `/liquidity/regime`, `/liquidity/oi-divergence` |
 | `/liquidations` | Liquidations | `/market-intelligence/liquidations`, `/liquidations/by-exchange`, `/squeeze-alerts`, live stream |
 | `/calendar` | Calendar | `/event/regime/score`, `/event/calendar`, `/event/regime/{symbol}`, `/supply/unlocks` |
+| `/news` | Market-moving news | `/news/market-moving`, `/news/pulse`, `/news/sources`, `/news/coin/{symbol}` |
+
+The news tape also appears as a compact panel beside the liquidation tape on `/liquidations`, and
+per-coin news appears in the Market Regimes coin drawer.
 
 Every page shares the header stat strip and the system status pills (worker, API key, daily
 budget meter, stream source). Every panel shows a "data as of" time, a stale badge, and an
@@ -180,7 +185,7 @@ enforced in four layers.
    key is within 1% of its daily limit, it pauses keyed polling until 00:00 UTC and panels show
    "Daily budget reached". The Budget pill shows the dashboard's calls and the whole key's usage.
 
-Scheduled load at the registry's intervals is **298 calls/hour (7,152/day)**, about a quarter of the
+Scheduled load at the registry's intervals is **326 calls/hour (7,824/day)**, about a quarter of the
 dashboard's budget. The L2 ladder is the most expensive on-demand dataset at 240 calls/hour while
 the order-book page is open. Intervals follow CDA's own refresh cadences, so the extra Pro Plus
 headroom is left for on-demand reads and Phase 2 rather than spent on faster polling.
@@ -206,9 +211,13 @@ headroom is left for on-demand reads and Phase 2 rather than spent on faster pol
 | squeeze-alerts | `/market-intelligence/squeeze-alerts` | 1 min | 60 |
 | event-calendar | `/event/calendar?window_days=30` | 30 min | 2 |
 | supply-unlocks | `/supply/unlocks?window_days=30` | 60 min | 1 |
+| news-market-moving | `/news/market-moving?hours=168&limit=200` | 5 min | 12 |
+| news-pulse | `/news/pulse?hours=24` | 5 min | 12 |
+| news-sources | `/news/sources` | 15 min | 4 |
 
 On-demand datasets: `quant-coin` (5 min), `quant-gex-coin` (5 min), `gex-history` (30 min),
-`volume-detail` (10 min), `l2-book` (15 s), `depth-history` (2 min), `event-symbol` (30 min), and the
+`volume-detail` (10 min), `l2-book` (15 s), `depth-history` (2 min), `event-symbol` (30 min),
+`news-coin` (5 min), and the
 Pro Plus `quant-history`, `quant-whales-history` and `positioning-ladder` (registered for Phase 2,
 not yet used by a page). At most 16 run at once (`ON_DEMAND_MAX`). Tune intervals in
 [packages/schemas/src/datasets.ts](packages/schemas/src/datasets.ts); `budgetPerHour()` recomputes

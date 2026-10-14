@@ -48,8 +48,8 @@ Updated 2026-10-14: the key is **Pro Plus** (confirmed via `GET /api/v1/auth/key
 | **Total** | | | **~350/hour idle, ~600/hour with order book open** |
 
 The table above was the original Pro estimate (~350/hour). As built, the scheduled registry is
-298 calls/hour (7,152/day) because GEX and positioning use one comma-list call each and several
-endpoints were merged. Against the Pro Plus key that is about 14% of the 50,000/day allowance and
+326 calls/hour (7,824/day), including the three scheduled news datasets, because GEX and
+positioning use one comma-list call each and several endpoints were merged. Against the Pro Plus key that is about 14% of the 50,000/day allowance and
 about a quarter of the dashboard's 30,000/day budget, so on-demand reads (L2 book, drawers, depth
 history, and the Phase 2 history endpoints) have ample room. The header's budget meter shows both
 the dashboard's calls today and the whole key's usage. Liquidation fills arrive live over SSE

@@ -4,6 +4,9 @@
  */
 import type { StreamEvent } from "./stream";
 
+/** Windows CDA measures market response over after a news event (Pro Plus). */
+export const NEWS_RESPONSE_WINDOWS = ["15m", "1h", "4h"] as const;
+
 export const STREAM_EVENT_TYPES = ["liquidation", "whale_transfer", "whale_position", "funding", "oi_delta", "price_move"] as const;
 export type StreamEventType = (typeof STREAM_EVENT_TYPES)[number];
 

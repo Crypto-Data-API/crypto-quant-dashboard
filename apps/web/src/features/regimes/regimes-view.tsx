@@ -369,7 +369,7 @@ export function RegimesView() {
         </Panel>
       </div>
       <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-        <Lock className="size-3" aria-hidden /> Regime history since 2020 needs a Pro Plus key (Phase 3).
+        <Lock className="size-3" aria-hidden /> Regime history since 2020 is a Pro Plus dataset, planned for Phase 2.
         <TriangleAlert className="ml-2 size-3" aria-hidden /> Signals are read live while the regime is committed through a dwell gate, so they can disagree mid-turn.
       </p>
     </div>
