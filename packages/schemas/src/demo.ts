@@ -5,6 +5,7 @@
  */
 import { DATASETS, isDatasetId, isOnDemandDef, staleAfter, type DatasetDef, type DatasetId } from "./datasets";
 import type { Envelope } from "./envelope";
+import type { RelayedEvent } from "./types";
 
 export interface SampleIndexEntry {
   file: string;
@@ -101,6 +102,26 @@ export function demoEntriesByDataset(index: SampleIndex): Map<DatasetId, SampleI
     out.set(e.dataset, list);
   }
   return out;
+}
+
+/**
+ * Timeline for the demo stream replay. Each capture becomes a track that starts at time zero
+ * (event times rebased to milliseconds since the track's first event), so a liquidation-only
+ * capture plays from the first second alongside the mixed ones. Deduplicated by event id.
+ */
+export function replayTimeline(captures: Array<{ events?: RelayedEvent[] }>): RelayedEvent[] {
+  const seen = new Set<string>();
+  const out: RelayedEvent[] = [];
+  for (const c of captures) {
+    const events = [...(c.events ?? [])].sort((a, b) => a.ts - b.ts);
+    const t0 = events[0]?.ts ?? 0;
+    for (const ev of events) {
+      if (seen.has(String(ev.id))) continue;
+      seen.add(String(ev.id));
+      out.push({ ...ev, ts: ev.ts - t0 });
+    }
+  }
+  return out.sort((a, b) => a.ts - b.ts);
 }
 
 /** Capture time range of the demo data, for the "Demo data from ..." banner. */

@@ -7,6 +7,7 @@ import {
   demoEnvelope,
   demoUnavailableEnvelope,
   isJevDef,
+  replayTimeline,
   keys,
   type DatasetDef,
   type DatasetId,
@@ -27,7 +28,7 @@ export interface DemoSamples {
   envelope(id: DatasetId, param: string | null): Envelope | null;
   /** "Not in demo" envelope listing the symbols that do have samples. */
   unavailable(id: DatasetId, param: string | null): Envelope;
-  /** Saved stream events, deduplicated and sorted by event time, for the demo replay. */
+  /** Saved stream events as a replay timeline (each capture rebased to start at zero). */
   streamEvents(): RelayedEvent[];
 }
 
@@ -62,12 +63,7 @@ export function loadDemoSamples(root: string | null, log: Logger): DemoSamples |
       return demoUnavailableEnvelope(id, param, params);
     },
     streamEvents() {
-      const seen = new Map<string, RelayedEvent>();
-      for (const e of index.files.filter((f) => f.stream)) {
-        const body = read(e.file) as { events?: RelayedEvent[] };
-        for (const ev of body.events ?? []) if (!seen.has(String(ev.id))) seen.set(String(ev.id), ev);
-      }
-      return [...seen.values()].sort((a, b) => a.ts - b.ts);
+      return replayTimeline(index.files.filter((f) => f.stream).map((e) => read(e.file) as { events?: RelayedEvent[] }));
     },
   };
 }
