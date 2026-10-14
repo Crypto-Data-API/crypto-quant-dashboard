@@ -91,7 +91,7 @@ export function SetupView() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <KeyCard icon={KeyRound} name="CryptoDataApi key (required for live data)" envVar="CDA_API_KEY" state={cdaState}>
-          <p>Every market panel, the header strip and the live tape come from CryptoDataApi.</p>
+          <p>Every market panel, the KPI tiles and the live tape come from CryptoDataApi.</p>
           <p>
             A free key comes from <code className="font-mono text-xs">POST https://cryptodataapi.com/api/v1/auth/keys</code> with your email (see{" "}
             {ext("https://cryptodataapi.com/ai-agents", "AI agent guide")}). Confirming the email turns on Pro for 24 hours. The dashboard is sized for Pro or Pro Plus
@@ -99,7 +99,7 @@ export function SetupView() {
           </p>
         </KeyCard>
         <KeyCard icon={Bot} name="TypeSafe key (optional)" envVar="TYPESAFE_API_KEY" state={jevState}>
-          <p>Powers the Jev classifier: its read of each news catalyst, the cascade odds on squeeze alerts and the market verdict card.</p>
+          <p>Powers the Jev classifier: its read of each news catalyst, the cascade odds on squeeze alerts and the market read in the sidebar.</p>
           <p>
             Create one at {ext("https://console.typesafe.ai/settings/keys", "console.typesafe.ai")}. Without it those panels show saved reads. Billing is on input tokens, about
             0.3M a day as built.
