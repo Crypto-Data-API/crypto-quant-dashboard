@@ -50,6 +50,8 @@ const ROOTS = [
   "CrossExchangeSummary",
   // Pro Plus (registered on-demand for Phase 2)
   "QuantHistoryResponse",
+  // Pro Plus: committed cycle-regime transitions (phase durations on Cycle Regimes)
+  "RegimeHistoryResponse",
 ];
 
 const spec = JSON.parse(readFileSync(specPath, "utf8"));

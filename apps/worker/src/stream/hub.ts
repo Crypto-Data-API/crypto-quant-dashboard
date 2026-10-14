@@ -15,6 +15,8 @@ interface Client {
 
 const BUFFER_MAX = 5_000;
 const BACKFILL_DEFAULT = 200;
+/** Whole minutes of event-rate history reported in status().rateHist. */
+const RATE_HISTORY_MINUTES = 40;
 
 /**
  * Fan-out hub: one upstream (live CDA stream or the delayed preview) feeds a ring buffer,
@@ -26,6 +28,10 @@ export class StreamHub {
   private readonly buffer: RelayedEvent[] = [];
   private readonly clients = new Set<Client>();
   private readonly publishTimes: number[] = [];
+  /** Event count per epoch minute, for the sidebar rate sparkline. */
+  private readonly minuteCounts = new Map<number, number>();
+  /** First whole minute after start: earlier minutes were only partly observed. */
+  private readonly firstFullMinute = Math.floor(Date.now() / 60_000) + 1;
   private nextClientId = 1;
   private pingTimer: ReturnType<typeof setInterval>;
   private statusValue: StreamStatus = {
@@ -52,6 +58,9 @@ export class StreamHub {
     const now = Date.now();
     this.publishTimes.push(now);
     while (this.publishTimes.length > 0 && this.publishTimes[0]! < now - 60_000) this.publishTimes.shift();
+    const minute = Math.floor(now / 60_000);
+    this.minuteCounts.set(minute, (this.minuteCounts.get(minute) ?? 0) + 1);
+    for (const m of this.minuteCounts.keys()) if (m < minute - RATE_HISTORY_MINUTES - 1) this.minuteCounts.delete(m);
     this.statusValue.lastEventAt = now;
     const frame = eventFrame(ev);
     for (const c of this.clients) {
@@ -71,7 +80,16 @@ export class StreamHub {
   status(): StreamStatus {
     const now = Date.now();
     while (this.publishTimes.length > 0 && this.publishTimes[0]! < now - 60_000) this.publishTimes.shift();
-    return { ...this.statusValue, eventsPerMin: this.publishTimes.length, clients: this.clients.size, bufferSize: this.buffer.length };
+    return { ...this.statusValue, eventsPerMin: this.publishTimes.length, rateHist: this.rateHistory(now), clients: this.clients.size, bufferSize: this.buffer.length };
+  }
+
+  /** Counts for the last whole minutes (oldest first), then the rolling 60-second count. */
+  private rateHistory(now: number): number[] {
+    const current = Math.floor(now / 60_000);
+    const out: number[] = [];
+    for (let m = Math.max(this.firstFullMinute, current - RATE_HISTORY_MINUTES); m < current; m++) out.push(this.minuteCounts.get(m) ?? 0);
+    out.push(this.publishTimes.length);
+    return out;
   }
 
   /** Attach a browser (already authenticated / CORS-checked by the HTTP layer). */

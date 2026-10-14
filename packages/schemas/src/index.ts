@@ -5,6 +5,7 @@ export * from "./datasets";
 export * from "./keys";
 export * from "./demo";
 export * from "./types";
+export * from "./kpis";
 export type * from "./generated/cda";
 export type {
   GexResponse,

@@ -12,6 +12,7 @@ import {
   type DatasetDef,
   type DatasetId,
   type Envelope,
+  type KpiHistory,
   type RelayedEvent,
   type SampleIndex,
 } from "@cqd/schemas";
@@ -30,6 +31,13 @@ export interface DemoSamples {
   unavailable(id: DatasetId, param: string | null): Envelope;
   /** Saved stream events as a replay timeline (each capture rebased to start at zero). */
   streamEvents(): RelayedEvent[];
+  /** Header-KPI history recorded by a live worker (docs/samples/kpi-history.json), if saved. */
+  kpiHistory(): { history: KpiHistory; capturedAt: string } | null;
+}
+
+/** docs/samples/kpi-history.json: a live worker's recorded KPI history, saved for the demo. */
+export interface KpiHistorySample extends KpiHistory {
+  captured_at: string;
 }
 
 /** Load docs/samples/ (index.json plus files). Null when the folder is absent (e.g. a slim deploy image). */
@@ -64,6 +72,12 @@ export function loadDemoSamples(root: string | null, log: Logger): DemoSamples |
     },
     streamEvents() {
       return replayTimeline(index.files.filter((f) => f.stream).map((e) => read(e.file) as { events?: RelayedEvent[] }));
+    },
+    kpiHistory() {
+      const path = join(dir, "kpi-history.json");
+      if (!existsSync(path)) return null;
+      const s = JSON.parse(readFileSync(path, "utf8")) as KpiHistorySample;
+      return { history: { points: s.points, intervalMs: s.intervalMs, demo: { capturedAt: s.captured_at } }, capturedAt: s.captured_at };
     },
   };
 }

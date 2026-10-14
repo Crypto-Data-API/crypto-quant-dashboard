@@ -58,6 +58,11 @@ export interface StreamStatus {
   message?: string | null;
   lastEventAt: number | null;
   eventsPerMin: number;
+  /**
+   * Events per minute for recent whole minutes, oldest first (up to 40, since the worker
+   * started), followed by the rolling count for the last 60 seconds.
+   */
+  rateHist?: number[];
   clients: number;
   bufferSize: number;
   /** For the delayed preview: how far behind real time the events are. */

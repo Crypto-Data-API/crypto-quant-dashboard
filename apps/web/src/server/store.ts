@@ -18,6 +18,7 @@ import {
   type DatasetDef,
   type DatasetId,
   type Envelope,
+  type KpiHistory,
   type WorkerStatus,
 } from "@cqd/schemas";
 import { Redis } from "ioredis";
@@ -183,6 +184,19 @@ export async function readEnvelope<T = unknown>(id: DatasetId, param: string | n
   // Redis unavailable, or no live worker writing to it: ask the worker directly.
   const env = await fetchWorker<Envelope<T>>(`/data/${id}${qs}`);
   return env ?? offline<T>(id, param);
+}
+
+/** Recorded header-KPI history: Redis first, then the worker; empty when neither has it. */
+export async function readKpiHistory(): Promise<KpiHistory> {
+  const raw = await redisGet(keys.kpiHistory);
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw) as KpiHistory;
+    } catch {
+      /* fall through */
+    }
+  }
+  return (await fetchWorker<KpiHistory>("/kpi-history")) ?? { points: [], intervalMs: 0 };
 }
 
 export function streamUpstream(search: string): string {

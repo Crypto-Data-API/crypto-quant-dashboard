@@ -24,6 +24,8 @@ export const keys = {
   jevSqueeze: (model: string) => `${KEY_PREFIX}:jev:squeeze:${model}`,
   /** Last model version the API resolved JEV_MODEL to (e.g. jev-latest -> jev-1.13.0). */
   jevResolvedModel: `${KEY_PREFIX}:jev:resolved-model`,
+  /** Rolling header-KPI history (JSON KpiHistory) the worker records every few minutes. */
+  kpiHistory: `${KEY_PREFIX}:kpi:history`,
 } as const;
 
 export const demandMember = (dataset: string, param: string) => `${dataset}|${param}`;

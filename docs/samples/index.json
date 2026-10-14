@@ -399,6 +399,15 @@
       "demo": true
     },
     {
+      "file": "regimes-history.json",
+      "dataset": "regimes-history",
+      "endpoint": "/api/v1/regimes/history?from=2026-08-15T10:25:19.377Z",
+      "captured_at": "2026-10-14T10:25:21.235Z",
+      "bytes": 25732,
+      "param": null,
+      "demo": true
+    },
+    {
       "file": "security-regime-score.json",
       "dataset": "score-security",
       "endpoint": "/api/v1/security/regime/score",

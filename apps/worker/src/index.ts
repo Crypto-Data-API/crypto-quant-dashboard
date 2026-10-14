@@ -9,6 +9,7 @@ import { loadDemoSamples, seedDemo } from "./demo";
 import { createHttpServer } from "./http";
 import { JevClassifier } from "./jev/classifier";
 import { createJevClient } from "./jev/client";
+import { KpiRecorder } from "./kpi-history";
 import { createLogger } from "./log";
 import { Poller } from "./poller";
 import { StreamHub } from "./stream/hub";
@@ -78,6 +79,7 @@ async function main(): Promise<void> {
   }
 
   const hub = new StreamHub();
+  const kpis = new KpiRecorder(cache, log.child({ component: "kpi" }));
   const poller = new Poller({
     client,
     cache,
@@ -121,6 +123,13 @@ async function main(): Promise<void> {
       log.info("demo samples seeded", { datasets: n });
     }
     await poller.start();
+    // Header KPI history: recorded from the live cache, or the saved history in demo mode.
+    const savedKpis = demoCda ? samples?.kpiHistory() : null;
+    if (savedKpis) kpis.seed(savedKpis.history, savedKpis.capturedAt);
+    else if (!demoCda) {
+      await kpis.restore();
+      kpis.start();
+    }
     void runStream({ source: config.streamSource, client, hub, log, signal: streamAbort.signal, replayEvents: () => samples?.streamEvents() ?? [] });
     if (!demoJev) await classifier.start();
     else if (jev.configured) log.info("Jev not called in demo mode: it would only classify saved samples");
@@ -205,12 +214,12 @@ async function main(): Promise<void> {
   }, 30_000);
 
   // ---- HTTP -----------------------------------------------------------------
-  const server = createHttpServer({ poller, hub, status, log: log.child({ component: "http" }), token: config.token, corsOrigin: config.corsOrigin });
+  const server = createHttpServer({ poller, hub, status, kpiHistory: () => kpis.history(), log: log.child({ component: "http" }), token: config.token, corsOrigin: config.corsOrigin });
   server.on("error", (err: NodeJS.ErrnoException) => {
     log.error("http server error", { error: err.message, code: err.code, port: config.port });
     if (err.code === "EADDRINUSE") process.exit(1);
   });
-  server.listen(config.port, config.host, () => log.info("http listening", { url: `http://localhost:${config.port}`, routes: ["/healthz", "/status", "/data/:dataset", "/stream"] }));
+  server.listen(config.port, config.host, () => log.info("http listening", { url: `http://localhost:${config.port}`, routes: ["/healthz", "/status", "/data/:dataset", "/kpi-history", "/stream"] }));
 
   // ---- shutdown ---------------------------------------------------------------
   let stopping = false;
@@ -223,6 +232,7 @@ async function main(): Promise<void> {
     clearInterval(budgetTimer);
     keyInfo.stop();
     classifier.stop();
+    kpis.stop();
     poller.stop();
     streamAbort.abort();
     hub.close();

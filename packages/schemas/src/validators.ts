@@ -19,6 +19,7 @@ export const VALIDATORS: Record<DatasetId, z.ZodType> = {
   "quant-model": Cda.QuantModelCardResponse,
   "quant-coin": Cda.QuantCoinDetailResponse,
   regimes: Cda.RegimesResponse,
+  "regimes-history": Cda.RegimeHistoryResponse,
   "market-health": Cda.MarketHealthResponse,
   "score-volatility": Cda.VolatilityRegimeScoreResponse,
   "score-policy": Cda.PolicyRegimeScoreResponse,

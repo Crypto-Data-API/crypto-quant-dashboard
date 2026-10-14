@@ -1,5 +1,5 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
-import { DATASETS, isDatasetId, isOnDemandDef, normalizeParam, type DatasetDef, type WorkerStatus } from "@cqd/schemas";
+import { DATASETS, isDatasetId, isOnDemandDef, normalizeParam, type DatasetDef, type KpiHistory, type WorkerStatus } from "@cqd/schemas";
 import type { Logger } from "./log";
 import type { Poller } from "./poller";
 import { parseFilter, type StreamHub } from "./stream/hub";
@@ -8,6 +8,7 @@ export interface HttpDeps {
   poller: Poller;
   hub: StreamHub;
   status: () => WorkerStatus;
+  kpiHistory: () => KpiHistory;
   log: Logger;
   token: string | null;
   corsOrigin: string;
@@ -19,6 +20,7 @@ export interface HttpDeps {
  *   GET /status                        budget, limiter, stream and per-dataset state
  *   GET /data/:dataset[?param=SYM]     envelope from the worker's own cache (fallback when Redis is down);
  *                                      also registers on-demand interest
+ *   GET /kpi-history                   recorded header-KPI history (fallback when Redis is down)
  *   GET /stream[?types=&symbols=&min_usd=&since_id=]   SSE fan-out of the live (or preview) tape
  *
  * /status and /data require `Authorization: Bearer $WORKER_TOKEN` when WORKER_TOKEN is set.
@@ -70,6 +72,11 @@ function route(req: IncomingMessage, res: ServerResponse, deps: HttpDeps): void 
 
   if (url.pathname === "/status") {
     json(res, 200, deps.status());
+    return;
+  }
+
+  if (url.pathname === "/kpi-history") {
+    json(res, 200, deps.kpiHistory());
     return;
   }
 

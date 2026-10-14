@@ -6,7 +6,7 @@
  * On-demand datasets (those with a `param`, or `onDemand: true`) are fetched only while a
  * viewer has asked for them within `demandTtlMs`, at a higher limiter priority.
  *
- * Steady-state budget (scheduled only) is 326 calls/hour = 7,824/day. The worker's default
+ * Steady-state budget (scheduled only) is 327 calls/hour = 7,848/day. The worker's default
  * daily budget is 30,000 (the key is Pro Plus: 50,000/day, shared with other tooling), so
  * on-demand reads have ample room; the L2 book alone is 240/hour while the order-book page is
  * open. Run `budgetPerHour()` to recompute after editing intervals.
@@ -132,6 +132,18 @@ export const DATASETS = {
 
   // ---- 3.2 Long-term regimes + market health ------------------------------
   regimes: def({ id: "regimes", label: "Cycle regime (10-phase)", path: "/api/v1/regimes", intervalMs: 15 * MIN, tier: "pro", asOfField: "as_of" }),
+  // Committed cycle-regime runs (recording began 2026-08-07). 60 days stays under the default
+  // 5,000-sample scan limit (~57 samples a day), so the recent end is never truncated.
+  "regimes-history": def({
+    id: "regimes-history",
+    label: "Cycle regime history (60d)",
+    path: "/api/v1/regimes/history",
+    query: { from: (now: number) => new Date(now - 60 * DAY).toISOString() },
+    intervalMs: 60 * MIN,
+    staleAfterMs: 3 * 60 * MIN,
+    tier: "pro_plus",
+    asOfField: "to",
+  }),
   "market-health": def({
     id: "market-health",
     label: "Market health",
@@ -411,6 +423,7 @@ export interface DatasetDataMap {
   "quant-model": Cda.QuantModelCardResponse;
   "quant-coin": Cda.QuantCoinDetailResponse;
   regimes: Cda.RegimesResponse;
+  "regimes-history": Cda.RegimeHistoryResponse;
   "market-health": Cda.MarketHealthResponse;
   "score-volatility": Cda.VolatilityRegimeScoreResponse;
   "score-policy": Cda.PolicyRegimeScoreResponse;

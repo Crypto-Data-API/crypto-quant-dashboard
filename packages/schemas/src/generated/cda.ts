@@ -799,3 +799,44 @@ export const QuantHistoryResponse = z.looseObject({
   count: z.number(),
 });
 export type QuantHistoryResponse = z.infer<typeof QuantHistoryResponse>;
+
+/** One committed run of a regime — when it was entered, and for how long. */
+export const RegimeTransition = z.looseObject({
+  id: z.number().nullish(),
+  regime: z.string().nullish(),
+  anchor: z.string().nullish(),
+  name: z.string().nullish(),
+  /** ISO-8601 instant the regime COMMITTED, read from the snapshot's own in_regime_since — not the sample that first observed it, so this is exact rather than rounded to the archive cadence */
+  committed_at: z.string(),
+  /** commit instant of the NEXT regime; null while this one is current */
+  ended_at: z.string().nullish(),
+  /** Held duration; measured to now for the open final run */
+  dwell_seconds: z.number().nullish(),
+  rationale: z.string().nullish(),
+  stage: z.string().nullish(),
+  euphoria_score: z.number().nullish(),
+  /** First archived sample carrying this run */
+  first_observed_at: z.string(),
+  /** Last archived sample carrying this run */
+  last_observed_at: z.string(),
+  /** Archived samples covering this run */
+  observations: z.number(),
+});
+export type RegimeTransition = z.infer<typeof RegimeTransition>;
+
+/** `/api/v1/regimes/history` — the committed transition sequence. */
+export const RegimeHistoryResponse = z.looseObject({
+  transitions: z.array(RegimeTransition),
+  count: z.number(),
+  /** Start of the requested window (inclusive) */
+  from: z.string(),
+  /** End of the requested window (exclusive) */
+  to: z.string(),
+  /** Earliest archived snapshot. Recording began 2026-08-07 and CANNOT be backfilled — the published regime is a stateful commit through the dwell gate, so replaying older signals would invent a sequence that was never ser... */
+  coverage_start: z.string().nullish(),
+  /** Archive cadence. Every committed regime is protected by a dwell floor of at least 2h, well above this, so no transition can fall between samples. */
+  sample_interval_seconds: z.number(),
+  /** True when `limit` clipped the window. Rows are read oldest-first, so the RECENT end is what is missing — narrow the window and re-request. */
+  truncated: z.boolean(),
+});
+export type RegimeHistoryResponse = z.infer<typeof RegimeHistoryResponse>;

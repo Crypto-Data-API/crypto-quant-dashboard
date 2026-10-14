@@ -11,7 +11,7 @@
  * 2. Runs `next build` with NEXT_PUBLIC_DATA_MODE=static (output: "export", no /api routes).
  */
 import { execSync } from "node:child_process";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -57,6 +57,14 @@ function exportSamples(): void {
 
   const events = replayTimeline(index.files.filter((f) => f.stream).map((f) => read(f.file) as { events?: RelayedEvent[] }));
   writeFileSync(join(outDir, "stream.json"), JSON.stringify({ events }));
+  const rateHist = replayRate(events);
+
+  // Header-KPI history a live worker recorded, saved for the demo (optional).
+  const kpiPath = join(samplesDir, "kpi-history.json");
+  if (existsSync(kpiPath)) {
+    const k = JSON.parse(readFileSync(kpiPath, "utf8")) as { captured_at: string; intervalMs: number; points: unknown[] };
+    writeFileSync(join(outDir, "kpi-history.json"), JSON.stringify({ points: k.points, intervalMs: k.intervalMs, demo: { capturedAt: k.captured_at } }));
+  }
 
   const verdict = index.files.find((f) => f.dataset === "jev-market-verdict");
   const jevModel = verdict ? ((read(verdict.file) as JevMarketVerdict).model ?? null) : null;
@@ -72,7 +80,7 @@ function exportSamples(): void {
     account: null,
     budget: { date: at.slice(0, 10), callsToday: 0, dailyBudget: 0, paceLimit: 0, mode: "normal", stretch: 1, scheduledPerHour: 0, byDataset: {}, byStatus: {}, resetsAt: at },
     limiter: { ratePerMinute: 0, burst: 0, tokens: 0, queued: 0, pausedUntil: null },
-    stream: { source: "replay", state: "open", message: "Static demo: saved events replayed in the browser", lastEventAt: null, eventsPerMin: 0, clients: 0, bufferSize: events.length, delayMs: null },
+    stream: { source: "replay", state: "open", message: "Static demo: saved events replayed in the browser", lastEventAt: null, eventsPerMin: rateHist[rateHist.length - 1] ?? 0, rateHist, clients: 0, bufferSize: events.length, delayMs: null },
     onDemand: { active: 0, max: 0, keys: [] },
     datasets: [],
     jev: {
@@ -93,6 +101,23 @@ function exportSamples(): void {
   };
   writeFileSync(join(outDir, "status.json"), JSON.stringify({ worker, via: "static", workerOnline: true, redis: "disabled", jev: worker.jev, now: at }));
   console.log(`static samples: ${files} dataset files, ${events.length} stream events -> ${outDir}`);
+}
+
+/**
+ * Events per minute as the browser replays the saved stream (pauses capped at 3 s, like the
+ * static replay in lib/hooks.ts), for the sidebar rate sparkline: up to 40 minutes.
+ */
+function replayRate(events: RelayedEvent[]): number[] {
+  const buckets: number[] = [];
+  let t = 0;
+  for (let i = 0; i < events.length; i++) {
+    const m = Math.floor(t / 60_000);
+    if (m >= 40) break;
+    buckets[m] = (buckets[m] ?? 0) + 1;
+    const next = events[i + 1];
+    t += next ? Math.min(3_000, Math.max(50, next.ts - events[i]!.ts)) : 2_000;
+  }
+  return Array.from(buckets, (v) => v ?? 0);
 }
 
 exportSamples();
