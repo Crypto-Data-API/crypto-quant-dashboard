@@ -17,14 +17,14 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-accent",
-        outline: "border border-border bg-transparent hover:bg-accent",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        default: "bg-primary text-primary-foreground hover:brightness-110",
+        secondary: "border border-[#1c2531] bg-[#0d1219] text-[#c9d3df] hover:border-[#2a3748] hover:text-white",
+        outline: "border border-[#1c2531] bg-transparent text-[#9aa8b8] hover:border-[#2a3748] hover:text-[#e6edf5]",
+        ghost: "text-[#8b98a9] hover:bg-[rgba(255,255,255,0.035)] hover:text-[#e6edf5]",
       },
       size: {
-        default: "h-9 px-3",
-        sm: "h-7 rounded-md px-2 text-xs",
+        default: "h-9 rounded-lg px-3 text-[12px]",
+        sm: "h-7 rounded-[7px] px-2.5 text-[11px]",
         icon: "size-8",
       },
     },
@@ -46,35 +46,35 @@ export function Button({
 // ---- Card --------------------------------------------------------------------
 
 export function Card({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="card" className={cn("flex flex-col rounded-lg border bg-card text-card-foreground", className)} {...props} />;
+  return <div data-slot="card" className={cn("flex flex-col rounded-[14px] border border-[#17202b] bg-[#0b0f14] text-card-foreground", className)} {...props} />;
 }
 
 export function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="card-header" className={cn("flex items-start justify-between gap-3 px-4 pt-3.5 pb-2", className)} {...props} />;
+  return <div data-slot="card-header" className={cn("flex items-start justify-between gap-3 px-5 pt-[18px] pb-3", className)} {...props} />;
 }
 
 export function CardTitle({ className, ...props }: React.ComponentProps<"h2">) {
-  return <h2 data-slot="card-title" className={cn("text-sm leading-tight font-semibold tracking-tight", className)} {...props} />;
+  return <h2 data-slot="card-title" className={cn("text-[13.5px] leading-tight font-semibold", className)} {...props} />;
 }
 
 export function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="card-content" className={cn("px-4 pb-4", className)} {...props} />;
+  return <div data-slot="card-content" className={cn("px-5 pb-[18px]", className)} {...props} />;
 }
 
 // ---- Badge -------------------------------------------------------------------
 
 export const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center gap-1 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-[11px] leading-none font-medium [&_svg]:size-3 [&_svg]:shrink-0",
+  "inline-flex w-fit shrink-0 items-center gap-1 whitespace-nowrap rounded-[5px] border px-[7px] py-[2px] font-mono text-[10px] leading-[1.35] font-medium [&_svg]:size-3 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-secondary text-secondary-foreground",
-        outline: "border-border text-muted-foreground",
-        good: "border-good/30 bg-good/10 text-[#4fd14f]",
-        warning: "border-warning/30 bg-warning/10 text-warning",
-        serious: "border-serious/30 bg-serious/10 text-serious",
-        critical: "border-critical/40 bg-critical/10 text-[#f07a7a]",
-        info: "border-primary/30 bg-primary/10 text-[#7db3f0]",
+        default: "border-[#1c2531] bg-[#0d1219] text-[#c9d3df]",
+        outline: "border-[#1c2531] text-[#8b98a9]",
+        good: "border-[rgba(46,230,166,0.4)] bg-[rgba(46,230,166,0.1)] text-[#2ee6a6]",
+        warning: "border-[rgba(255,181,71,0.4)] bg-[rgba(255,181,71,0.1)] text-[#ffb547]",
+        serious: "border-[rgba(255,122,61,0.4)] bg-[rgba(255,122,61,0.1)] text-[#ff7a3d]",
+        critical: "border-[rgba(255,92,108,0.4)] bg-[rgba(255,92,108,0.1)] text-[#ff5c6c]",
+        info: "border-[rgba(76,155,255,0.4)] bg-[rgba(76,155,255,0.1)] text-[#4c9bff]",
       },
     },
     defaultVariants: { variant: "default" },
@@ -90,30 +90,30 @@ export function Badge({ className, variant, ...props }: React.ComponentProps<"sp
 export function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <div data-slot="table-container" className="scrollbar-thin relative w-full overflow-x-auto">
-      <table data-slot="table" className={cn("w-full caption-bottom text-xs", className)} {...props} />
+      <table data-slot="table" className={cn("w-full caption-bottom text-[11.5px]", className)} {...props} />
     </div>
   );
 }
 export function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
-  return <thead data-slot="table-header" className={cn("[&_tr]:border-b", className)} {...props} />;
+  return <thead data-slot="table-header" className={cn("[&_tr]:border-b [&_tr]:border-[#131a23]", className)} {...props} />;
 }
 export function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   return <tbody data-slot="table-body" className={cn("[&_tr:last-child]:border-0", className)} {...props} />;
 }
 export function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
-  return <tr data-slot="table-row" className={cn("border-b border-border/60 transition-colors hover:bg-accent/50 data-[state=selected]:bg-accent", className)} {...props} />;
+  return <tr data-slot="table-row" className={cn("border-b border-[#0f141b] transition-colors hover:bg-[rgba(255,255,255,0.025)] data-[state=selected]:bg-[rgba(76,155,255,0.08)]", className)} {...props} />;
 }
 export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
-      className={cn("h-8 px-2 text-left align-middle text-[11px] font-medium whitespace-nowrap text-muted-foreground", className)}
+      className={cn("h-8 px-3 text-left align-middle font-mono text-[9.5px] font-normal tracking-[0.06em] whitespace-nowrap text-[#5b6878] uppercase", className)}
       {...props}
     />
   );
 }
 export function TableCell({ className, ...props }: React.ComponentProps<"td">) {
-  return <td data-slot="table-cell" className={cn("num px-2 py-1.5 align-middle whitespace-nowrap", className)} {...props} />;
+  return <td data-slot="table-cell" className={cn("num px-3 py-[7px] align-middle whitespace-nowrap", className)} {...props} />;
 }
 
 // ---- Tabs --------------------------------------------------------------------
@@ -125,7 +125,7 @@ export function TabsList({ className, ...props }: React.ComponentProps<typeof Ta
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={cn("inline-flex h-8 w-fit items-center rounded-md bg-muted p-0.5 text-muted-foreground", className)}
+      className={cn("inline-flex w-fit items-center gap-[2px] rounded-[9px] border border-[#1c2531] bg-[#080b10] p-[3px] text-[#8b98a9]", className)}
       {...props}
     />
   );
@@ -135,7 +135,7 @@ export function TabsTrigger({ className, ...props }: React.ComponentProps<typeof
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex h-7 items-center justify-center gap-1.5 rounded px-2.5 text-xs font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/60 data-[state=active]:bg-card data-[state=active]:text-foreground",
+        "inline-flex items-center justify-center gap-1.5 rounded-[7px] px-3 py-1.5 text-[12px] font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/60 data-[state=active]:bg-[#1a2230] data-[state=active]:text-[#eef3f8]",
         className,
       )}
       {...props}
@@ -161,7 +161,7 @@ export function Tip({ content, children, side = "top" }: { content: React.ReactN
         <TooltipPrimitive.Content
           side={side}
           sideOffset={6}
-          className="z-50 max-w-xs rounded-md border bg-popover px-2.5 py-1.5 text-xs text-popover-foreground shadow-lg shadow-black/40 animate-in fade-in-0 zoom-in-95"
+          className="z-50 max-w-xs rounded-[7px] border border-[#2a3442] bg-[rgba(7,10,14,0.96)] px-2.5 py-1.5 text-[11.5px] leading-[1.55] text-[#c9d3df] shadow-[0_8px_24px_rgba(0,0,0,0.5)] animate-in fade-in-0 zoom-in-95"
         >
           {content}
         </TooltipPrimitive.Content>
@@ -185,19 +185,19 @@ export function SheetContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content> & { title: React.ReactNode; description?: React.ReactNode }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/60 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-[rgba(3,5,8,0.55)] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
       <DialogPrimitive.Content
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l bg-background shadow-2xl sm:max-w-xl data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
+          "fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-[#222c39] bg-[#0b0f14] shadow-[0_24px_60px_-12px_rgba(0,0,0,0.7)] sm:max-w-xl data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
           className,
         )}
         {...props}
       >
-        <div className="flex items-start justify-between gap-3 border-b px-5 py-4">
+        <div className="flex items-start justify-between gap-3 border-b border-[#131a23] px-5 py-4">
           <div className="min-w-0">
-            <DialogPrimitive.Title className="text-base font-semibold">{title}</DialogPrimitive.Title>
+            <DialogPrimitive.Title className="text-[15px] font-semibold tracking-[-0.01em]">{title}</DialogPrimitive.Title>
             {description ? (
-              <DialogPrimitive.Description className="mt-0.5 text-xs text-muted-foreground">{description}</DialogPrimitive.Description>
+              <DialogPrimitive.Description className="mt-1 text-[12px] text-[#8b98a9]">{description}</DialogPrimitive.Description>
             ) : (
               <DialogPrimitive.Description className="sr-only">Details</DialogPrimitive.Description>
             )}
@@ -219,7 +219,7 @@ export function Input({ className, ...props }: React.ComponentProps<"input">) {
     <input
       data-slot="input"
       className={cn(
-        "h-8 w-full min-w-0 rounded-md border border-input bg-transparent px-2.5 text-xs outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50",
+        "h-[30px] w-full min-w-0 rounded-lg border border-[#1c2531] bg-[#080b10] px-2.5 font-mono text-[12px] text-[#e6edf5] outline-none placeholder:text-[#5b6878] focus-visible:border-[#2f3d50]",
         className,
       )}
       {...props}
@@ -232,7 +232,7 @@ export function NativeSelect({ className, children, ...props }: React.ComponentP
     <select
       data-slot="native-select"
       className={cn(
-        "h-8 rounded-md border border-input bg-card px-2 pr-7 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+        "h-[30px] rounded-lg border border-[#1c2531] bg-[#080b10] px-2 text-[12px] text-[#e6edf5] outline-none focus-visible:border-[#2f3d50]",
         className,
       )}
       {...props}
@@ -243,9 +243,9 @@ export function NativeSelect({ className, children, ...props }: React.ComponentP
 }
 
 export function Label({ className, ...props }: React.ComponentProps<"label">) {
-  return <label className={cn("flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground", className)} {...props} />;
+  return <label className={cn("flex items-center gap-[7px] text-[11.5px] text-[#8b98a9]", className)} {...props} />;
 }
 
 export function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="skeleton" className={cn("animate-pulse rounded-md bg-muted", className)} {...props} />;
+  return <div data-slot="skeleton" className={cn("cq-skel", className)} {...props} />;
 }

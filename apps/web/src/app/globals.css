@@ -4,65 +4,62 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Dark-first trading palette.
- * Data colours follow the dataviz reference palette's dark steps (validated against this
- * surface with the palette validator): categorical slots for identity, a blue<->red diverging
- * pair with a grey midpoint, and four fixed status colours that are never reused as series.
- * Long/short use aqua/red and always ship with an L/S label, because that pair sits in the
- * colour-vision-deficiency warn band (dE 6.5) without secondary encoding.
+ * Palette and type from the Claude Design prototype (docs/design): near-black surfaces, cool
+ * greys, Geist and Geist Mono, and six accents. Long/short are aqua/red and always ship with an
+ * L/S label. The shadcn-style tokens below map onto the same palette so every primitive matches.
  */
 :root {
   color-scheme: dark;
   --radius: 0.5rem;
 
-  --background: #0b0c0e;
-  --foreground: #ecebe7;
-  --card: #121316;
-  --card-foreground: #ecebe7;
-  --popover: #17181b;
-  --popover-foreground: #ecebe7;
-  --primary: #3987e5;
-  --primary-foreground: #0b0c0e;
-  --secondary: #1b1c20;
-  --secondary-foreground: #ecebe7;
-  --muted: #1b1c20;
-  --muted-foreground: #9a9992;
-  --accent: #202227;
-  --accent-foreground: #ecebe7;
-  --destructive: #d03b3b;
-  --border: rgb(255 255 255 / 0.08);
-  --input: rgb(255 255 255 / 0.12);
-  --ring: #3987e5;
+  --background: #06080b;
+  --foreground: #e6edf5;
+  --card: #0b0f14;
+  --card-foreground: #e6edf5;
+  --popover: #0b0f14;
+  --popover-foreground: #e6edf5;
+  --primary: #4c9bff;
+  --primary-foreground: #06080b;
+  --secondary: #0d1219;
+  --secondary-foreground: #e6edf5;
+  --muted: #0d1219;
+  --muted-foreground: #8b98a9;
+  --accent: #121922;
+  --accent-foreground: #e6edf5;
+  --destructive: #ff5c6c;
+  --border: #17202b;
+  --input: #1c2531;
+  --ring: #4c9bff;
 
   /* chart chrome */
-  --grid: #26272b;
-  --axis: #3a3b40;
+  --grid: #131a23;
+  --axis: #1c2531;
 
   /* polarity */
-  --long: #199e70;
-  --short: #e66767;
-  --neutral: #4a4a47;
+  --long: #2ee6a6;
+  --short: #ff5c6c;
+  --neutral: #56606d;
 
-  /* status (fixed, never themed, always paired with icon + label) */
-  --good: #0ca30c;
-  --warning: #fab219;
-  --serious: #ec835a;
-  --critical: #d03b3b;
+  /* status (always paired with icon + label) */
+  --good: #2ee6a6;
+  --warning: #ffb547;
+  --serious: #ff7a3d;
+  --critical: #ff5c6c;
 
-  /* categorical (dark steps, fixed order) */
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
-  --series-4: #c98500;
-  --series-5: #d55181;
-  --series-6: #008300;
-  --series-7: #9085e9;
-  --series-8: #e66767;
+  /* accents (fixed order) */
+  --series-1: #4c9bff;
+  --series-2: #ff7a3d;
+  --series-3: #2ee6a6;
+  --series-4: #ffb547;
+  --series-5: #a98bff;
+  --series-6: #7fb6ff;
+  --series-7: #a98bff;
+  --series-8: #ff5c6c;
 }
 
 @theme inline {
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace;
+  --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
@@ -116,10 +113,32 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "cv11", "ss01";
+    font-size: 13px;
+  }
+  a {
+    color: #7fb6ff;
+  }
+  a:hover {
+    color: #b8d6ff;
+  }
+  select option {
+    background: #0b0f14;
+    color: #e6edf5;
   }
   ::selection {
-    background: rgb(57 135 229 / 0.35);
+    background: rgb(76 155 255 / 0.35);
+  }
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1a222d;
+    border-radius: 9px;
+    border: 2px solid #06080b;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
@@ -130,7 +149,7 @@
   }
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: #2a2b30 transparent;
+    scrollbar-color: #1a222d transparent;
   }
 }
 
@@ -147,6 +166,290 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .tape-in {
+    animation: none;
+  }
+}
+
+/*
+ * Prototype component classes (docs/design/Crypto Quant.dc.html). Exact values from the
+ * design; kept in the components layer so Tailwind utilities can still adjust layout.
+ */
+@layer components {
+  .cq-mono {
+    font-family: var(--font-mono);
+  }
+  .cq-main {
+    background-color: #06080b;
+    background-image:
+      radial-gradient(900px 420px at 75% -12%, rgba(76, 155, 255, 0.07), transparent 65%),
+      linear-gradient(rgba(255, 255, 255, 0.016) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.016) 1px, transparent 1px);
+    background-size:
+      auto,
+      44px 44px,
+      44px 44px;
+  }
+  .cq-card {
+    background: #0b0f14;
+    border: 1px solid #17202b;
+    border-radius: 14px;
+    min-width: 0;
+  }
+  .cq-sec {
+    padding: 18px 20px;
+  }
+  .cq-title {
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  .cq-path {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: #4f5b6a;
+    margin-top: 3px;
+  }
+  .cq-asof {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: #5b6878;
+    white-space: nowrap;
+  }
+  .cq-kicker {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: #5b6878;
+  }
+  .cq-sub {
+    font-size: 12px;
+    color: #8b98a9;
+    margin-top: 4px;
+    text-wrap: pretty;
+  }
+  .cq-note {
+    font-size: 11px;
+    color: #4f5b6a;
+    margin-top: 12px;
+    text-wrap: pretty;
+  }
+  .cq-stage {
+    position: relative;
+    background: #080b10;
+    border: 1px solid #141b24;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .cq-stage-hint {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: #4f5b6a;
+    pointer-events: none;
+  }
+  .cq-tile {
+    background: #0d1219;
+    border: 1px solid #151c26;
+    border-radius: 10px;
+  }
+  .cq-input {
+    background: #080b10;
+    border: 1px solid #1c2531;
+    border-radius: 8px;
+    color: #e6edf5;
+    padding: 7px 10px;
+    font-size: 12px;
+    outline: none;
+    font-family: var(--font-mono);
+  }
+  .cq-input:focus-visible,
+  .cq-select:focus-visible {
+    border-color: #2f3d50;
+  }
+  .cq-select {
+    background: #080b10;
+    border: 1px solid #1c2531;
+    border-radius: 8px;
+    color: #e6edf5;
+    padding: 6px 8px;
+    font-size: 12px;
+    outline: none;
+  }
+  .cq-field {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11.5px;
+    color: #8b98a9;
+  }
+  .cq-btn {
+    flex: none;
+    background: none;
+    border: 1px solid #1c2531;
+    border-radius: 7px;
+    padding: 5px 9px;
+    color: #9aa8b8;
+    cursor: pointer;
+    font-size: 11px;
+    white-space: nowrap;
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+  .cq-btn:hover {
+    color: #e6edf5;
+    border-color: #2a3748;
+  }
+  .cq-seg {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    background: #080b10;
+    border: 1px solid #1c2531;
+    border-radius: 9px;
+  }
+  .cq-seg > button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: #8b98a9;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .cq-seg > button[aria-pressed="true"] {
+    background: #1a2230;
+    color: #eef3f8;
+  }
+  .cq-chip {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 5px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .cq-th {
+    display: grid;
+    gap: 12px;
+    padding: 8px 12px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    color: #5b6878;
+    border-bottom: 1px solid #131a23;
+  }
+  .cq-tr {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+    padding: 7px 12px;
+    border: none;
+    border-bottom: 1px solid #0f141b;
+    color: #e6edf5;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    align-items: center;
+    text-align: right;
+    background: transparent;
+  }
+  button.cq-tr {
+    cursor: pointer;
+  }
+  .cq-tr:hover {
+    background: rgba(255, 255, 255, 0.025);
+  }
+  .cq-sort {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+  }
+  .cq-pop {
+    background: #0b0f14;
+    border: 1px solid #222c39;
+    border-radius: 14px;
+    box-shadow:
+      0 24px 60px -12px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(76, 155, 255, 0.06);
+  }
+  .cq-switch {
+    position: relative;
+    width: 34px;
+    height: 20px;
+    flex: none;
+    border: none;
+    border-radius: 20px;
+    background: #1f2833;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s;
+  }
+  .cq-switch[aria-checked="true"] {
+    background: #4c9bff;
+  }
+  .cq-switch > span {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+  .cq-switch[aria-checked="true"] > span {
+    transform: translateX(14px);
+  }
+  .cq-skel {
+    border-radius: 10px;
+    background: linear-gradient(90deg, #0b0f14 0%, #111822 50%, #0b0f14 100%);
+    background-size: 200% 100%;
+    animation: cq-shimmer 1.4s ease-in-out infinite;
+  }
+  .cq-pulse {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    position: relative;
+    flex: none;
+  }
+  .cq-pulse > i {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--c, #2ee6a6);
+  }
+  .cq-pulse > i + i {
+    animation: cq-pulse 1.8s ease-out infinite;
+    opacity: 0.7;
+  }
+}
+
+@keyframes cq-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes cq-pulse {
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cq-pulse > i + i {
     animation: none;
   }
 }

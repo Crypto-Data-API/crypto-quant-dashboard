@@ -18,13 +18,11 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "ioredis": "5.11.1",
-    "lightweight-charts": "5.2.1",
     "lucide-react": "1.56.0",
     "next": "15.5.27",
     "radix-ui": "1.8.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "recharts": "3.10.1",
     "tailwind-merge": "3.7.0",
     "three": "0.160.0"
   },

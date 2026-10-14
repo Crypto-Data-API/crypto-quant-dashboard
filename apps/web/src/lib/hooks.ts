@@ -47,7 +47,7 @@ async function staticEnvelope<T>(id: DatasetId, param: string | null, signal?: A
  * browser can refetch more often than the worker polls: a quarter of the dataset interval,
  * between 5 s and 5 min, and every 2 s while an on-demand fetch is pending.
  */
-export function useDataset<K extends DatasetId>(id: K, opts: { param?: string | null; enabled?: boolean } = {}) {
+export function useDataset<K extends DatasetId>(id: K, opts: { param?: string | null; enabled?: boolean; paused?: boolean } = {}) {
   const def = DATASETS[id] as DatasetDef;
   const param = opts.param ?? null;
   const enabled = (opts.enabled ?? true) && (!def.param || !!param);
@@ -66,7 +66,7 @@ export function useDataset<K extends DatasetId>(id: K, opts: { param?: string | 
     // is hidden once loaded: their reads keep the worker spending CDA budget on that symbol.
     refetchIntervalInBackground: true,
     refetchInterval: (q) => {
-      if (IS_STATIC) return false;
+      if (IS_STATIC || opts.paused) return false;
       const env = q.state.data;
       if (!env || env.status === "pending") return 2_000;
       if (isOnDemandDef(def) && typeof document !== "undefined" && document.hidden) return false;
@@ -265,5 +265,18 @@ export function useFilteredEvents(events: RelayedEvent[], filter: { symbol?: str
         return true;
       }),
     [events, symbol, minUsd],
+  );
+}
+
+/** Matches a CSS media query (false during server render). */
+export function useMediaQuery(query: string): boolean {
+  return useSyncExternalStore(
+    (cb) => {
+      const m = window.matchMedia(query);
+      m.addEventListener("change", cb);
+      return () => m.removeEventListener("change", cb);
+    },
+    () => window.matchMedia(query).matches,
+    () => false,
   );
 }

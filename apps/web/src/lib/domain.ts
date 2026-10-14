@@ -1,28 +1,27 @@
 /**
  * Domain vocabulary shared by the pages: regime colours and labels, probability-head bucket
- * orderings, and band/status mappings. Colours come from the dataviz palette tokens defined
- * in globals.css (dark steps).
+ * orderings, and band/status mappings. Colours follow the prototype palette (src/cq/theme.ts).
  */
 
 export const C = {
-  long: "#199e70",
-  short: "#e66767",
-  neutral: "#4a4a47",
-  grid: "#26272b",
-  axis: "#3a3b40",
-  muted: "#9a9992",
-  ink: "#ecebe7",
-  blue: "#3987e5",
-  orange: "#d95926",
-  aqua: "#199e70",
-  yellow: "#c98500",
-  magenta: "#d55181",
-  violet: "#9085e9",
-  red: "#e66767",
-  good: "#0ca30c",
-  warning: "#fab219",
-  serious: "#ec835a",
-  critical: "#d03b3b",
+  long: "#2ee6a6",
+  short: "#ff5c6c",
+  neutral: "#56606d",
+  grid: "#131a23",
+  axis: "#1c2531",
+  muted: "#8b98a9",
+  ink: "#e6edf5",
+  blue: "#4c9bff",
+  orange: "#ff7a3d",
+  aqua: "#2ee6a6",
+  yellow: "#ffb547",
+  magenta: "#d36bff",
+  violet: "#a98bff",
+  red: "#ff5c6c",
+  good: "#2ee6a6",
+  warning: "#ffb547",
+  serious: "#ff7a3d",
+  critical: "#ff5c6c",
 } as const;
 
 // ---- short-term HMM regimes (/quant) --------------------------------------------
@@ -48,7 +47,7 @@ export function hmmMeta(label: string | null | undefined) {
 
 type Scale = "diverging-price" | "diverging" | "ordinal" | "regime";
 
-const RAMP_ORDINAL = ["#184f95", "#2a78d6", "#6da7ec", "#b7d3f6"];
+const RAMP_ORDINAL = ["#2f6fd6", "#4c9bff", "#7fb6ff", "#9fd0ff"];
 
 export const HEADS: Record<string, { label: string; order: string[]; scale: Scale; note?: string }> = {
   directional: {
@@ -82,9 +81,9 @@ export function headBuckets(head: string, probs: Record<string, number> | null |
     let color: string = C.neutral;
     const scale = meta?.scale ?? "ordinal";
     if (scale === "diverging-price") {
-      color = ["#e66767", "#9b5250", "#4a4a47", "#1f6f53", "#199e70"][i] ?? C.neutral;
+      color = ["#ff5c6c", "#c9505c", "#56606d", "#1fa67a", "#2ee6a6"][i] ?? C.neutral;
     } else if (scale === "diverging") {
-      color = n === 3 ? (["#3987e5", "#4a4a47", "#d95926"][i] ?? C.neutral) : C.neutral;
+      color = n === 3 ? (["#4c9bff", "#56606d", "#ff7a3d"][i] ?? C.neutral) : C.neutral;
     } else if (scale === "ordinal") {
       color = RAMP_ORDINAL[Math.min(RAMP_ORDINAL.length - 1, Math.round((i / Math.max(1, n - 1)) * (n >= 4 ? 3 : 2)))] ?? C.blue;
     } else if (scale === "regime") {

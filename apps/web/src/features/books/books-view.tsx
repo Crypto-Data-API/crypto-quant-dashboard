@@ -1,356 +1,309 @@
 "use client";
 
-import type { CoinDepthSnapshot, L2Level } from "@cqd/schemas";
-import { Crosshair, TriangleAlert } from "lucide-react";
-import { useMemo, useState } from "react";
-import { DivergingBar, Gauge } from "@/components/charts/basic";
-import { TimeSeriesChart, type TsSeries } from "@/components/charts/time-series";
-import { Freshness, Panel, PanelBody } from "@/components/panel";
-import { Badge, Card, CardContent, CardHeader, CardTitle, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tip } from "@/components/ui/primitives";
-import { C, hmmMeta, LIQ_REGIME, sentimentTone } from "@/lib/domain";
-import { clock, humanize, num, pct, price, usd } from "@/lib/format";
+import type { CoinDepthSnapshot } from "@cqd/schemas";
+import { useEffect, useMemo, useState } from "react";
+import { Freshness, Panel, PanelBody, SecHead } from "@/components/panel";
+import { depthSlice, ladderSlice } from "@/cq/adapters";
+import { Depth3DView, GaugeView, LadderView, Pulse } from "@/cq/react";
+import { A, C, fmt, REG, regCode } from "@/cq/theme";
+import type { LadderSlice } from "@/cq/types";
+import { SearchInput } from "@/features/market/perp-regimes-view";
+import { humanize, num } from "@/lib/format";
 import { useDataset } from "@/lib/hooks";
-import { cn, finite, toMs } from "@/lib/utils";
+import { useUi } from "@/lib/settings";
+import { finite } from "@/lib/utils";
 
-const BANDS = ["10bps", "25bps", "50bps", "100bps"] as const;
+const CHIPS = ["BTC", "ETH", "SOL", "HYPE", "XRP", "SUI", "ZEC", "PUMP"];
 
-function depthAt(s: CoinDepthSnapshot, side: "bid" | "ask", band: string): number | null {
-  const v = s.depth_usd?.[side]?.[band];
+const LIQ: Record<string, { label: string; c: string }> = {
+  deep_book: { label: "Deep book", c: C.long },
+  neutral: { label: "Neutral", c: "#8b98a9" },
+  oi_price_divergence: { label: "OI/price divergence", c: C.amber },
+  depth_withdrawal: { label: "Depth withdrawal", c: C.orange },
+  post_cascade_impaired: { label: "Post-cascade", c: C.short },
+};
+const liqOf = (r: string | null | undefined) => LIQ[r ?? ""] ?? { label: humanize(r ?? "—"), c: "#8b98a9" };
+
+function band(s: CoinDepthSnapshot, side: "bid" | "ask", b: string): number | null {
+  const v = s.depth_usd?.[side]?.[b];
   return typeof v === "number" ? v : null;
 }
-
-function truncated(s: CoinDepthSnapshot, band: string): boolean {
+function sat(s: CoinDepthSnapshot, b: string): boolean {
   const t = s.levels_truncated as Record<string, Record<string, boolean>> | null | undefined;
-  return Boolean(t?.bid?.[band] || t?.ask?.[band]);
+  return Boolean(t?.bid?.[b] || t?.ask?.[b]);
 }
+const both = (s: CoinDepthSnapshot, b: string) => {
+  const x = band(s, "bid", b);
+  const y = band(s, "ask", b);
+  return x === null && y === null ? null : (x ?? 0) + (y ?? 0);
+};
 
-function useRegimeLookups() {
+function useLookups() {
   const liq = useDataset("liquidity-regime");
   const risk = useDataset("quant-coins-risk");
-  return useMemo(() => {
-    const liqBy = new Map((liq.data?.data?.coins ?? []).map((c) => [c.coin, c]));
-    const hmmBy = new Map((risk.data?.data?.items ?? []).map((c) => [c.symbol, c]));
-    return { liqBy, hmmBy };
-  }, [liq.data, risk.data]);
+  const depth = useDataset("liquidity-depth");
+  return useMemo(
+    () => ({
+      liqBy: new Map((liq.data?.data?.coins ?? []).map((c) => [c.coin, c])),
+      hmmBy: new Map((risk.data?.data?.items ?? []).map((c) => [c.symbol, c])),
+      depthBy: new Map((depth.data?.data?.coins ?? []).map((c) => [c.coin, c])),
+    }),
+    [liq.data, risk.data, depth.data],
+  );
 }
+
+function LadderCard({ coin, imb, hmmColor }: { coin: string; imb: number | null; hmmColor: string }) {
+  const ui = useUi();
+  const q = useDataset("l2-book", { param: coin, paused: !ui.live });
+  const [ladder, setLadder] = useState<LadderSlice | null>(null);
+  const book = q.data?.data ?? null;
+  useEffect(() => {
+    setLadder((prev) => ladderSlice(book, prev, imb));
+  }, [book, imb]);
+  const mid = ladder ? (ladder.asks[0]!.p + ladder.bids[0]!.p) / 2 : null;
+  return (
+    <section className="cq-card flex flex-col" style={{ flex: "0 1 380px", minWidth: 300, padding: "16px 16px 12px" }}>
+      <div className="flex items-start justify-between" style={{ gap: 10, marginBottom: 10 }}>
+        <div className="flex min-w-0 items-center" style={{ gap: 12 }}>
+          <div className="relative flex flex-none items-center justify-center" style={{ width: 42, height: 42, borderRadius: "50%", background: A(hmmColor, 0.1), border: `1px solid ${A(hmmColor, 0.4)}`, boxShadow: `0 0 24px -6px ${hmmColor}` }}>
+            <span className="cq-mono" style={{ fontSize: 13, fontWeight: 600, color: hmmColor }}>
+              {coin.slice(0, 3)}
+            </span>
+            <div aria-hidden style={{ position: "absolute", left: 5, top: 5, width: 30, height: 30, borderRadius: "50%", backgroundImage: `url(https://app.hyperliquid.xyz/coins/${encodeURIComponent(coin)}.svg)`, backgroundSize: "contain", backgroundPosition: "center", backgroundRepeat: "no-repeat" }} />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-baseline" style={{ gap: 9 }}>
+              <span style={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1 }}>{coin}</span>
+              <span className="cq-mono" style={{ fontSize: 13, color: "#c9d3df" }}>
+                {fmt.px(mid)}
+              </span>
+            </div>
+            <div className="cq-mono" style={{ fontSize: 10.5, color: "#4f5b6a", marginTop: 5 }}>
+              L2 ladder · /hyperliquid/l2-book
+            </div>
+          </div>
+        </div>
+        {q.data?.demo ? (
+          <Freshness env={q.data} />
+        ) : ui.live ? (
+          <span className="cq-mono flex items-center" style={{ gap: 6, fontSize: 10, color: C.long }}>
+            <Pulse color={C.long} />
+            live
+          </span>
+        ) : (
+          <span className="cq-mono" style={{ fontSize: 10, color: "#5b6878" }}>
+            paused
+          </span>
+        )}
+      </div>
+      <div style={{ height: 580, position: "relative" }}>
+        {ladder ? (
+          <LadderView ladder={ladder} label={`${coin} order book, 12 levels a side`} />
+        ) : (
+          <PanelBody env={q.data} isLoading={q.isLoading} skeletonHeight={580}>
+            {() => <div style={{ fontSize: 12, color: "#5b6878" }}>Empty book.</div>}
+          </PanelBody>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function TerrainCard({ coin }: { coin: string }) {
+  const q = useDataset("depth-history", { param: coin });
+  const t = useMemo(() => depthSlice(q.data?.data, coin), [q.data, coin]);
+  return (
+    <section className="cq-card flex min-w-0 flex-col" style={{ flex: "1 1 560px", padding: "16px 18px" }}>
+      <SecHead title={`Liquidity terrain ±50 bps · last 6h · ${coin}`} mb={12} right={<Freshness env={q.data} />} />
+      <div className="cq-stage flex-1" style={{ minHeight: 500 }}>
+        <div className="absolute inset-0" style={{ padding: t.slice.cols.length ? 0 : 14 }}>
+          <PanelBody env={q.data} isLoading={q.isLoading} skeletonHeight="100%" fill>
+            {() =>
+              t.slice.cols.length ? (
+                <Depth3DView data={t.slice} label={`${coin} depth within 50 bps of mid over the last 6 hours`} />
+              ) : (
+                <div className="flex h-full items-center justify-center" style={{ fontSize: 12, color: "#5b6878" }}>
+                  No depth snapshots in the window yet.
+                </div>
+              )
+            }
+          </PanelBody>
+        </div>
+        <div className="cq-mono flex" style={{ position: "absolute", left: 14, top: 12, gap: 16, fontSize: 10.5, pointerEvents: "none" }}>
+          <span style={{ color: C.long }}>
+            Bid depth 25 bps <b style={{ color: "#e6edf5" }}>{fmt.usd(t.bid25)}</b>
+          </span>
+          <span style={{ color: C.short }}>
+            Ask depth 25 bps <b style={{ color: "#e6edf5" }}>{fmt.usd(t.ask25)}</b>
+          </span>
+        </div>
+        <div className="cq-stage-hint">height = depth (compressed) · live edge streams in at right · drag to orbit</div>
+      </div>
+      {t.slice.sat ? (
+        <div className="flex items-start" style={{ gap: 8, marginTop: 12, fontSize: 11.5, color: C.amber, lineHeight: 1.5 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.amber} strokeWidth="2" style={{ flex: "none", marginTop: 2 }} aria-hidden>
+            <path d="M12 3 2 21h20L12 3zM12 10v5M12 18h.01" />
+          </svg>
+          <span style={{ textWrap: "pretty" }}>Bands beyond 10 bps are saturated: Hyperliquid returns ~20 levels, which fit inside 10 bps on this book, so outer depth is a lower bound (flat slate area).</span>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+const COLS = "0.7fr 0.9fr 0.7fr 0.9fr 0.9fr 0.9fr 1.3fr 0.8fr 1.2fr 0.7fr";
 
 function DepthTable({ focus, onFocus }: { focus: string; onFocus: (c: string) => void }) {
   const q = useDataset("liquidity-depth");
-  const { liqBy, hmmBy } = useRegimeLookups();
+  const { liqBy, hmmBy } = useLookups();
+  const [search, setSearch] = useState("");
   return (
-    <Panel title="Depth across the top 25 perps" dataset="liquidity-depth" env={q.data} isLoading={q.isLoading} skeletonHeight={420}>
-      {(d) => (
-        <div className="space-y-2">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead>Coin</TableHead>
-                <TableHead className="text-right">Mid</TableHead>
-                <TableHead className="text-right">Spread</TableHead>
-                <TableHead className="text-right">&plusmn;10 bps</TableHead>
-                <TableHead className="text-right">&plusmn;25 bps</TableHead>
-                <TableHead className="text-right">&plusmn;100 bps</TableHead>
-                <TableHead className="w-28">Imbalance 10 bps</TableHead>
-                <TableHead className="text-right">OI</TableHead>
-                <TableHead>Liquidity regime</TableHead>
-                <TableHead>HMM regime</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {d.coins.map((c) => {
-                const liq = liqBy.get(c.coin);
-                const hmm = hmmBy.get(c.coin);
-                const lr = liq ? (LIQ_REGIME[liq.regime] ?? { tone: "outline" as const, label: humanize(liq.regime) }) : null;
-                const imb = finite(c.imbalance_10bps);
-                const sum = (band: string) => {
-                  const b = depthAt(c, "bid", band);
-                  const a = depthAt(c, "ask", band);
-                  return b === null && a === null ? null : (b ?? 0) + (a ?? 0);
-                };
-                return (
-                  <TableRow
-                    key={c.coin}
-                    data-state={c.coin === focus ? "selected" : undefined}
-                    className="cursor-pointer"
-                    tabIndex={0}
-                    onClick={() => onFocus(c.coin)}
-                    onKeyDown={(e) => (e.key === "Enter" ? onFocus(c.coin) : undefined)}
-                  >
-                    <TableCell className="font-semibold">{c.coin}</TableCell>
-                    <TableCell className="text-right">{price(c.mid_price)}</TableCell>
-                    <TableCell className="text-right">{num(c.spread_bps, 2)} bps</TableCell>
-                    {(["10bps", "25bps", "100bps"] as const).map((b) => (
-                      <TableCell key={b} className="text-right">
-                        {truncated(c, b) ? (
-                          <Tip content="The deepest of the ~20 returned levels sat inside this band, so the true depth is at least this much.">
-                            <span className="text-muted-foreground">&ge;</span>
-                          </Tip>
-                        ) : null}
-                        {usd(sum(b))}
-                      </TableCell>
-                    ))}
-                    <TableCell>
-                      <Tip content={`Imbalance ${imb !== null ? num(imb, 2) : "n/a"} (positive = more bid depth)`}>
-                        <div className="w-24">
-                          <DivergingBar value={imb ?? 0} maxAbs={1} />
-                        </div>
-                      </Tip>
-                    </TableCell>
-                    <TableCell className="text-right text-muted-foreground">{usd(c.open_interest_usd)}</TableCell>
-                    <TableCell>{lr ? <Badge variant={lr.tone}>{lr.label}</Badge> : <span className="text-muted-foreground">{"—"}</span>}</TableCell>
-                    <TableCell>
-                      {hmm?.regime ? (
-                        <span className="inline-flex items-center gap-1.5 text-[11px]">
-                          <span className="size-2 rounded-sm" style={{ background: hmmMeta(hmm.regime.label).color }} aria-hidden />
-                          {hmmMeta(hmm.regime.label).short}
+    <Panel title="Depth across the top 25 perps" dataset="liquidity-depth" env={q.data} isLoading={q.isLoading} skeletonHeight={420} mb={12}>
+      {(d) => {
+        const query = search.trim().toUpperCase();
+        const rows = d.coins.filter((c) => !query || c.coin.toUpperCase().includes(query));
+        return (
+          <>
+            <div className="flex flex-wrap items-center" style={{ gap: 12, marginBottom: 12 }}>
+              <SearchInput value={search} onChange={setSearch} placeholder="Find coin" upper label="Find coin" />
+              <span className="cq-mono" style={{ marginLeft: "auto", fontSize: 10.5, color: "#5b6878" }}>
+                {rows.length} of {d.coins.length} books · click a row to focus
+              </span>
+            </div>
+            <div className="overflow-x-auto">
+              <div style={{ minWidth: 1020 }}>
+                <div className="cq-th" style={{ gridTemplateColumns: COLS, textAlign: "right" }}>
+                  <span style={{ textAlign: "left" }}>COIN</span>
+                  <span>MID</span>
+                  <span>SPREAD BPS</span>
+                  <span>±10 BPS</span>
+                  <span>±25 BPS</span>
+                  <span>±100 BPS</span>
+                  <span style={{ textAlign: "center" }}>IMBALANCE 10 BPS</span>
+                  <span>OI</span>
+                  <span style={{ textAlign: "left", paddingLeft: 10 }}>LIQUIDITY</span>
+                  <span style={{ textAlign: "left" }}>HMM</span>
+                </div>
+                {rows.map((b) => {
+                  const on = b.coin === focus;
+                  const imb = finite(b.imbalance_10bps) ?? 0;
+                  const ic = imb >= 0 ? C.long : C.short;
+                  const iw = Math.min(50, Math.abs(imb) * 80);
+                  const lq = liqOf(liqBy.get(b.coin)?.regime);
+                  const h = hmmBy.get(b.coin);
+                  const code = regCode(h?.regime?.label);
+                  const hc = code ? REG[code].color : "#5b6878";
+                  return (
+                    <button key={b.coin} type="button" className="cq-tr relative" style={{ gridTemplateColumns: COLS, background: on ? "rgba(76,155,255,0.08)" : undefined }} onClick={() => onFocus(b.coin)} aria-pressed={on}>
+                      <span style={{ position: "absolute", left: 0, top: 4, bottom: 4, width: 2, background: on ? C.blue : "transparent" }} />
+                      <span style={{ textAlign: "left", fontWeight: 600, fontFamily: "var(--font-sans)", fontSize: 12.5 }}>{b.coin}</span>
+                      <span>{fmt.px(b.mid_price)}</span>
+                      <span style={{ color: "#9aa8b8" }}>{num(b.spread_bps, 2)}</span>
+                      {(["10bps", "25bps", "100bps"] as const).map((k) => (
+                        <span key={k} title={sat(b, k) ? "The ~20 returned levels sat inside this band, so the true depth is at least this much." : undefined}>
+                          {sat(b, k) ? "≥" : ""}
+                          {fmt.usd(both(b, k))}
                         </span>
-                      ) : (
-                        <span className="text-muted-foreground">{"—"}</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-          <p className="text-[10px] text-muted-foreground">Depth is bid plus ask USD within the band. Click a row to focus its live ladder and 6h depth history. Each book carries its HMM regime from the Market Regimes model as corroboration.</p>
-        </div>
-      )}
-    </Panel>
-  );
-}
-
-function Ladder({ coin }: { coin: string }) {
-  const q = useDataset("l2-book", { param: coin });
-  return (
-    <Card>
-      <CardHeader>
-        <div>
-          <CardTitle>L2 ladder: {coin}</CardTitle>
-          <div className="mt-0.5 font-mono text-[10px] text-muted-foreground/70">/hyperliquid/l2-book (15 s while open)</div>
-        </div>
-        <Freshness env={q.data} />
-      </CardHeader>
-      <CardContent>
-        <PanelBody env={q.data} isLoading={q.isLoading} skeletonHeight={420}>
-          {(d) => {
-            const asks = [...d.asks].slice(0, 12).reverse();
-            const bids = d.bids.slice(0, 12);
-            const cum = (levels: L2Level[]) => {
-              let acc = 0;
-              return levels.map((l) => (acc += l.price * l.size));
-            };
-            const askCum = cum([...d.asks].slice(0, 12)).reverse();
-            const bidCum = cum(bids);
-            const maxCum = Math.max(askCum[0] ?? 0, bidCum[bidCum.length - 1] ?? 0, 1);
-            const bestBid = d.bids[0]?.price;
-            const bestAsk = d.asks[0]?.price;
-            const mid = bestBid && bestAsk ? (bestBid + bestAsk) / 2 : null;
-            const spreadBps = bestBid && bestAsk && mid ? ((bestAsk - bestBid) / mid) * 10_000 : null;
-            const Row = ({ l, c, side }: { l: L2Level; c: number; side: "bid" | "ask" }) => (
-              <div className="relative grid grid-cols-[1fr_1fr_3rem_1fr] gap-2 px-2 py-[3px] text-[11px]">
-                <div
-                  className="absolute inset-y-0 right-0 opacity-20"
-                  style={{ width: `${(c / maxCum) * 100}%`, background: side === "bid" ? C.long : C.short }}
-                  aria-hidden
-                />
-                <span className={cn("num relative", side === "bid" ? "text-long" : "text-short")}>{price(l.price)}</span>
-                <span className="num relative text-right">{num(l.size, l.size >= 100 ? 0 : 3)}</span>
-                <span className="num relative text-right text-muted-foreground">{l.count ?? ""}</span>
-                <span className="num relative text-right text-muted-foreground">{usd(c)}</span>
-              </div>
-            );
-            return (
-              <div className="rounded-md border">
-                <div className="grid grid-cols-[1fr_1fr_3rem_1fr] gap-2 border-b px-2 py-1.5 text-[10px] text-muted-foreground">
-                  <span>Price</span>
-                  <span className="text-right">Size</span>
-                  <span className="text-right">Orders</span>
-                  <span className="text-right">Cum. USD</span>
-                </div>
-                <div aria-label="Asks (S side)">
-                  {asks.map((l, i) => (
-                    <Row key={`a${l.price}`} l={l} c={askCum[i] ?? 0} side="ask" />
-                  ))}
-                </div>
-                <div className="flex items-center justify-between border-y bg-muted/40 px-2 py-1.5 text-xs">
-                  <span className="num font-semibold">{price(mid)}</span>
-                  <span className="num text-muted-foreground">spread {num(spreadBps, 2)} bps</span>
-                  <span className="text-[10px] text-muted-foreground">book {clock(toMs(d.ts))}</span>
-                </div>
-                <div aria-label="Bids (L side)">
-                  {bids.map((l, i) => (
-                    <Row key={`b${l.price}`} l={l} c={bidCum[i] ?? 0} side="bid" />
-                  ))}
-                </div>
-              </div>
-            );
-          }}
-        </PanelBody>
-        <p className="mt-2 text-[10px] text-muted-foreground">Asks (red) above the mid, bids (aqua) below. Shaded bars show cumulative USD from the touch.</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-/** ±50 bps liquidity heatmap over 6h: incremental depth per band and side, one column per ~2-minute snapshot. */
-function DepthHistory({ coin }: { coin: string }) {
-  const q = useDataset("depth-history", { param: coin });
-  return (
-    <Card>
-      <CardHeader>
-        <div>
-          <CardTitle>Liquidity heatmap &plusmn;50 bps, last 6h: {coin}</CardTitle>
-          <div className="mt-0.5 font-mono text-[10px] text-muted-foreground/70">/liquidity/depth/{"{coin}"}?minutes=360</div>
-        </div>
-        <Freshness env={q.data} />
-      </CardHeader>
-      <CardContent>
-        <PanelBody env={q.data} isLoading={q.isLoading} skeletonHeight={300}>
-          {(d) => {
-            const hist = [...d.history].sort((a, b) => a.ts - b.ts);
-            if (hist.length === 0) return <div className="py-8 text-center text-xs text-muted-foreground">No depth snapshots in the window yet.</div>;
-            const rows: Array<{ label: string; side: "bid" | "ask"; lo: string | null; hi: string }> = [
-              { label: "Ask 25-50", side: "ask", lo: "25bps", hi: "50bps" },
-              { label: "Ask 10-25", side: "ask", lo: "10bps", hi: "25bps" },
-              { label: "Ask 0-10", side: "ask", lo: null, hi: "10bps" },
-              { label: "Bid 0-10", side: "bid", lo: null, hi: "10bps" },
-              { label: "Bid 10-25", side: "bid", lo: "10bps", hi: "25bps" },
-              { label: "Bid 25-50", side: "bid", lo: "25bps", hi: "50bps" },
-            ];
-            const cell = (s: CoinDepthSnapshot, r: (typeof rows)[number]) => {
-              const hi = depthAt(s, r.side, r.hi);
-              const lo = r.lo ? depthAt(s, r.side, r.lo) : 0;
-              return hi === null ? null : Math.max(0, hi - (lo ?? 0));
-            };
-            const all = hist.flatMap((s) => rows.map((r) => cell(s, r) ?? 0));
-            const max = Math.max(...all, 1);
-            const anyTrunc = hist.some((s) => BANDS.slice(0, 3).some((b) => truncated(s, b)));
-            const series: TsSeries[] = [
-              { id: "bid", label: "Bid depth 25 bps", kind: "line", color: C.long, points: hist.map((s) => ({ t: s.ts * 1000, v: depthAt(s, "bid", "25bps") ?? NaN })) },
-              { id: "ask", label: "Ask depth 25 bps", kind: "line", color: C.short, points: hist.map((s) => ({ t: s.ts * 1000, v: depthAt(s, "ask", "25bps") ?? NaN })) },
-            ];
-            const first = hist[0]!;
-            const last = hist[hist.length - 1]!;
-            return (
-              <div className="space-y-4">
-                <div className="grid grid-cols-[4.5rem_1fr] gap-x-2 gap-y-[2px]">
-                  {rows.map((r) => (
-                    <div key={r.label} className="contents">
-                      <span className={cn("text-right text-[10px] leading-4", r.side === "bid" ? "text-long" : "text-short")}>{r.label}</span>
-                      <div className="flex h-4 gap-px" role="img" aria-label={`${r.label} bps depth over time`}>
-                        {hist.map((s) => {
-                          const v = cell(s, r);
-                          const f = v === null ? 0 : Math.sqrt(v / max);
-                          return (
-                            <div
-                              key={s.ts}
-                              title={`${clock(s.ts * 1000, false)} ${r.label} bps: ${usd(v)}`}
-                              className="h-full min-w-px flex-1"
-                              style={{ background: v === null ? C.grid : `color-mix(in srgb, ${C.blue} ${Math.round(6 + f * 90)}%, #0b0c0e)` }}
-                            />
-                          );
-                        })}
+                      ))}
+                      <div className="flex items-center justify-center" style={{ gap: 8 }}>
+                        <div style={{ position: "relative", width: 110, height: 6, background: "#121922", borderRadius: 3 }}>
+                          <div style={{ position: "absolute", left: "50%", top: -3, bottom: -3, width: 1, background: "#3a4553" }} />
+                          <div style={{ position: "absolute", top: 0, bottom: 0, left: imb >= 0 ? "50%" : `${50 - iw}%`, width: `${iw}%`, background: ic, borderRadius: 3 }} />
+                        </div>
+                        <span style={{ color: ic, width: 40, textAlign: "right", fontSize: 10.5 }}>
+                          {imb > 0 ? "+" : ""}
+                          {imb.toFixed(2)}
+                        </span>
                       </div>
-                    </div>
-                  ))}
-                  <span />
-                  <div className="flex justify-between text-[10px] text-muted-foreground">
-                    <span>{clock(first.ts * 1000, false)}</span>
-                    <span>{hist.length} snapshots</span>
-                    <span>{clock(last.ts * 1000, false)}</span>
-                  </div>
-                </div>
-                {anyTrunc ? (
-                  <div className="flex items-start gap-1.5 text-[10px] text-warning">
-                    <TriangleAlert className="mt-px size-3 shrink-0" aria-hidden />
-                    Some bands saturated the ~20 levels Hyperliquid returns, so their depth is a lower bound (common on BTC and ETH, where 20 levels fit inside 10 bps).
-                  </div>
-                ) : null}
-                <TimeSeriesChart series={series} height={180} format={(v) => usd(v)} />
+                      <span style={{ color: "#9aa8b8" }}>{fmt.usd(b.open_interest_usd)}</span>
+                      <span style={{ textAlign: "left", paddingLeft: 10 }}>
+                        <span style={{ fontSize: 10, color: lq.c, background: A(lq.c, 0.1), border: `1px solid ${A(lq.c, 0.4)}`, padding: "1px 7px", borderRadius: 5, whiteSpace: "nowrap" }}>{lq.label}</span>
+                      </span>
+                      <span className="flex items-center" style={{ textAlign: "left", gap: 6, fontSize: 10.5 }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: hc, boxShadow: `0 0 6px ${hc}` }} />
+                        {code ?? "—"}
+                      </span>
+                    </button>
+                  );
+                })}
+                {rows.length === 0 ? <div style={{ padding: 28, textAlign: "center", fontSize: 12, color: "#5b6878" }}>No books match this search.</div> : null}
               </div>
-            );
-          }}
-        </PanelBody>
-      </CardContent>
-    </Card>
+            </div>
+            <div className="cq-note">Depth is bid plus ask USD within the band. Click a row to focus its live ladder and terrain. Each book carries its HMM regime from the Market Regimes model as corroboration.</div>
+          </>
+        );
+      }}
+    </Panel>
   );
 }
 
 function OiDivergence() {
   const q = useDataset("oi-divergence");
   return (
-    <Panel title="OI vs price divergence" dataset="oi-divergence" env={q.data} isLoading={q.isLoading} skeletonHeight={300}>
+    <Panel title="OI vs price divergence" dataset="oi-divergence" env={q.data} isLoading={q.isLoading} skeletonHeight={300} style={{ flex: "2 1 560px" }}>
       {(d) => {
         const rows = [...d.rows].sort((a, b) => (b.divergence_4h ?? -Infinity) - (a.divergence_4h ?? -Infinity));
         const maxAbs = Math.max(...rows.map((r) => Math.abs(r.divergence_4h ?? 0)), 0.01);
         const fragile = rows.filter((r) => (r.divergence_4h ?? 0) > 0 && (r.oi_change_4h_pct ?? 0) > 0).slice(0, 3);
+        const cols = "0.8fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 1.2fr 0.8fr";
+        const pc = (v: number | null | undefined) => (v === null || v === undefined ? "—" : `${v > 0 ? "+" : ""}${v.toFixed(1)}%`);
         return (
-          <div className="space-y-3">
-            {fragile.length > 0 ? (
-              <div className="grid gap-2 sm:grid-cols-3">
+          <>
+            {fragile.length ? (
+              <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10, marginBottom: 12 }}>
                 {fragile.map((r) => (
-                  <div key={r.coin} className="rounded-md border border-warning/30 bg-warning/5 px-3 py-2 text-xs">
-                    <div className="flex items-center gap-1.5 font-semibold">
-                      <TriangleAlert className="size-3.5 text-warning" aria-hidden />
-                      {r.coin}: fragile positioning
+                  <div key={r.coin} className="cq-tile" style={{ padding: "10px 12px", borderColor: A(C.amber, 0.35), background: A(C.amber, 0.04) }}>
+                    <div style={{ fontSize: 12, fontWeight: 600 }}>
+                      <span style={{ color: C.amber }}>▲</span> {r.coin}: fragile positioning
                     </div>
-                    <div className="mt-0.5 text-muted-foreground">
-                      OI {pct(r.oi_change_4h_pct, { sign: true })} vs price {pct(r.price_change_4h_pct, { sign: true })} over 4h (divergence {num(r.divergence_4h, 2)})
+                    <div className="cq-mono" style={{ fontSize: 10.5, color: "#8b98a9", marginTop: 4 }}>
+                      OI {pc(r.oi_change_4h_pct)} vs price {pc(r.price_change_4h_pct)} over 4h · div {num(r.divergence_4h, 2)}
                     </div>
                   </div>
                 ))}
               </div>
             ) : null}
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Coin</TableHead>
-                  <TableHead className="text-right">Px 1h</TableHead>
-                  <TableHead className="text-right">OI 1h</TableHead>
-                  <TableHead className="text-right">Px 4h</TableHead>
-                  <TableHead className="text-right">OI 4h</TableHead>
-                  <TableHead className="text-right">Px 24h</TableHead>
-                  <TableHead className="text-right">OI 24h</TableHead>
-                  <TableHead className="w-28">Divergence 4h</TableHead>
-                  <TableHead className="text-right">OI</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((r) => (
-                  <TableRow key={r.coin}>
-                    <TableCell className="font-semibold">{r.coin}</TableCell>
-                    {(
-                      [
-                        [r.price_change_1h_pct, r.oi_change_1h_pct],
-                        [r.price_change_4h_pct, r.oi_change_4h_pct],
-                        [r.price_change_24h_pct, r.oi_change_24h_pct],
-                      ] as const
-                    ).flatMap(([p, o], i) => [
-                      <TableCell key={`p${i}`} className="text-right text-muted-foreground">
-                        {pct(p, { sign: true })}
-                      </TableCell>,
-                      <TableCell key={`o${i}`} className="text-right">
-                        {pct(o, { sign: true })}
-                      </TableCell>,
-                    ])}
-                    <TableCell>
-                      <Tip content={`Divergence ${num(r.divergence_4h, 2)}: positive = OI rising faster than price`}>
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-16">
-                            <DivergingBar value={r.divergence_4h ?? 0} maxAbs={maxAbs} pos={C.orange} neg={C.blue} />
-                          </div>
-                          <span className="num text-[11px]">{num(r.divergence_4h, 2)}</span>
+            <div className="overflow-x-auto">
+              <div style={{ minWidth: 760 }}>
+                <div className="cq-th" style={{ gridTemplateColumns: cols, textAlign: "right" }}>
+                  <span style={{ textAlign: "left" }}>COIN</span>
+                  <span>PX 1H</span>
+                  <span>OI 1H</span>
+                  <span>PX 4H</span>
+                  <span>OI 4H</span>
+                  <span>PX 24H</span>
+                  <span>OI 24H</span>
+                  <span style={{ textAlign: "center" }}>DIVERGENCE 4H</span>
+                  <span>OI</span>
+                </div>
+                {rows.map((r) => {
+                  const v = r.divergence_4h ?? 0;
+                  const w = Math.min(50, (Math.abs(v) / maxAbs) * 50);
+                  const col = v >= 0 ? C.orange : C.blue;
+                  return (
+                    <div key={r.coin} className="cq-tr" style={{ gridTemplateColumns: cols }}>
+                      <span style={{ textAlign: "left", fontWeight: 600, fontFamily: "var(--font-sans)", fontSize: 12.5 }}>{r.coin}</span>
+                      <span style={{ color: "#9aa8b8" }}>{pc(r.price_change_1h_pct)}</span>
+                      <span>{pc(r.oi_change_1h_pct)}</span>
+                      <span style={{ color: "#9aa8b8" }}>{pc(r.price_change_4h_pct)}</span>
+                      <span>{pc(r.oi_change_4h_pct)}</span>
+                      <span style={{ color: "#9aa8b8" }}>{pc(r.price_change_24h_pct)}</span>
+                      <span>{pc(r.oi_change_24h_pct)}</span>
+                      <div className="flex items-center justify-center" style={{ gap: 8 }}>
+                        <div style={{ position: "relative", width: 90, height: 6, background: "#121922", borderRadius: 3 }}>
+                          <div style={{ position: "absolute", left: "50%", top: -3, bottom: -3, width: 1, background: "#3a4553" }} />
+                          <div style={{ position: "absolute", top: 0, bottom: 0, left: v >= 0 ? "50%" : `${50 - w}%`, width: `${w}%`, background: col, borderRadius: 3 }} />
                         </div>
-                      </Tip>
-                    </TableCell>
-                    <TableCell className="text-right text-muted-foreground">{usd(r.open_interest_usd)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <p className="text-[10px] text-muted-foreground">Ranked by 4h divergence. Positive (orange) means open interest is growing faster than price: positioning is being added without follow-through.</p>
-          </div>
+                        <span style={{ width: 40, textAlign: "right", fontSize: 10.5, color: col }}>{num(v, 2)}</span>
+                      </div>
+                      <span style={{ color: "#9aa8b8" }}>{fmt.usd(r.open_interest_usd)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="cq-note">Ranked by 4h divergence. Positive (orange) means open interest is growing faster than price: positioning is being added without follow-through.</div>
+          </>
         );
       }}
     </Panel>
@@ -360,29 +313,39 @@ function OiDivergence() {
 function LiquidityRegime() {
   const q = useDataset("liquidity-regime");
   return (
-    <Panel title="Liquidity regime" dataset="liquidity-regime" env={q.data} isLoading={q.isLoading} skeletonHeight={200}>
+    <Panel title="Liquidity regime" dataset="liquidity-regime" env={q.data} isLoading={q.isLoading} skeletonHeight={220} style={{ flex: "1 1 320px" }}>
       {(d) => {
         const keys = ["deep_book", "neutral", "oi_price_divergence", "depth_withdrawal", "post_cascade_impaired"] as const;
         const total = keys.reduce((s, k) => s + (d.aggregate[k] ?? 0), 0) || 1;
-        const colors: Record<string, string> = { deep_book: C.blue, neutral: C.neutral, oi_price_divergence: C.yellow, depth_withdrawal: C.orange, post_cascade_impaired: C.red };
         return (
-          <div className="flex flex-wrap items-center gap-6">
-            <Gauge value={d.composite_score} label="Composite (higher = healthier)" size={130} sub={<Badge variant={sentimentTone(d.sentiment)}>{humanize(d.sentiment)}</Badge>} />
-            <div className="min-w-[220px] flex-1 space-y-2">
-              <div className="flex h-2.5 gap-[2px] overflow-hidden rounded" role="img" aria-label="Regime mix across tracked coins">
-                {keys.map((k) =>
-                  (d.aggregate[k] ?? 0) > 0 ? <div key={k} style={{ width: `${((d.aggregate[k] ?? 0) / total) * 100}%`, background: colors[k] }} /> : null,
-                )}
+          <div className="flex flex-wrap items-center" style={{ gap: 20 }}>
+            <div className="flex flex-col items-center" style={{ gap: 6, flex: "0 0 150px" }}>
+              <div style={{ width: 150, height: 120 }}>
+                <GaugeView value={d.composite_score} color={C.blue} label={`Liquidity composite ${d.composite_score} of 100`} />
               </div>
-              <ul className="space-y-1 text-xs">
+              <div style={{ fontSize: 11.5, color: "#9aa8b8" }}>Composite (higher = healthier)</div>
+              <span className="cq-mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: "0.08em", color: C.blue, background: A(C.blue, 0.1), border: `1px solid ${A(C.blue, 0.4)}`, padding: "2px 8px", borderRadius: 5 }}>
+                {d.sentiment.toUpperCase()}
+              </span>
+            </div>
+            <div className="min-w-0 flex-1" style={{ minWidth: 200 }}>
+              <div className="flex" style={{ gap: 3, height: 8 }}>
+                {keys.map((k) => ((d.aggregate[k] ?? 0) > 0 ? <div key={k} style={{ flex: `${d.aggregate[k]} 1 0%`, background: liqOf(k).c, borderRadius: 3 }} /> : null))}
+              </div>
+              <div className="flex flex-col" style={{ gap: 6, marginTop: 12 }}>
                 {keys.map((k) => (
-                  <li key={k} className="flex items-center gap-2">
-                    <span className="size-2 rounded-[2px]" style={{ background: colors[k] }} aria-hidden />
-                    <span className="flex-1">{LIQ_REGIME[k]?.label}</span>
-                    <span className="num font-medium">{d.aggregate[k] ?? 0}</span>
-                  </li>
+                  <div key={k} className="flex items-center" style={{ gap: 8, fontSize: 12 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: 2, background: liqOf(k).c }} />
+                    <span style={{ flex: 1, color: "#9aa8b8" }}>{liqOf(k).label}</span>
+                    <span className="cq-mono" style={{ fontWeight: 600 }}>
+                      {d.aggregate[k] ?? 0}
+                    </span>
+                    <span className="cq-mono" style={{ fontSize: 10.5, color: "#5b6878", width: 34, textAlign: "right" }}>
+                      {Math.round(((d.aggregate[k] ?? 0) / total) * 100)}%
+                    </span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         );
@@ -392,33 +355,63 @@ function LiquidityRegime() {
 }
 
 export function BooksView() {
-  const [focus, setFocus] = useState("BTC");
-  const { liqBy, hmmBy } = useRegimeLookups();
-  const liq = liqBy.get(focus);
-  const hmm = hmmBy.get(focus);
+  const ui = useUi();
+  const [focus, setFocus] = useState(ui.focus || "BTC");
+  const { liqBy, hmmBy, depthBy } = useLookups();
+  const h = hmmBy.get(focus);
+  const code = regCode(h?.regime?.label);
+  const hc = code ? REG[code].color : "#5b6878";
+  const lq = liqOf(liqBy.get(focus)?.regime);
+  const row = depthBy.get(focus);
   return (
-    <div className="space-y-4">
-      <DepthTable focus={focus} onFocus={setFocus} />
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        <Crosshair className="size-4 text-primary" aria-hidden />
-        <span className="font-semibold">Focused: {focus}</span>
-        {hmm?.regime ? (
-          <Badge variant="outline">
-            <span className="size-2 rounded-sm" style={{ background: hmmMeta(hmm.regime.label).color }} aria-hidden />
-            HMM {hmmMeta(hmm.regime.label).name} ({Math.round(hmm.regime.confidence * 100)}%)
-          </Badge>
+    <div className="flex flex-col" style={{ gap: 16 }}>
+      <div className="flex flex-wrap items-center" style={{ gap: 10, fontSize: 12, color: "#8b98a9" }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={C.blue} strokeWidth="1.8" aria-hidden>
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 1v4M12 19v4M1 12h4M19 12h4" />
+        </svg>
+        <span>Focused</span>
+        <b style={{ color: "#e6edf5", fontSize: 14 }}>{focus}</b>
+        {code ? (
+          <span className="cq-mono flex items-center" style={{ gap: 6, fontSize: 10.5, color: hc, background: A(hc, 0.1), border: `1px solid ${A(hc, 0.4)}`, padding: "2px 8px", borderRadius: 6 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: hc }} />
+            HMM {code} · {Math.round((h?.regime?.confidence ?? 0) * 100)}%
+          </span>
         ) : null}
-        {liq ? <Badge variant={LIQ_REGIME[liq.regime]?.tone ?? "outline"}>Liquidity: {LIQ_REGIME[liq.regime]?.label ?? humanize(liq.regime)}</Badge> : null}
-        <span className="text-muted-foreground">The ladder and history poll only while this page is open.</span>
+        <span className="cq-mono" style={{ fontSize: 10.5, color: "#c9d3df", border: "1px solid #1c2531", padding: "2px 8px", borderRadius: 6 }}>
+          Liquidity: {lq.label}
+        </span>
+        {row ? (
+          <span className="cq-mono" style={{ fontSize: 10.5, color: "#c9d3df", border: "1px solid #1c2531", padding: "2px 8px", borderRadius: 6 }}>
+            mid {fmt.px(row.mid_price)} · spread {num(row.spread_bps, 2)} bps
+          </span>
+        ) : null}
+        <div className="flex flex-wrap" style={{ gap: 4, marginLeft: "auto" }}>
+          {CHIPS.map((c) => (
+            <button
+              key={c}
+              type="button"
+              aria-pressed={c === focus}
+              onClick={() => setFocus(c)}
+              className="cq-mono"
+              style={{ padding: "4px 9px", background: c === focus ? "#1a2230" : "transparent", border: `1px solid ${c === focus ? "#2f3d50" : "#1c2531"}`, borderRadius: 6, color: c === focus ? "#eef3f8" : "#8b98a9", cursor: "pointer", fontSize: 10.5 }}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
-        <Ladder coin={focus} />
-        <DepthHistory coin={focus} />
+      <div className="flex flex-wrap" style={{ gap: 16 }}>
+        <LadderCard key={focus} coin={focus} imb={finite(row?.imbalance_10bps)} hmmColor={hc} />
+        <TerrainCard coin={focus} />
       </div>
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
+      <DepthTable focus={focus} onFocus={setFocus} />
+      <div className="flex flex-wrap" style={{ gap: 16 }}>
         <OiDivergence />
         <LiquidityRegime />
       </div>
+      <div style={{ fontSize: 11, color: "#4f5b6a" }}>The ladder and terrain poll only while this page is open; turning the live feed off in Settings pauses the ladder.</div>
     </div>
   );
 }

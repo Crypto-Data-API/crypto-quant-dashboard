@@ -1,163 +1,214 @@
 "use client";
 
-import type { QuantCoinRisk } from "@cqd/schemas";
-import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Panel } from "@/components/panel";
-import { Badge, Input, Label, NativeSelect, Tip } from "@/components/ui/primitives";
-import { HMM_REGIMES, hmmMeta } from "@/lib/domain";
-import { dateTime, duration, frac, int, num, usd } from "@/lib/format";
-import { useDataset } from "@/lib/hooks";
-import { cn, finite, isRecord, toMs } from "@/lib/utils";
-import { CoinDrawer } from "./coin-drawer";
-import { RegimeHeroCard } from "./regime-hero";
+import { Freshness, Panel, PanelBody, SecHead } from "@/components/panel";
+import { fanQuantiles, galaxySlice, marketRegimeState, ordinalMix, outcomeMix, regimeCoins, regimeFlows, type MixPart } from "@/cq/adapters";
+import { FanView, GalaxyView } from "@/cq/react";
+import { A, REG, REG_ORDER, regCode, type RegCode } from "@/cq/theme";
+import { dateTime, duration, int, num } from "@/lib/format";
+import { useDataset, useNow } from "@/lib/hooks";
+import { finite, isRecord, toMs } from "@/lib/utils";
 
-/** Tile width steps by open-interest rank (sized by OI, as the plan asks). */
-function sizeClass(oi: number | null, cutoffs: number[]): string {
-  if (oi === null) return "w-[74px]";
-  if (oi >= (cutoffs[0] ?? Infinity)) return "w-[132px]";
-  if (oi >= (cutoffs[1] ?? Infinity)) return "w-[104px]";
-  return "w-[74px]";
+/** Regime filter chips (dot, code, count) shared by the regime map and the perp grid. */
+export function RegimeChips({ counts, focus, onFocus }: { counts: Record<RegCode, number>; focus: string; onFocus: (c: RegCode) => void }) {
+  return (
+    <div className="flex flex-wrap" style={{ gap: 6 }}>
+      {REG_ORDER.map((code) => {
+        const c = REG[code].color;
+        const on = focus === code;
+        return (
+          <button
+            key={code}
+            type="button"
+            onClick={() => onFocus(code)}
+            aria-pressed={on}
+            title={`${REG[code].label}: ${counts[code]} perps`}
+            className="cq-mono flex items-center"
+            style={{ gap: 6, padding: "5px 10px", background: on ? A(c, 0.16) : "transparent", border: `1px solid ${on ? c : "#1c2531"}`, borderRadius: 7, cursor: "pointer", fontSize: 10.5, color: "#c9d3df", transition: "all .2s" }}
+          >
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: c, boxShadow: `0 0 8px ${c}` }} />
+            {code}
+            <span style={{ color: "#5b6878" }}>{counts[code]}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
-function RegimeGrid({ onPick }: { onPick: (c: QuantCoinRisk) => void }) {
-  const q = useDataset("quant-coins-risk");
-  const vol = useDataset("volume-scanner");
-  const [search, setSearch] = useState("");
-  const [minConf, setMinConf] = useState(0);
-  const [hideThin, setHideThin] = useState(true);
-
-  const oiBySymbol = useMemo(() => {
-    const m = new Map<string, number>();
-    for (const it of vol.data?.data?.items ?? []) {
-      const oi = finite(it.open_interest_usd);
-      if (oi !== null) m.set(it.symbol, oi);
-    }
-    return m;
-  }, [vol.data]);
-
+export function MixBar({ parts, height = 10, title }: { parts: MixPart[]; height?: number; title?: string }) {
   return (
-    <Panel
-      title="Regime grid: every perp"
-      dataset="quant-coins-risk"
-      env={q.data}
-      isLoading={q.isLoading}
-      skeletonHeight={360}
-      actions={null}
-    >
+    <div>
+      <div className="flex" style={{ gap: 3, height }} role="img" aria-label={title ?? parts.map((p) => `${p.k} ${p.v}%`).join(", ")}>
+        {parts.map((o) => (
+          <div key={o.key} style={{ flex: `${Math.max(0.3, o.v)} 1 0%`, background: o.c, borderRadius: 3 }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function MixLegend({ parts, dots = true, gap = "6px 12px" }: { parts: MixPart[]; dots?: boolean; gap?: string }) {
+  return (
+    <div className="flex flex-wrap" style={{ gap, marginTop: dots ? 9 : 8 }}>
+      {parts.map((o) => (
+        <span key={o.key} className="flex items-center" style={{ gap: 5, fontSize: 10.5, color: "#8b98a9" }}>
+          {dots ? <span style={{ width: 7, height: 7, borderRadius: 2, background: o.c }} /> : null}
+          {o.k} <b className="cq-mono" style={{ color: "#e6edf5" }}>{o.v}%</b>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function RegimeMap() {
+  const market = useDataset("quant-market");
+  const risk = useDataset("quant-coins-risk");
+  const [focus, setFocus] = useState("");
+  const galaxy = useMemo(() => galaxySlice(risk.data?.data, market.data?.data), [risk.data, market.data]);
+  const data = useMemo(() => (galaxy ? { ...galaxy, focus } : null), [galaxy, focus]);
+  const counts = useMemo(() => {
+    const c = Object.fromEntries(REG_ORDER.map((k) => [k, 0])) as Record<RegCode, number>;
+    for (const x of regimeCoins(risk.data?.data)) c[x.code]++;
+    return c;
+  }, [risk.data]);
+  return (
+    <section className="cq-card cq-sec">
+      <SecHead title="Regime map · every perp" mb={12} right={<RegimeChips counts={counts} focus={focus} onFocus={(c) => setFocus((f) => (f === c ? "" : c))} />} />
+      <div className="cq-stage" style={{ height: "clamp(620px, 76vh, 860px)" }}>
+        <div className="absolute inset-0" style={{ padding: data ? 0 : 14 }}>
+          <PanelBody env={risk.data} isLoading={risk.isLoading} skeletonHeight="100%" fill>
+            {() => (data ? <GalaxyView data={data} label="Regime map: every perp clustered by its short-term regime; flows show the market's odds of each regime in 24h" /> : null)}
+          </PanelBody>
+        </div>
+        <div className="cq-stage-hint">drag to orbit · click a perp to open it in Perp Regimes</div>
+      </div>
+    </section>
+  );
+}
+
+function MarketRegime() {
+  const q = useDataset("quant-market");
+  const now = useNow() || Date.now();
+  return (
+    <Panel title="Market regime · short-term HMM" env={q.data} isLoading={q.isLoading} mb={16} skeletonHeight={480} style={{ flex: "2 1 560px" }}>
       {(d) => {
-        const term = search.trim().toUpperCase();
-        const items = d.items.filter((c) => {
-          if (term && !c.symbol.toUpperCase().includes(term)) return false;
-          if (hideThin && (c.meta.insufficient_history || c.meta.new_listing || !c.regime)) return false;
-          return (c.regime?.confidence ?? 0) >= minConf;
-        });
-        const ois = [...oiBySymbol.values()].sort((a, b) => b - a);
-        const cutoffs = [ois[Math.floor(ois.length * 0.1)] ?? Infinity, ois[Math.floor(ois.length * 0.4)] ?? Infinity];
-        const groups = HMM_REGIMES.map((r) => ({
-          regime: r,
-          coins: items.filter((c) => c.regime?.label === r).sort((a, b) => (oiBySymbol.get(b.symbol) ?? 0) - (oiBySymbol.get(a.symbol) ?? 0)),
-        }));
-        const other = items.filter((c) => !c.regime || !HMM_REGIMES.includes(c.regime.label as (typeof HMM_REGIMES)[number]));
-        const total = items.length || 1;
+        const reg = marketRegimeState(d);
+        const code = regCode(reg?.label);
+        const color = code ? REG[code].color : "#5b6878";
+        const qs = fanQuantiles(d);
+        const t = isRecord(d.tomorrow) ? d.tomorrow : {};
+        const volSpike = finite(t.p_visit_vol_spike);
+        const drop5 = finite(t.p_drawdown_gt_5pct);
+        const since = toMs(reg?.in_regime_since);
+        const outcome = outcomeMix(d);
+        const next = regimeFlows(d).map((f) => ({ key: f.k, k: f.k, v: f.v, c: REG[f.code].color }));
+        const vol = ordinalMix(d, "volatility");
+        const liq = ordinalMix(d, "liquidation_risk");
+        const headConf = finite(d.probabilities?.directional?.confidence);
         return (
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-end gap-3">
-              <Label>
-                <Search className="size-3.5" aria-hidden />
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Find coin" className="w-32" aria-label="Find coin" />
-              </Label>
-              <Label>
-                Min confidence
-                <NativeSelect value={minConf} onChange={(e) => setMinConf(Number(e.target.value))}>
-                  {[0, 0.5, 0.7, 0.9].map((v) => (
-                    <option key={v} value={v}>
-                      {v === 0 ? "Any" : frac(v, { digits: 0 })}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </Label>
-              <Label className="cursor-pointer">
-                <input type="checkbox" checked={hideThin} onChange={(e) => setHideThin(e.target.checked)} className="accent-[var(--primary)]" />
-                Hide warming / new listings
-              </Label>
-              <span className="ml-auto text-[11px] text-muted-foreground">
-                {items.length} of {d.count} perps &middot; universe {d.universe_size} &middot; horizon {d.horizon}
+          <>
+            <div className="flex items-baseline justify-between" style={{ gap: 10, marginBottom: 8 }}>
+              <span className="cq-mono" style={{ fontSize: 9.5, letterSpacing: "0.08em", color: "#5b6878" }}>
+                SIMULATED 24H RETURN RANGE · MONTE CARLO
+              </span>
+              <span className="cq-mono" style={{ fontSize: 10, color: "#5b6878" }}>
+                p5 / median / p95
               </span>
             </div>
-
-            {/* Mix: share of perps per regime */}
-            <div>
-              <div className="flex h-2.5 w-full gap-[2px] overflow-hidden rounded" role="img" aria-label="Share of perps in each regime">
-                {groups
-                  .filter((g) => g.coins.length > 0)
-                  .map((g) => (
-                    <Tip key={g.regime} content={`${hmmMeta(g.regime).name}: ${g.coins.length} perps (${frac(g.coins.length / total, { digits: 0 })})`}>
-                      <div className="h-full" style={{ width: `${(g.coins.length / total) * 100}%`, background: hmmMeta(g.regime).color }} />
-                    </Tip>
-                  ))}
-              </div>
+            <div className="cq-stage" style={{ height: "clamp(300px, 40vh, 420px)", marginBottom: 20 }}>
+              {qs ? (
+                <FanView p5={qs.p5} p50={qs.p50} p95={qs.p95} label={`Simulated 24h return: p5 ${qs.p5.toFixed(1)}%, median ${qs.p50.toFixed(2)}%, p95 ${qs.p95.toFixed(1)}%`} />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center" style={{ fontSize: 12, color: "#5b6878" }}>
+                  Range unavailable (24h horizon only).
+                </div>
+              )}
             </div>
-
-            <div className="grid gap-4 lg:grid-cols-2">
-              {groups.map((g) => {
-                const m = hmmMeta(g.regime);
-                return (
-                  <section key={g.regime} className="rounded-md border p-3" aria-label={m.name}>
-                    <header className="mb-2 flex items-center gap-2">
-                      <span className="size-2.5 rounded-sm" style={{ background: m.color }} aria-hidden />
-                      <span className="text-sm font-medium">{m.name}</span>
-                      <Badge variant="outline">{m.short}</Badge>
-                      <span className="ml-auto num text-xs text-muted-foreground">
-                        {g.coins.length} &middot; {frac(g.coins.length / total, { digits: 0 })}
-                      </span>
-                    </header>
-                    {g.coins.length === 0 ? (
-                      <div className="py-2 text-xs text-muted-foreground">No perps in this regime.</div>
-                    ) : (
-                      <div className="flex flex-wrap gap-1">
-                        {g.coins.map((c) => {
-                          const conf = c.regime?.confidence ?? 0;
-                          const oi = oiBySymbol.get(c.symbol) ?? null;
-                          return (
-                            <Tip
-                              key={c.symbol}
-                              content={
-                                <div className="space-y-0.5">
-                                  <div className="font-medium">
-                                    {c.symbol}: {m.name}
-                                  </div>
-                                  <div>Confidence {frac(conf, { digits: 0 })}</div>
-                                  <div>Open interest {usd(oi)}</div>
-                                  <div>Vol-target size {num(c.vol_target_multiplier, 2)}x</div>
-                                </div>
-                              }
-                            >
-                              <button
-                                type="button"
-                                onClick={() => onPick(c)}
-                                className={cn(
-                                  "flex h-11 flex-col justify-between rounded border px-1.5 py-1 text-left transition-colors outline-none hover:border-foreground/40 focus-visible:ring-2 focus-visible:ring-ring/60",
-                                  sizeClass(oi, cutoffs),
-                                )}
-                                style={{ background: `color-mix(in srgb, ${m.color} ${Math.round(6 + conf * 22)}%, transparent)`, borderColor: `color-mix(in srgb, ${m.color} ${Math.round(25 + conf * 35)}%, transparent)` }}
-                                aria-label={`${c.symbol}, ${m.name}, confidence ${Math.round(conf * 100)} percent`}
-                              >
-                                <span className="truncate text-[11px] leading-none font-semibold">{c.symbol}</span>
-                                <span className="num text-[10px] leading-none text-foreground/80">{frac(conf, { digits: 0 })}</span>
-                              </button>
-                            </Tip>
-                          );
-                        })}
+            {!reg ? (
+              <div style={{ fontSize: 12, color: "#8b98a9" }}>Model warming up: no regime yet ({d.meta.status}).</div>
+            ) : (
+              <div className="flex flex-wrap" style={{ gap: 26 }}>
+                <div className="flex min-w-0 flex-col" style={{ flex: "1 1 280px", gap: 14 }}>
+                  <div className="flex" style={{ gap: 14 }}>
+                    <div style={{ width: 4, borderRadius: 4, background: color, boxShadow: `0 0 18px ${A(color, 0.75)}` }} />
+                    <div>
+                      <div className="flex flex-wrap items-center" style={{ gap: 10 }}>
+                        <span style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-0.03em" }}>{reg.name}</span>
+                        {code ? (
+                          <span className="cq-mono" style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", color, background: A(color, 0.1), border: `1px solid ${A(color, 0.4)}`, padding: "2px 7px", borderRadius: 5 }}>
+                            {code}
+                          </span>
+                        ) : null}
+                        {reg.label_raw && reg.label_raw !== reg.label ? (
+                          <span className="cq-mono" title="Argmax label before hysteresis; the headline lags until the challenger confirms." style={{ fontSize: 10, color: "#ffb547", border: "1px solid rgba(255,181,71,0.4)", padding: "2px 7px", borderRadius: 5 }}>
+                            raw {regCode(reg.label_raw) ?? reg.label_raw}
+                          </span>
+                        ) : null}
                       </div>
-                    )}
-                  </section>
-                );
-              })}
-            </div>
-            {other.length > 0 ? <div className="text-[11px] text-muted-foreground">{other.length} perps without a regime yet (warming up).</div> : null}
-            <p className="text-[10px] text-muted-foreground">Tiles are grouped by regime, sized by open interest (top 10% / top 40% / rest) and shaded by confidence. Click a tile for the coin drawer.</p>
-          </div>
+                      <div style={{ fontSize: 12, color: "#8b98a9", marginTop: 6 }}>
+                        Confidence <b className="cq-mono" style={{ color: "#e6edf5" }}>{Math.round(reg.confidence * 100)}%</b> · in regime{" "}
+                        <b className="cq-mono" style={{ color: "#e6edf5", fontWeight: 500 }}>{since ? duration((now - since) / 1000) : `${reg.candles_in_regime}h`}</b>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2" style={{ gap: 10 }}>
+                    <div className="cq-tile" style={{ padding: "12px 14px" }} title="Share of 1,000 seeded Monte Carlo paths that visit the vol-spike regime in the next 24h.">
+                      <div className="cq-mono" style={{ fontSize: 9.5, letterSpacing: "0.08em", color: "#5b6878" }}>
+                        VOL SPIKE ODDS 24H
+                      </div>
+                      <div className="cq-mono" style={{ fontSize: 20, fontWeight: 600, marginTop: 6 }}>
+                        {volSpike !== null ? `${(volSpike * 100).toFixed(1)}%` : "—"}
+                      </div>
+                    </div>
+                    <div className="cq-tile" style={{ padding: "12px 14px" }} title="Share of simulated paths with a drawdown greater than 5% within 24h.">
+                      <div className="cq-mono" style={{ fontSize: 9.5, letterSpacing: "0.08em", color: "#5b6878" }}>
+                        &gt;5% DROP ODDS 24H
+                      </div>
+                      <div className="cq-mono" style={{ fontSize: 20, fontWeight: 600, marginTop: 6 }}>
+                        {drop5 !== null ? `${(drop5 * 100).toFixed(1)}%` : "—"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex min-w-0 flex-col" style={{ flex: "1 1 300px", gap: 20 }}>
+                  <div>
+                    <div className="flex justify-between" style={{ marginBottom: 9 }}>
+                      <span style={{ fontSize: 12, color: "#c9d3df", fontWeight: 500 }}>24h outcome distribution</span>
+                      {headConf !== null ? (
+                        <span className="cq-mono" style={{ fontSize: 10.5, color: "#5b6878" }}>
+                          head conf {Math.round(headConf * 100)}%
+                        </span>
+                      ) : null}
+                    </div>
+                    <MixBar parts={outcome} />
+                    <MixLegend parts={outcome} />
+                  </div>
+                  {next.length ? (
+                    <div>
+                      <div style={{ fontSize: 12, color: "#c9d3df", fontWeight: 500, marginBottom: 9 }}>Regime in 24h · transition odds</div>
+                      <MixBar parts={next} />
+                      <MixLegend parts={next} />
+                    </div>
+                  ) : null}
+                  <div className="grid grid-cols-2" style={{ gap: 16 }}>
+                    {(
+                      [
+                        ["Volatility", vol],
+                        ["Liquidation risk", liq],
+                      ] as const
+                    ).map(([k, parts]) => (
+                      <div key={k}>
+                        <div style={{ fontSize: 12, color: "#c9d3df", fontWeight: 500, marginBottom: 9 }}>{k}</div>
+                        <MixBar parts={parts} height={8} />
+                        <MixLegend parts={parts} dots={false} gap="0 9px" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         );
       }}
     </Panel>
@@ -167,65 +218,80 @@ function RegimeGrid({ onPick }: { onPick: (c: QuantCoinRisk) => void }) {
 function ModelCard() {
   const q = useDataset("quant-model");
   return (
-    <Panel title="Model card" dataset="quant-model" env={q.data} isLoading={q.isLoading} skeletonHeight={200}>
-      {(d) => {
-        const runtime = isRecord(d.runtime) ? d.runtime : {};
-        const universe = isRecord(runtime.universe) ? runtime.universe : {};
-        const drift = isRecord(runtime.drift) ? runtime.drift : {};
-        const cur = isRecord(drift.current) && isRecord(drift.current.market) ? drift.current.market : {};
-        const base = isRecord(drift.baseline) ? drift.baseline : {};
-        const live = finite(cur.loglik_7d_mean);
-        const mean = finite(base.mean);
-        const std = finite(base.std);
-        const z = live !== null && mean !== null && std ? (live - mean) / std : null;
-        const validation = isRecord(d.validation) ? d.validation : {};
-        const folds = Array.isArray(validation.folds) ? validation.folds.length : null;
-        const anchors = Array.isArray(validation.anchor_checks) ? (validation.anchor_checks as Array<Record<string, unknown>>) : [];
-        const lastInference = toMs(runtime.last_inference);
-        const rows: Array<[string, React.ReactNode]> = [
-          ["Status", d.loaded ? <Badge variant="good">loaded</Badge> : <Badge variant="critical">not loaded</Badge>],
-          ["Model", `${(d.model_family ?? "?").toUpperCase()} v${d.model_version ?? "?"} (features ${d.feature_version ?? "?"})`],
-          ["Last retrain", d.last_retrain ? `${dateTime(toMs(d.last_retrain))} (${duration((Date.now() - (toMs(d.last_retrain) ?? Date.now())) / 1000)} ago)` : "—"],
-          ["Last inference", lastInference ? dateTime(lastInference) : "—"],
-          ["Universe", `${int(finite(universe.active))} active / ${int(finite(universe.tracked))} tracked / ${int(finite(universe.warmed_up))} warmed up`],
-          ["Labels", (d.labels ?? []).map((l) => hmmMeta(l).short).join(" · ")],
-          ["Validation", folds !== null ? `${folds} walk-forward folds, mean OOS loglik ${num(finite(validation.mean_oos_loglik), 2)}, max flap ${num(finite(validation.max_flap_rate), 2)}/day` : "—"],
-          ["Anchor checks", anchors.length ? `${anchors.filter((a) => a.ok === true).length}/${anchors.length} historical anchors matched` : "—"],
-          ["Drift (7d loglik)", z !== null ? `${num(live, 2)} vs baseline ${num(mean, 2)} (z ${num(z, 2)})` : "—"],
-        ];
-        return (
-          <dl className="grid grid-cols-[8rem_1fr] gap-x-3 gap-y-1.5 text-xs">
-            {rows.map(([k, v]) => (
-              <div key={k} className="contents">
-                <dt className="text-muted-foreground">{k}</dt>
-                <dd className="min-w-0">{v}</dd>
-              </div>
-            ))}
-            {d.sha256 ? (
-              <div className="contents">
-                <dt className="text-muted-foreground">sha256</dt>
-                <dd className="truncate font-mono text-[10px] text-muted-foreground" title={d.sha256}>
-                  {d.sha256}
-                </dd>
-              </div>
-            ) : null}
-          </dl>
-        );
-      }}
-    </Panel>
+    <section className="cq-card" style={{ padding: "16px 20px 18px" }}>
+      <div className="flex items-baseline justify-between" style={{ gap: 12, marginBottom: 12 }}>
+        <div className="flex items-baseline" style={{ gap: 10 }}>
+          <span className="cq-kicker">METADATA · MODEL CARD</span>
+          <span className="cq-mono" style={{ fontSize: 10.5, color: "#4f5b6a" }}>
+            /quant/model
+          </span>
+        </div>
+        <Freshness env={q.data} />
+      </div>
+      <PanelBody env={q.data} isLoading={q.isLoading} skeletonHeight={140}>
+        {(d) => {
+          const runtime = isRecord(d.runtime) ? d.runtime : {};
+          const universe = isRecord(runtime.universe) ? runtime.universe : {};
+          const drift = isRecord(runtime.drift) ? runtime.drift : {};
+          const cur = isRecord(drift.current) && isRecord(drift.current.market) ? drift.current.market : {};
+          const base = isRecord(drift.baseline) ? drift.baseline : {};
+          const live = finite(cur.loglik_7d_mean);
+          const mean = finite(base.mean);
+          const std = finite(base.std);
+          const z = live !== null && mean !== null && std ? (live - mean) / std : null;
+          const validation = isRecord(d.validation) ? d.validation : {};
+          const folds = Array.isArray(validation.folds) ? validation.folds.length : null;
+          const anchors = Array.isArray(validation.anchor_checks) ? (validation.anchor_checks as Array<Record<string, unknown>>) : [];
+          const lastInference = toMs(runtime.last_inference);
+          const retrain = toMs(d.last_retrain);
+          const rows: Array<{ k: string; v: string; kind: "ok" | "bad" | "mono" | "plain" }> = [
+            { k: "Status", v: d.loaded ? "loaded" : "not loaded", kind: d.loaded ? "ok" : "bad" },
+            { k: "Model", v: `${(d.model_family ?? "?").toUpperCase()} v${d.model_version ?? "?"} (features ${d.feature_version ?? "?"})`, kind: "plain" },
+            { k: "Last retrain", v: retrain ? `${dateTime(retrain)} (${duration((Date.now() - retrain) / 1000)} ago)` : "—", kind: "plain" },
+            { k: "Last inference", v: lastInference ? dateTime(lastInference) : "—", kind: "plain" },
+            { k: "Universe", v: `${int(finite(universe.active))} active / ${int(finite(universe.tracked))} tracked / ${int(finite(universe.warmed_up))} warmed up`, kind: "plain" },
+            { k: "Labels", v: (d.labels ?? []).map((l) => regCode(l) ?? l).join(" · "), kind: "plain" },
+            { k: "Validation", v: folds !== null ? `${folds} walk-forward folds, mean OOS loglik ${num(finite(validation.mean_oos_loglik), 2)}, max flap ${num(finite(validation.max_flap_rate), 2)}/day` : "—", kind: "plain" },
+            { k: "Anchor checks", v: anchors.length ? `${anchors.filter((a) => a.ok === true).length}/${anchors.length} historical anchors matched` : "—", kind: "plain" },
+            { k: "Drift (7d loglik)", v: z !== null ? `${num(live, 2)} vs baseline ${num(mean, 2)} (z ${num(z, 2)})` : "—", kind: "plain" },
+            { k: "sha256", v: d.sha256 ?? "—", kind: "mono" },
+          ];
+          return (
+            <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "0 24px" }}>
+              {rows.map((m) => (
+                <div key={m.k} className="grid min-w-0 items-baseline" style={{ gridTemplateColumns: "104px minmax(0,1fr)", gap: 10, padding: "7px 0", borderTop: "1px solid #10161e", fontSize: 11.5 }}>
+                  <span style={{ color: "#5b6878" }}>{m.k}</span>
+                  {m.kind === "ok" || m.kind === "bad" ? (
+                    <span>
+                      <span className="cq-mono" style={{ fontSize: 10, color: m.kind === "ok" ? "#2ee6a6" : "#ff5c6c", background: A(m.kind === "ok" ? "#2ee6a6" : "#ff5c6c", 0.1), border: `1px solid ${A(m.kind === "ok" ? "#2ee6a6" : "#ff5c6c", 0.4)}`, padding: "1px 7px", borderRadius: 5 }}>
+                        {m.v}
+                      </span>
+                    </span>
+                  ) : m.kind === "mono" ? (
+                    <span className="cq-mono truncate" style={{ fontSize: 10, color: "#8b98a9" }} title={m.v}>
+                      {m.v}
+                    </span>
+                  ) : (
+                    <span style={{ color: "#c9d3df", textWrap: "pretty" }}>{m.v}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          );
+        }}
+      </PanelBody>
+    </section>
   );
 }
 
 export function MarketRegimesView() {
-  const [picked, setPicked] = useState<QuantCoinRisk | null>(null);
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 xl:grid-cols-3">
-        <RegimeHeroCard className="xl:col-span-2" />
-        <ModelCard />
+    <div className="flex flex-col" style={{ gap: 16 }}>
+      <RegimeMap />
+      <div className="flex flex-wrap" style={{ gap: 16 }}>
+        <MarketRegime />
       </div>
-      <RegimeGrid onPick={setPicked} />
-      <CoinDrawer symbol={picked?.symbol ?? null} risk={picked} onClose={() => setPicked(null)} />
+      <ModelCard />
     </div>
   );
 }
