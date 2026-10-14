@@ -136,6 +136,19 @@ Source: `/event/regime`, `/event/calendar`, `/event/regime/{symbol}`, `/supply/u
 - Upcoming catalysts table: date, type (unlock / macro / depeg / mint-burn), event, bias, magnitude, source. Filters by type, symbol, bias, min magnitude.
 - Recent catalysts list. Per-symbol overlay in the coin drawer.
 
+### 3.8 Market-Moving News — `/news`
+Source: `/news/market-moving`, `/news/pulse`, `/news/coin/{symbol}`, `/news/sources`.
+- Catalyst tape: qualified events only, newest first, with symbol, category, signed bias, impact
+  score, corroboration count, and (Pro Plus) the score components and measured market response at
+  +15m / +1h / +4h. Filters: symbol or MARKET, lookback hours, min impact.
+- News pulse table: one row per perp with `news_pressure`, signed `news_tilt`, event count, top
+  impact and raw headline count, cross-sectionally ranked. Highlights "talked about but nothing
+  happening" coins (high headlines, zero pressure).
+- Coin drill-down from `/news/coin/{symbol}`, also surfaced as a panel in the coin drawer.
+- Feed health strip from `/news/sources`: per-feed status, 24h funnel counts, unresolvable tickers.
+- Also shown as a compact panel beside the liquidation tape on `/liquidations`, so cause and effect
+  sit together.
+
 ---
 
 ## 4. Phased delivery
@@ -147,9 +160,9 @@ Source: `/event/regime`, `/event/calendar`, `/event/regime/{symbol}`, `/supply/u
 4. `/api/data/[dataset]` proxy route reading from Redis. `/api/stream` SSE relay.
 5. App shell: dark layout, nav, shared header stat strip, "data as of" timestamps on every panel, Pro-required and stale-data states.
 
-### Phase 1: The seven requested pages
+### Phase 1: The seven requested pages plus news
 Build in this order, since each reuses the previous: Market Regimes, Long-term Regimes, Volume
-Scanner, Liquidations (with live tape), Order Books, Quant Gamma, Calendar.
+Scanner, Liquidations (with live tape), Order Books, Quant Gamma, Calendar, Market-Moving News.
 
 ### Phase 2: History and backtesting (requires Pro Plus)
 **Unblocked (2026-10-14):** the key is Pro Plus, so every endpoint below is available today.
