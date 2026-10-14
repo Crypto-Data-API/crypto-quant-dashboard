@@ -37,4 +37,19 @@ export type {
   NewsCoinResponse,
   NewsResponseWindow,
 } from "./news";
+export type {
+  JevAnswer,
+  JevChoiceAnswer,
+  JevScoreAnswer,
+  JevNoulAnswer,
+  JevResponse,
+  JevChoiceRead,
+  JevScoreRead,
+  JevNewsRead,
+  JevNewsReads,
+  JevSqueezeRead,
+  JevSqueezeReads,
+  JevVerdictInput,
+  JevMarketVerdict,
+} from "./jev";
 export type { StreamEvent, StreamEventStrict, DelayedStreamResponse, RecentStreamResponse } from "./stream";

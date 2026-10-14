@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Panel } from "@/components/panel";
 import { Badge } from "@/components/ui/primitives";
 import { HealthCard } from "@/features/market/health-card";
+import { JevVerdictCard } from "@/features/jev/verdict-card";
 import { RegimeHeroCard } from "@/features/market/regime-hero";
 import { LiquidationTape } from "@/features/liquidations/liquidation-tape";
 import { SqueezeAlerts } from "@/features/liquidations/squeeze-alerts";
@@ -58,7 +59,10 @@ export default function OverviewPage() {
   return (
     <div className="grid gap-4 xl:grid-cols-3">
       <div className="space-y-4 xl:col-span-2">
-        <RegimeHeroCard compact />
+        <div className="grid gap-4 2xl:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+          <RegimeHeroCard compact />
+          <JevVerdictCard />
+        </div>
         <div className="grid gap-4 md:grid-cols-2">
           <HealthCard />
           <div className="space-y-4">

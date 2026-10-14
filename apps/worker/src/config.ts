@@ -47,6 +47,34 @@ export interface WorkerConfig {
   gexSymbols: string;
   logLevel: LogLevel;
   onDemandMax: number;
+  jev: JevConfig;
+}
+
+export interface JevConfig {
+  /** TYPESAFE_API_KEY. Read by the worker only. */
+  apiKey: string | null;
+  /** JEV_ENABLED (default true). false turns the classifier off even with a key. */
+  enabled: boolean;
+  /** JEV_MODEL, pinned per request (default "jev-latest"). */
+  model: string;
+  /** TYPESAFE_BASE_URL (default https://api.typesafe.ai). */
+  baseUrl: string;
+  /** JEV_RATE_PER_MIN: our own ceiling, far under the API's 1,200/min. */
+  ratePerMinute: number;
+  /** JEV_DAILY_CALLS: daily request budget. */
+  dailyCalls: number;
+  /** JEV_DAILY_INPUT_TOKENS: daily input-token budget (billing is on input tokens). */
+  dailyInputTokens: number;
+  /** JEV_VERDICT_MINUTES: market verdict cadence (default 15). */
+  verdictIntervalMs: number;
+}
+
+function bool(name: string, fallback: boolean): boolean {
+  const raw = (process.env[name] ?? "").trim().toLowerCase();
+  if (raw === "") return fallback;
+  if (["1", "true", "yes", "on"].includes(raw)) return true;
+  if (["0", "false", "no", "off"].includes(raw)) return false;
+  throw new Error(`${name} must be true or false (got "${raw}")`);
 }
 
 /**
@@ -99,5 +127,15 @@ export function readConfig(): WorkerConfig {
     gexSymbols: symbols || "BTC,ETH,SOL,HYPE",
     logLevel: oneOf("LOG_LEVEL", ["debug", "info", "warn", "error"] as const, "info"),
     onDemandMax: int("ON_DEMAND_MAX", 16, 1, 50),
+    jev: {
+      apiKey: process.env.TYPESAFE_API_KEY?.trim() || null,
+      enabled: bool("JEV_ENABLED", true),
+      model: process.env.JEV_MODEL?.trim() || "jev-latest",
+      baseUrl: process.env.TYPESAFE_BASE_URL?.trim() || "https://api.typesafe.ai",
+      ratePerMinute: int("JEV_RATE_PER_MIN", 60, 1, 1_100),
+      dailyCalls: int("JEV_DAILY_CALLS", 3_000, 1, 1_000_000),
+      dailyInputTokens: int("JEV_DAILY_INPUT_TOKENS", 2_000_000, 1_000, 1_000_000_000),
+      verdictIntervalMs: int("JEV_VERDICT_MINUTES", 15, 1, 24 * 60) * 60_000,
+    },
   };
 }

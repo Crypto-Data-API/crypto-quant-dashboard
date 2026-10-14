@@ -1,0 +1,107 @@
+{
+  "captured_at": "2026-10-14T09:32:39.672Z",
+  "endpoint": "POST /v1/systemone",
+  "note": "active squeeze alert NEAR long_flush",
+  "http_status": 200,
+  "request_id": "req_01a139c1b96d7820b06d67ad8e5b18bd",
+  "request": {
+    "model": "jev-latest",
+    "state": {
+      "alert": {
+        "symbol": "NEAR",
+        "direction": "long_flush",
+        "severity": 0.801,
+        "triggered": true,
+        "suppressed_by": [],
+        "window_s": 300,
+        "long_liq_usd": 143598.87,
+        "short_liq_usd": 0,
+        "total_liq_usd": 143598.87,
+        "asymmetry": 1,
+        "side_ratio": null,
+        "spike_ratio": 21.66,
+        "liq_24h_usd": 1908243.44,
+        "oi_change_pct": -0.45,
+        "oi_state": "unclear",
+        "price_change_24h_pct": -2.435,
+        "legs": {
+          "spike": 1,
+          "asymmetry": 1,
+          "notional": 0.006
+        },
+        "coverage": "okx+bybit+hyperliquid_aggregate",
+        "window_uptime_h": 1.8,
+        "baseline_span_h": 23.99
+      },
+      "alerts_as_of": "2026-10-14T09:31:46.000Z",
+      "coin_regime": {
+        "regime": {
+          "label": "range_low_vol",
+          "confidence": 0.975
+        },
+        "probabilities": {
+          "volatility": {
+            "low": 0.4396,
+            "medium": 0.3545,
+            "high": 0.2058,
+            "confidence": 0.0403
+          },
+          "liquidation_risk": {
+            "low": 0.4396,
+            "medium": 0.3545,
+            "high": 0.2058,
+            "confidence": 0.0403
+          },
+          "funding": {
+            "falls": 0.2849,
+            "stable": 0.3585,
+            "rises": 0.3566,
+            "confidence": 0.0049
+          },
+          "open_interest": {
+            "contracting": 0.2841,
+            "neutral": 0.3877,
+            "expanding": 0.3283,
+            "confidence": 0.0074
+          }
+        },
+        "vol_target_multiplier": 0.365,
+        "vol_pctile_30": 96.1,
+        "rv_24h": 93.47
+      },
+      "liquidity_regime": {
+        "regime": "neutral",
+        "confidence": 0.5,
+        "signals": {
+          "current_depth_25bps_usd": 113752.4,
+          "current_spread_bps": 0.2,
+          "liq_24h_usd": 1765527.2140500005,
+          "liq_1h_usd": 15574.956100000001,
+          "depth_drop_10min_pct": -10.39,
+          "spread_widen_10min_pct": 1.01,
+          "oi_change_4h_pct": -2.076,
+          "price_change_4h_pct": -1.107
+        }
+      }
+    },
+    "questions": {
+      "cascade": {
+        "type": "noul",
+        "instructions": "Is the forced liquidation flow here a genuine cascade likely to continue over the next hour, rather than an isolated print? Use the alert's spike ratio, asymmetry, open-interest state and the coin's regime and liquidity context."
+      }
+    }
+  },
+  "response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "cascade": {
+        "type": "noul",
+        "noul": 0.31
+      }
+    },
+    "usage": {
+      "input_tokens": 1103,
+      "output_tokens": 20
+    }
+  }
+}

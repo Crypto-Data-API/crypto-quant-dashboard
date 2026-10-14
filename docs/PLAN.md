@@ -149,6 +149,26 @@ Source: `/news/market-moving`, `/news/pulse`, `/news/coin/{symbol}`, `/news/sour
 - Also shown as a compact panel beside the liquidation tape on `/liquidations`, so cause and effect
   sit together.
 
+### 3.9 Jev classifier (TypeSafe System One) — worker-side
+Source: `POST https://api.typesafe.ai/v1/systemone` (model `jev-latest`, pinned via `JEV_MODEL`), run
+only in the worker over data the poller already cached. Results are cached as `jev-*` datasets with
+the usual envelope, as-of and stale states.
+- **News catalysts** (`jev-news`): every event on the news tape or an open coin drill-down, once per
+  event id and model version, cached permanently. `bias` choice (bullish / bearish / neutral),
+  `actionable` noul (a concrete dated market event, not commentary), `severity` score (noise to
+  market-wide shock). Shown beside CDA's bias in the `/news` tape and the liquidations news panel,
+  with a "Jev disagrees" badge when CDA's bias sign differs, and an agree/disagree filter on `/news`.
+- **Squeeze alerts** (`jev-squeeze`): each active alert, once per symbol, direction and UTC hour: a
+  noul for "a genuine cascade likely to continue over the next hour". State is the alert row plus
+  the coin's regime probabilities and liquidity regime. Shown as a pill on the alert.
+- **Market verdict** (`jev-market-verdict`): every 15 minutes from the market regime, market
+  health, cycle regime, news pulse top 10, squeeze summary and event risk. `stance` choice
+  (risk_on / risk_off / neutral), `vol_expansion_24h` noul, `conviction` score. Shown as a card next
+  to the hero regime card on the overview, with a "what Jev saw" list of input as-of times.
+- Budget: billed on input tokens only (about 0.3M/day as built); daily call and token counters and
+  a governor like the CDA budget; no retries on 401/403; backoff on 429. `JEV_ENABLED=false` or an
+  empty `TYPESAFE_API_KEY` turns it off and the panels show "Classifier not configured".
+
 ---
 
 ## 4. Phased delivery

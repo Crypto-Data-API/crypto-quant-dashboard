@@ -9,7 +9,15 @@ export async function GET() {
   const { status, via } = await readHeartbeat();
   const stale = status ? Date.now() - Date.parse(status.ts) > 30_000 : true;
   return NextResponse.json(
-    { worker: status, via, workerOnline: status !== null && !stale, redis: redisState(), now: new Date().toISOString() },
+    {
+      worker: status,
+      via,
+      workerOnline: status !== null && !stale,
+      redis: redisState(),
+      /** TypeSafe Jev classifier: configured, model, calls and input tokens today, last error. */
+      jev: status?.jev ?? null,
+      now: new Date().toISOString(),
+    },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

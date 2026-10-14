@@ -6,11 +6,11 @@
  * checked with the dataset validator; stream samples are checked event by event against the
  * strict per-type stream schema (unknown event types are reported, not failed).
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { isDatasetId } from "../src/datasets";
-import { DelayedStreamResponse, RecentStreamResponse, StreamEventStrict, validateDataset } from "../src/validators";
+import { DelayedStreamResponse, JevResponse, RecentStreamResponse, StreamEventStrict, validateDataset } from "../src/validators";
 
 interface IndexEntry {
   file: string;
@@ -55,5 +55,17 @@ for (const entry of index.files) {
   console.log(`skip ${entry.file} (${entry.endpoint})`);
 }
 
-console.log(failures === 0 ? `\nall ${index.files.length} samples valid` : `\n${failures} sample(s) failed`);
+// Jev (TypeSafe) request/response pairs in docs/samples/jev/: validate the response half.
+const jevDir = join(dir, "jev");
+let jevCount = 0;
+if (existsSync(jevDir)) {
+  for (const file of readdirSync(jevDir).filter((f) => f.endsWith(".json"))) {
+    const pair = JSON.parse(readFileSync(join(jevDir, file), "utf8")) as { response: unknown };
+    const r = JevResponse.safeParse(pair.response);
+    line(r.success, `jev/${file} -> JevResponse`, r.success ? undefined : r.error.issues.slice(0, 5).map((i) => `${i.path.join(".")}: ${i.message}`));
+    jevCount++;
+  }
+}
+
+console.log(failures === 0 ? `\nall ${index.files.length + jevCount} samples valid` : `\n${failures} sample(s) failed`);
 process.exit(failures === 0 ? 0 : 1);

@@ -4,6 +4,31 @@
  */
 import type { StreamEvent } from "./stream";
 
+/** Agreement between CDA's signed news bias and Jev's directional choice (bullish/bearish/neutral). */
+export function jevAgrees(cdaBias: number, jevChoice: string): boolean {
+  const cda = cdaBias > 0 ? "bullish" : cdaBias < 0 ? "bearish" : "neutral";
+  return cda === jevChoice;
+}
+
+export interface JevStatus {
+  /** JEV_ENABLED (default true). */
+  enabled: boolean;
+  /** TYPESAFE_API_KEY present and enabled. */
+  configured: boolean;
+  /** Configured model (JEV_MODEL), e.g. "jev-latest". */
+  model: string;
+  /** Version the API resolved it to, e.g. "jev-1.13.0" (null before the first call). */
+  resolvedModel: string | null;
+  callsToday: number;
+  inputTokensToday: number;
+  outputTokensToday: number;
+  errorsToday: number;
+  budget: { dailyCalls: number; dailyInputTokens: number; mode: BudgetMode };
+  ratePerMinute: number;
+  lastCallAt: string | null;
+  lastError: { kind: string; message: string; at: string } | null;
+}
+
 /** Windows CDA measures market response over after a news event (Pro Plus). */
 export const NEWS_RESPONSE_WINDOWS = ["15m", "1h", "4h"] as const;
 
@@ -75,5 +100,7 @@ export interface WorkerStatus {
   limiter: { ratePerMinute: number; burst: number; tokens: number; queued: number; pausedUntil: number | null };
   stream: StreamStatus;
   onDemand: { active: number; max: number; keys: string[] };
+  /** TypeSafe Jev classifier (PLAN.md 3.9). */
+  jev: JevStatus;
   datasets: DatasetRuntimeStatus[];
 }

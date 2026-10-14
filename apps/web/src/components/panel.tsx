@@ -1,7 +1,7 @@
 "use client";
 
 import { DATASETS, isStale, type DatasetDef, type DatasetId, type Envelope, type EnvelopeStatus } from "@cqd/schemas";
-import { Clock, Gauge, Hourglass, KeyRound, Loader, Lock, PlugZap, ShieldAlert, TriangleAlert } from "lucide-react";
+import { Bot, Clock, Gauge, Hourglass, KeyRound, Loader, Lock, PlugZap, ShieldAlert, TriangleAlert } from "lucide-react";
 import type * as React from "react";
 import { Badge, Card, CardContent, CardHeader, CardTitle, Skeleton, Tip } from "@/components/ui/primitives";
 import { ago, dateTime, duration } from "@/lib/format";
@@ -51,6 +51,12 @@ const STATE_COPY: Record<Exclude<EnvelopeStatus, "ok">, { icon: React.ElementTyp
     body: "The last request to CryptoDataApi failed. The worker retries with backoff.",
     tone: "text-serious",
   },
+  classifier_off: {
+    icon: Bot,
+    title: "Classifier not configured",
+    body: "Set TYPESAFE_API_KEY in the repo-root .env (and leave JEV_ENABLED on), then restart the worker. CryptoDataApi panels are unaffected.",
+    tone: "text-muted-foreground",
+  },
   worker_offline: {
     icon: PlugZap,
     title: "Worker offline",
@@ -67,7 +73,7 @@ export function StateView({ status, message, compact = false }: { status: Exclud
       <Icon className={cn("size-5", s.tone, status === "pending" && "animate-spin [animation-duration:2s]")} aria-hidden />
       <div className="text-sm font-medium">{s.title}</div>
       <p className="max-w-sm text-xs text-muted-foreground">{s.body}</p>
-      {message && status !== "pending" && status !== "worker_offline" && status !== "no_api_key" ? <p className="max-w-sm font-mono text-[11px] break-words text-muted-foreground/80">{message}</p> : null}
+      {message && status !== "pending" && status !== "worker_offline" && status !== "no_api_key" && status !== "classifier_off" ? <p className="max-w-sm font-mono text-[11px] break-words text-muted-foreground/80">{message}</p> : null}
     </div>
   );
 }
@@ -142,8 +148,11 @@ export function Panel<T>({ title, dataset, env, isLoading, actions, className, b
         <div className="min-w-0">
           <CardTitle>{title}</CardTitle>
           {def ? (
-            <div className="mt-0.5 truncate font-mono text-[10px] text-muted-foreground/70" title={`Source: GET ${def.path}`}>
-              {def.path.replace("/api/v1", "")}
+            <div
+              className="mt-0.5 truncate font-mono text-[10px] text-muted-foreground/70"
+              title={def.path ? `Source: GET ${def.path}` : "Source: TypeSafe Jev classifier (worker)"}
+            >
+              {def.path ? def.path.replace("/api/v1", "") : "TypeSafe Jev (classified in the worker)"}
             </div>
           ) : null}
         </div>

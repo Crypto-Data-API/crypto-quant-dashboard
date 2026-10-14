@@ -9,11 +9,13 @@
     "start": "node dist/index.js",
     "build": "tsup",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "jev:samples": "tsx scripts/jev-samples.ts"
   },
   "dependencies": {
     "@cqd/cda-client": "workspace:*",
     "@cqd/schemas": "workspace:*",
+    "@typesafe-ai/sdk": "0.6.0",
     "eventsource-parser": "3.1.1",
     "ioredis": "5.11.1",
     "zod": "4.6.7"

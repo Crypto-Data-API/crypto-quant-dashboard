@@ -158,6 +158,14 @@ export async function readEnvelope<T = unknown>(id: DatasetId, param: string | n
     if (typeof hb === "string") {
       try {
         const status = JSON.parse(hb) as WorkerStatus;
+        if (def.source === "jev" && status.jev && !status.jev.configured) {
+          return emptyEnvelope<T>(id, "classifier_off", {
+            param,
+            intervalMs: def.intervalMs,
+            staleAfterMs: staleAfter(def),
+            error: { kind: "classifier_off", message: "TYPESAFE_API_KEY is not set or JEV_ENABLED=false on the worker." },
+          });
+        }
         if (!status.keyConfigured && def.tier !== "keyless") {
           return emptyEnvelope<T>(id, "no_api_key", {
             param,

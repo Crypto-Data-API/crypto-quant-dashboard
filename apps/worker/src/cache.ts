@@ -216,6 +216,92 @@ export class WorkerCache {
     }
   }
 
+  // ---- generic daily counters (Jev calls and tokens) ----------------------
+
+  /** Add `n` to a counter key in memory and mirror it to Redis (kept 3 days). */
+  addCounter(key: string, n = 1): void {
+    if (n === 0) return;
+    this.memCounters.set(key, (this.memCounters.get(key) ?? 0) + n);
+    if (this.redisReady && this.redis) {
+      this.redis
+        .multi()
+        .incrby(key, n)
+        .expire(key, 3 * 24 * 3600)
+        .exec()
+        .catch((err: Error) => this.log.debug("redis counter failed", { key, error: err.message }));
+    }
+  }
+
+  counter(key: string): number {
+    return this.memCounters.get(key) ?? 0;
+  }
+
+  /** Seed counters from Redis on startup so a restart does not forget today's spend. */
+  async restoreCounterKeys(keyList: string[]): Promise<void> {
+    if (!this.redisReady || !this.redis || keyList.length === 0) return;
+    try {
+      const values = await this.redis.mget(...keyList);
+      values.forEach((v, i) => {
+        if (v) this.memCounters.set(keyList[i]!, Number(v));
+      });
+    } catch (err) {
+      this.log.warn("redis counter restore failed", { error: (err as Error).message });
+    }
+  }
+
+  // ---- permanent hash stores (Jev classifications) ------------------------
+
+  private readonly memHashes = new Map<string, Map<string, string>>();
+
+  /** Write one field of a hash in memory and Redis. `ttlSeconds` refreshes the hash expiry (omit to keep forever). */
+  hashSet(key: string, field: string, value: string, ttlSeconds?: number): void {
+    let h = this.memHashes.get(key);
+    if (!h) {
+      h = new Map();
+      this.memHashes.set(key, h);
+    }
+    h.set(field, value);
+    if (this.redisReady && this.redis) {
+      const m = this.redis.multi().hset(key, field, value);
+      if (ttlSeconds) m.expire(key, ttlSeconds);
+      m.exec().catch((err: Error) => this.log.debug("redis hset failed", { key, error: err.message }));
+    }
+  }
+
+  hashGet(key: string, field: string): string | null {
+    return this.memHashes.get(key)?.get(field) ?? null;
+  }
+
+  /** Load a whole hash from Redis into memory (once per key). */
+  async hashLoad(key: string): Promise<number> {
+    if (!this.redisReady || !this.redis) return 0;
+    try {
+      const all = await this.redis.hgetall(key);
+      const h = this.memHashes.get(key) ?? new Map<string, string>();
+      for (const [f, v] of Object.entries(all)) h.set(f, v);
+      this.memHashes.set(key, h);
+      return Object.keys(all).length;
+    } catch (err) {
+      this.log.warn("redis hash load failed", { key, error: (err as Error).message });
+      return 0;
+    }
+  }
+
+  async getRaw(key: string): Promise<string | null> {
+    if (!this.redisReady || !this.redis) return null;
+    return this.redis.get(key).catch(() => null);
+  }
+
+  /** Envelopes currently cached in memory whose key starts with `prefix` (e.g. every news-coin symbol). */
+  envelopesWithPrefix<T = unknown>(prefix: string): Envelope<T>[] {
+    const out: Envelope<T>[] = [];
+    const now = Date.now();
+    for (const [k, v] of this.mem) {
+      if (k.startsWith(prefix) && (v.expiresAt === null || v.expiresAt > now)) out.push(v.value as Envelope<T>);
+    }
+    return out;
+  }
+
   // ---- misc ---------------------------------------------------------------
 
   async setRaw(key: string, value: string, ttlMs: number): Promise<void> {

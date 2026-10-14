@@ -6,6 +6,7 @@ import { Panel } from "@/components/panel";
 import { Badge, Tip } from "@/components/ui/primitives";
 import { C } from "@/lib/domain";
 import { duration, frac, multiple, pct, usd } from "@/lib/format";
+import { JevCascadePill } from "@/features/jev/jev-parts";
 import { useDataset } from "@/lib/hooks";
 
 /**
@@ -42,6 +43,7 @@ export function SqueezeAlerts({ className }: { className?: string }) {
                       liquidated side: <span className={up ? "text-short" : "text-long"}>{up ? "shorts (S)" : "longs (L)"}</span>
                     </span>
                     {!a.triggered && a.suppressed_by?.length ? <Badge variant="outline">suppressed: {a.suppressed_by.join(", ")}</Badge> : null}
+                    <JevCascadePill symbol={a.symbol} direction={a.direction} />
                     <span className="ml-auto num text-sm font-semibold">{usd(a.total_liq_usd)}</span>
                   </div>
                   <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-muted-foreground sm:grid-cols-4">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Panel } from "@/components/panel";
 import { useDataset, useNow } from "@/lib/hooks";
 import { toMs } from "@/lib/utils";
+import { useJevNews } from "@/features/jev/jev-parts";
 import { CompactNewsItem } from "./news-parts";
 
 /**
@@ -12,6 +13,7 @@ import { CompactNewsItem } from "./news-parts";
  */
 export function NewsPanel({ hours = 24, max = 8, className }: { hours?: number; max?: number; className?: string }) {
   const q = useDataset("news-market-moving");
+  const jev = useJevNews();
   const now = useNow() || Date.now();
   return (
     <Panel title="Market-moving news" dataset="news-market-moving" env={q.data} isLoading={q.isLoading} skeletonHeight={200} className={className}>
@@ -27,7 +29,7 @@ export function NewsPanel({ hours = 24, max = 8, className }: { hours?: number; 
             ) : (
               <ul className="space-y-2">
                 {shown.map((e) => (
-                  <CompactNewsItem key={e.event_id} e={e} />
+                  <CompactNewsItem key={e.event_id} e={e} jev={jev.reads[e.event_id]} jevStatus={jev.env?.status} />
                 ))}
               </ul>
             )}

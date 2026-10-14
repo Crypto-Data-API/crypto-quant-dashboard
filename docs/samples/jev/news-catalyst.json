@@ -1,0 +1,92 @@
+{
+  "captured_at": "2026-10-14T09:32:39.459Z",
+  "endpoint": "POST /v1/systemone",
+  "note": "news-market-moving event 19e22b1a79dc90bd7e44cd2d217168143441a67a (BTC, CDA bias 0)",
+  "http_status": 200,
+  "request_id": "req_01a139c1b8777a7f944924d9987a180d",
+  "request": {
+    "model": "jev-latest",
+    "state": {
+      "headline": "Bitcoin rebounds above $83,000 as it decouples from tumbling Korean stocks and Nasdaq futures",
+      "category": "macro",
+      "symbol": "BTC",
+      "published": "2026-10-13T04:18:20+00:00",
+      "sources": [
+        "coindesk",
+        "cointelegraph",
+        "decrypt"
+      ],
+      "corroboration": 3,
+      "cda_bias": 0,
+      "cda_impact_score": 0.504
+    },
+    "questions": {
+      "bias": {
+        "type": "choice",
+        "instructions": "Directional read of this crypto news catalyst for the named symbol (MARKET means the whole crypto market). Judge the likely price impact, not the tone of the headline.",
+        "criteria": {
+          "bullish": "Likely to push the symbol's price up",
+          "bearish": "Likely to push the symbol's price down",
+          "neutral": "No clear directional price effect"
+        }
+      },
+      "actionable": {
+        "type": "noul",
+        "instructions": "Is this a concrete, dated market event (a decision, filing, hack, listing, approval, data release), not commentary, opinion or a recap?"
+      },
+      "severity": {
+        "type": "score",
+        "instructions": "How market-moving is this event for the named symbol?",
+        "criteria": [
+          "Noise: no plausible price effect",
+          "Minor: a small, local effect on the asset",
+          "Moderate: a noticeable move in the named asset",
+          "Major: a large move in the asset or its whole sector",
+          "Market-wide shock: moves the whole crypto market"
+        ]
+      }
+    }
+  },
+  "response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "bias": {
+        "type": "choice",
+        "choice": "bullish",
+        "confidence": 0.98,
+        "probabilities": {
+          "bullish": 0.99,
+          "bearish": 0,
+          "neutral": 0.01
+        }
+      },
+      "actionable": {
+        "type": "noul",
+        "noul": 0.53
+      },
+      "severity": {
+        "type": "score",
+        "score": 2.23,
+        "confidence": 0.74,
+        "legend": {
+          "0": "Noise: no plausible price effect",
+          "1": "Minor: a small, local effect on the asset",
+          "2": "Moderate: a noticeable move in the named asset",
+          "3": "Major: a large move in the asset or its whole sector",
+          "4": "Market-wide shock: moves the whole crypto market"
+        },
+        "probabilities": {
+          "0": 0,
+          "1": 0.04,
+          "2": 0.7,
+          "3": 0.25,
+          "4": 0.01
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 637,
+      "output_tokens": 74
+    }
+  }
+}

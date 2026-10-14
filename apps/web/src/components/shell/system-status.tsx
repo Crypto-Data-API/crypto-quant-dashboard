@@ -1,6 +1,6 @@
 "use client";
 
-import { Database, KeyRound, PlugZap, Radio, Server } from "lucide-react";
+import { Bot, Database, KeyRound, PlugZap, Radio, Server } from "lucide-react";
 import type * as React from "react";
 import { TIER_LABEL, type Tier } from "@cqd/schemas";
 import { Tip } from "@/components/ui/primitives";
@@ -108,6 +108,35 @@ export function SystemStatus() {
             />
           </span>
           <span className="num text-foreground">{int(budget.callsToday)}</span>
+        </Pill>
+      ) : null}
+
+      {w?.jev ? (
+        <Pill
+          tip={
+            <div className="space-y-0.5">
+              <div>
+                TypeSafe Jev classifier: {w.jev.configured ? "on" : w.jev.enabled ? "no TYPESAFE_API_KEY" : "disabled (JEV_ENABLED=false)"}
+              </div>
+              <div>
+                Model {w.jev.model}
+                {w.jev.resolvedModel ? ` (${w.jev.resolvedModel})` : ""}
+              </div>
+              <div>
+                Today: {int(w.jev.callsToday)} calls, {int(w.jev.inputTokensToday)} input tokens (budget {int(w.jev.budget.dailyInputTokens)}, {w.jev.budget.mode})
+              </div>
+              {w.jev.lastError ? (
+                <div className="text-warning">
+                  Last error {ago(Date.parse(w.jev.lastError.at), now)}: {w.jev.lastError.kind}
+                </div>
+              ) : null}
+            </div>
+          }
+        >
+          <Bot className="size-3.5" aria-hidden />
+          <Dot tone={!w.jev.configured ? "muted" : w.jev.lastError && Date.now() - Date.parse(w.jev.lastError.at) < 10 * 60_000 ? "warning" : "good"} />
+          Jev
+          {w.jev.configured ? <span className="num text-muted-foreground/80">{int(w.jev.inputTokensToday / 1000)}k tok</span> : <span className="text-muted-foreground/80">off</span>}
         </Pill>
       ) : null}
 

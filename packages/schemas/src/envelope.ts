@@ -21,7 +21,9 @@ export type EnvelopeStatus =
   /** Network / 5xx / invalid response. */
   | "error"
   /** The web app could not reach the cache or the worker. */
-  | "worker_offline";
+  | "worker_offline"
+  /** A worker-side classifier dataset (Jev) with TYPESAFE_API_KEY unset or JEV_ENABLED=false. */
+  | "classifier_off";
 
 export interface EnvelopeError {
   kind: string;

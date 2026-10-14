@@ -3,6 +3,7 @@ import {
   DATASETS,
   DATASET_IDS,
   emptyEnvelope,
+  isJevDef,
   isOnDemandDef,
   keys,
   resolveQuery,
@@ -50,6 +51,8 @@ export interface PollerOptions {
   onDemandMax: number;
   /** The key's tier from /auth/keys/me (null until known: no gating). */
   keyTier: () => string | null;
+  /** Whether the Jev classifier is configured (for Jev datasets not yet written). */
+  jevConfigured: () => boolean;
 }
 
 /** Demand-set member for a dataset (paramless on-demand datasets use an empty param). */
@@ -93,7 +96,8 @@ export class Poller {
 
   async start(): Promise<void> {
     const { cache, client, log } = this.o;
-    const scheduled = DATASET_IDS.filter((id) => !isOnDemandDef(DATASETS[id] as DatasetDef));
+    // Jev datasets are written by the classifier, never polled from CDA.
+    const scheduled = DATASET_IDS.filter((id) => !isOnDemandDef(DATASETS[id] as DatasetDef) && !isJevDef(DATASETS[id] as DatasetDef));
 
     // Warm start from Redis: datasets fetched recently by a previous worker are not refetched early.
     const restored = await cache.restore(scheduled.map((id) => keys.data(id)));
@@ -145,6 +149,16 @@ export class Poller {
     const def = DATASETS[id] as DatasetDef;
     const env = this.o.cache.getEnvelope(keys.data(id, param));
     if (env) return env;
+    if (isJevDef(def)) {
+      return this.o.jevConfigured()
+        ? emptyEnvelope(id, "pending", { param, intervalMs: def.intervalMs, staleAfterMs: staleAfter(def) })
+        : emptyEnvelope(id, "classifier_off", {
+            param,
+            intervalMs: def.intervalMs,
+            staleAfterMs: staleAfter(def),
+            error: { kind: "classifier_off", message: "TYPESAFE_API_KEY is not set or JEV_ENABLED=false on the worker." },
+          });
+    }
     if (def.tier !== "keyless" && !this.o.client.hasKey) {
       return emptyEnvelope(id, "no_api_key", {
         param,
@@ -166,7 +180,7 @@ export class Poller {
       if (!(d.dataset in DATASETS)) continue;
       const id = d.dataset as DatasetId;
       const def = DATASETS[id] as DatasetDef;
-      if (!isOnDemandDef(def)) continue;
+      if (!isOnDemandDef(def) || isJevDef(def)) continue;
       const slot = this.slotFor(id, d.param || null);
       if (slot.nextDueAt === 0) {
         // Claim the slot so the tick loop does not fetch while we look for a cached copy.
@@ -222,10 +236,12 @@ export class Poller {
 
   private async fetch(slot: Slot): Promise<void> {
     const { client, log, budget } = this.o;
+    const path = slot.def.path;
+    if (!path) return;
     slot.inFlight = true;
     const started = Date.now();
     try {
-      const res: CdaResult = await client.get(slot.def.path, {
+      const res: CdaResult = await client.get(path, {
         pathParams: slot.def.param?.in === "path" && slot.param ? { [slot.def.param.name]: slot.param } : undefined,
         query: this.queryFor(slot.def, slot.param),
         priority: isOnDemandDef(slot.def) ? PRIORITY_ON_DEMAND : PRIORITY_SCHEDULED,

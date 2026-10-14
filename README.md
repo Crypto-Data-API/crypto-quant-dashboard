@@ -21,6 +21,10 @@ backtesting) is unblocked by the Pro Plus key; its first three datasets are alre
 | `/calendar` | Calendar | `/event/regime/score`, `/event/calendar`, `/event/regime/{symbol}`, `/supply/unlocks` |
 | `/news` | Market-moving news | `/news/market-moving`, `/news/pulse`, `/news/sources`, `/news/coin/{symbol}` |
 
+A second opinion from TypeSafe's Jev classifier runs in the worker over the cached data: its read
+of each news catalyst, a cascade probability on squeeze alerts, and a market verdict card on the
+overview (see [Jev classifier](#jev-classifier-typesafe-system-one)).
+
 The news tape also appears as a compact panel beside the liquidation tape on `/liquidations`, and
 per-coin news appears in the Market Regimes coin drawer.
 
@@ -100,6 +104,12 @@ fixed at 3001 in `apps/web/package.json` (`next dev -p 3001`, `next start -p 300
 | `GEX_SYMBOLS` | `BTC,ETH,SOL,HYPE` | worker | Coins polled on a schedule for GEX and positioning. |
 | `LOG_LEVEL` | `info` | worker | `debug`, `info`, `warn`, `error`. Set `LOG_FORMAT=pretty` for terminal output. |
 | `NEXT_PUBLIC_STREAM_URL` | empty | web | Production only: point browsers straight at the worker's `/stream`. |
+| `TYPESAFE_API_KEY` | empty | worker | TypeSafe key for the Jev classifier (Bearer auth). Empty turns the classifier off. |
+| `JEV_ENABLED` | `true` | worker | `false` turns the classifier off even with a key. |
+| `JEV_MODEL` | `jev-latest` | worker | Model sent on every request; pin a version such as `jev-1.13.0` to freeze answers. |
+| `JEV_RATE_PER_MIN` | `60` | worker | Our request ceiling (the API allows 1,200/min). |
+| `JEV_DAILY_CALLS` / `JEV_DAILY_INPUT_TOKENS` | `3000` / `2000000` | worker | Daily budget; the classifier pauses until 00:00 UTC when either is reached. |
+| `JEV_VERDICT_MINUTES` | `15` | worker | Market verdict cadence. |
 
 ## Architecture
 
@@ -236,6 +246,47 @@ the scheduled total.
 
 The worker, cache, proxy route, panel states, tier gating and budget accounting need no changes.
 
+## Jev classifier (TypeSafe System One)
+
+The worker sends compact JSON snapshots of already-cached CDA data to
+`POST https://api.typesafe.ai/v1/systemone` through the official `@typesafe-ai/sdk` (Bearer auth) and
+caches the answers as three datasets. The web app reads them like any other dataset; it never sees
+`TYPESAFE_API_KEY`.
+
+| Dataset | What is classified | Questions | Cadence and caching |
+|---|---|---|---|
+| `jev-news` | Each event on the news tape or an open coin drill-down: headline, category, symbol, sources, CDA's bias and impact | `bias` choice (bullish, bearish, neutral), `actionable` noul (a concrete dated market event, not commentary), `severity` score 0 to 4 (noise to market-wide shock) | New events every minute; one call per event id and model version, cached permanently in Redis |
+| `jev-squeeze` | Each active squeeze alert, with the coin's regime probabilities and liquidity regime | `cascade` noul: a genuine cascade likely to continue over the next hour | Every minute; one call per symbol, direction and UTC hour |
+| `jev-market-verdict` | Market regime, market health, cycle regime, news pulse top 10, squeeze summary, event risk | `stance` choice (risk_on, risk_off, neutral), `vol_expansion_24h` noul, `conviction` score 0 to 4 | Every 15 minutes |
+
+Where it shows: a Jev column beside CDA's bias in the `/news` tape (with a "Jev disagrees" badge
+when the direction differs from the sign of CDA's bias, and an agree/disagree filter), the same read
+in the liquidations news panel and coin drawers, a cascade pill on squeeze alerts, and a verdict
+card next to the hero regime card on the overview with a "what Jev saw" list of input as-of times.
+
+**Costs.** TypeSafe bills input tokens only. Measured per call: about 600 input tokens for a news
+event, 1,100 for a squeeze alert and 2,700 for the market verdict. A quiet day is roughly
+96 verdicts (260k tokens) plus a handful of new news events and alerts, so about 0.3M input tokens
+and 150 calls. The first run on a fresh Redis also classifies the whole 7-day news tape once (about
+33 events, 20k tokens). Daily calls and input tokens are counted (`cqd:jev:<date>:*` in Redis) and
+capped by `JEV_DAILY_CALLS` and `JEV_DAILY_INPUT_TOKENS`; the header's Jev pill and
+`/api/status` (`jev` block) show the counts, the model and the last error.
+
+**Failures.** The SDK retries 408, 429 and 5xx with backoff and honours `Retry-After`; a 429 also
+pauses our own token bucket. 401 and 403 are never retried: the classifier pauses for an hour and
+the panels show the error. Responses are validated with Zod at the boundary.
+
+**Model versions.** `JEV_MODEL=jev-latest` resolves server-side (currently `jev-1.13.0`). News and
+squeeze reads are keyed by the resolved version, so when upstream moves to a new version each event
+is classified once more under it. Pin `JEV_MODEL` to keep answers frozen.
+
+**Turning it off.** Set `JEV_ENABLED=false` (or leave `TYPESAFE_API_KEY` empty) and restart the
+worker. Jev panels then show "Classifier not configured"; nothing else changes.
+
+Real request/response pairs are in [docs/samples/jev](docs/samples/jev); refresh them with
+`pnpm --filter @cqd/worker jev:samples` (three calls, about 4,400 input tokens, inputs read from a
+running worker).
+
 ## Project structure
 
 ```
@@ -253,6 +304,7 @@ crypto-quant-dashboard/
       src/budget.ts         daily budget governor
       src/cache.ts          memory cache with Redis mirror, demand set, call counters
       src/stream/           CDA SSE relay, delayed preview, fan-out hub
+      src/jev/              TypeSafe Jev client (SDK wrapper), question sets, state builders, classifier
       src/http.ts           /healthz, /status, /data/:dataset, /stream
   packages/
     cda-client/             openapi.json, generated types, transport, token bucket (see its README)

@@ -16,6 +16,14 @@ export const keys = {
   heartbeat: `${KEY_PREFIX}:worker:heartbeat`,
   /** Single-poller lock so two workers never double the call budget. */
   lock: `${KEY_PREFIX}:worker:lock`,
+  /** Jev (TypeSafe) daily counters: calls, input tokens, output tokens, errors. */
+  jevCounter: (date: string, what: "calls" | "input_tokens" | "output_tokens" | "errors") => `${KEY_PREFIX}:jev:${date}:${what}`,
+  /** Hash of Jev news reads for one model version: event id -> JSON. Kept permanently. */
+  jevNews: (model: string) => `${KEY_PREFIX}:jev:news:${model}`,
+  /** Hash of Jev squeeze reads for one model version: alert id -> JSON. */
+  jevSqueeze: (model: string) => `${KEY_PREFIX}:jev:squeeze:${model}`,
+  /** Last model version the API resolved JEV_MODEL to (e.g. jev-latest -> jev-1.13.0). */
+  jevResolvedModel: `${KEY_PREFIX}:jev:resolved-model`,
 } as const;
 
 export const demandMember = (dataset: string, param: string) => `${dataset}|${param}`;

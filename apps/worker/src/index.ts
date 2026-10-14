@@ -6,6 +6,8 @@ import { createKeyInfoMonitor } from "./key-info";
 import { WorkerCache } from "./cache";
 import { loadEnv, readConfig } from "./config";
 import { createHttpServer } from "./http";
+import { JevClassifier } from "./jev/classifier";
+import { createJevClient } from "./jev/client";
 import { createLogger } from "./log";
 import { Poller } from "./poller";
 import { StreamHub } from "./stream/hub";
@@ -28,6 +30,7 @@ async function main(): Promise<void> {
     dailyBudget: config.dailyBudget,
     streamSource: config.streamSource,
     scheduledCallsPerHour: budgetPerHour().total,
+    jev: { enabled: config.jev.enabled, keyConfigured: config.jev.apiKey !== null, model: config.jev.model },
   });
 
   const cache = new WorkerCache(log.child({ component: "cache" }), config.redisUrl);
@@ -47,6 +50,10 @@ async function main(): Promise<void> {
     },
   });
 
+  // TypeSafe Jev classifier (worker only; the web app never sees TYPESAFE_API_KEY).
+  const jev = createJevClient({ config: config.jev, cache, log: log.child({ component: "jev" }) });
+  const classifier = new JevClassifier({ jev, cache, log: log.child({ component: "jev" }), verdictIntervalMs: config.jev.verdictIntervalMs });
+
   // Tier and limits of the key (account-wide usage includes other tooling on the same key).
   // Read before polling starts so tier gating and the limiter rate apply from the first call.
   const keyInfo = createKeyInfoMonitor({ client, budget, limiter, configuredRate: config.ratePerMinute, log: log.child({ component: "key-info" }) });
@@ -61,6 +68,7 @@ async function main(): Promise<void> {
     gexSymbols: config.gexSymbols,
     onDemandMax: config.onDemandMax,
     keyTier: () => budget.accountInfo?.tier ?? null,
+    jevConfigured: () => jev.configured,
   });
 
   // ---- single-poller lock -------------------------------------------------
@@ -91,6 +99,7 @@ async function main(): Promise<void> {
     started = true;
     await poller.start();
     void runStream({ source: config.streamSource, client, hub, log, signal: streamAbort.signal });
+    await classifier.start();
   };
 
   const lockTimer = setInterval(async () => {
@@ -145,6 +154,7 @@ async function main(): Promise<void> {
       stream: hub.status(),
       onDemand: { active: poller.activeDemand().length, max: config.onDemandMax, keys: poller.activeDemand() },
       datasets: poller.runtimeStatus(),
+      jev: jev.status(),
     };
   };
   // Only the lock holder publishes the heartbeat the web app reads; a standby worker would
@@ -184,6 +194,7 @@ async function main(): Promise<void> {
     clearInterval(heartbeat);
     clearInterval(budgetTimer);
     keyInfo.stop();
+    classifier.stop();
     poller.stop();
     streamAbort.abort();
     hub.close();

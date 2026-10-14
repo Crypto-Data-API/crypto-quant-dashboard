@@ -20,6 +20,7 @@
  */
 import type { GetPath, QueryValue } from "@cqd/cda-client";
 import type * as Cda from "./generated/cda";
+import type * as J from "./jev";
 import type * as N from "./news";
 import type * as P from "./permissive";
 
@@ -55,8 +56,14 @@ export type QuerySpec = QueryValue | ((now: number) => QueryValue);
 export interface DatasetDef {
   id: string;
   label: string;
-  /** CDA endpoint (typed against the OpenAPI spec). */
-  path: GetPath;
+  /**
+   * Where the data comes from. "cda" (default) is polled from CryptoDataApi at `path`; "jev" is
+   * produced by the worker's TypeSafe Jev classifier from other cached datasets and is never
+   * fetched from CDA.
+   */
+  source?: "cda" | "jev";
+  /** CDA endpoint (typed against the OpenAPI spec). Required for source "cda". */
+  path?: GetPath;
   query?: Record<string, QuerySpec>;
   intervalMs: number;
   /** Shown as stale after this long without a successful fetch. Default 3 x interval. */
@@ -332,6 +339,33 @@ export const DATASETS = {
     asOfField: "as_of",
   }),
 
+  // ---- 3.9 Jev classifier (TypeSafe System One) ---------------------------------
+  // Produced by apps/worker/src/jev from the cached CDA datasets above; never polled from CDA.
+  "jev-news": def({
+    id: "jev-news",
+    label: "Jev read of news catalysts",
+    source: "jev",
+    intervalMs: 60 * SEC,
+    staleAfterMs: 10 * MIN,
+    tier: "keyless",
+  }),
+  "jev-squeeze": def({
+    id: "jev-squeeze",
+    label: "Jev cascade read of squeeze alerts",
+    source: "jev",
+    intervalMs: 60 * SEC,
+    staleAfterMs: 10 * MIN,
+    tier: "keyless",
+  }),
+  "jev-market-verdict": def({
+    id: "jev-market-verdict",
+    label: "Jev market verdict",
+    source: "jev",
+    intervalMs: 15 * MIN,
+    staleAfterMs: 45 * MIN,
+    tier: "keyless",
+  }),
+
   // ---- Pro Plus history (Phase 2): registered on-demand, so they cost nothing until a page
   // reads them. Unlocked by the current key (tier pro_plus).
   "quant-history": def({
@@ -406,6 +440,9 @@ export interface DatasetDataMap {
   "news-pulse": N.NewsPulseResponse;
   "news-sources": N.NewsSourcesResponse;
   "news-coin": N.NewsCoinResponse;
+  "jev-news": J.JevNewsReads;
+  "jev-squeeze": J.JevSqueezeReads;
+  "jev-market-verdict": J.JevMarketVerdict;
   "quant-history": Cda.QuantHistoryResponse;
   "quant-whales-history": P.WhalesHistoryResponse;
   "positioning-ladder": P.PositioningLadderResponse;
@@ -428,6 +465,11 @@ export function isDatasetId(id: string): id is DatasetId {
 
 export function getDataset(id: DatasetId): DatasetDef {
   return DATASETS[id];
+}
+
+/** Datasets produced by the worker's Jev classifier rather than fetched from CDA. */
+export function isJevDef(d: DatasetDef): boolean {
+  return d.source === "jev";
 }
 
 /** On-demand datasets poll only while a viewer asks for them. */
@@ -460,7 +502,7 @@ export function budgetPerHour(): { total: number; byDataset: Record<string, numb
   const byDataset: Record<string, number> = {};
   let total = 0;
   for (const d of Object.values(DATASETS) as DatasetDef[]) {
-    if (isOnDemandDef(d) || d.tier === "keyless") continue;
+    if (isOnDemandDef(d) || d.tier === "keyless" || isJevDef(d)) continue;
     const n = Math.round((60 * MIN) / d.intervalMs);
     byDataset[d.id] = n;
     total += n;

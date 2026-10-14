@@ -1,9 +1,10 @@
 "use client";
 
-import { NEWS_RESPONSE_WINDOWS, type NewsEvent, type NewsResponseWindow } from "@cqd/schemas";
+import { NEWS_RESPONSE_WINDOWS, type JevNewsRead, type NewsEvent, type NewsResponseWindow } from "@cqd/schemas";
 import { ExternalLink } from "lucide-react";
 import { DivergingBar, MeterBar } from "@/components/charts/basic";
 import { PanelBody, Freshness } from "@/components/panel";
+import { JevNewsCell, useJevNews } from "@/features/jev/jev-parts";
 import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Tip } from "@/components/ui/primitives";
 import { C } from "@/lib/domain";
 import { ago, dateTime, frac, fundingHourly, humanize, multiple, num, pct } from "@/lib/format";
@@ -121,6 +122,7 @@ export function Headline({ e, clamp = false }: { e: NewsEvent; clamp?: boolean }
 /** The catalyst tape as a table: newest first, all fields from the plan. */
 export function NewsTable({ events, onSymbol, showSymbol = true }: { events: NewsEvent[]; onSymbol?: (s: string) => void; showSymbol?: boolean }) {
   const now = useNow() || Date.now();
+  const jev = useJevNews();
   return (
     <Table>
       <TableHeader>
@@ -129,7 +131,8 @@ export function NewsTable({ events, onSymbol, showSymbol = true }: { events: New
           {showSymbol ? <TableHead>Symbol</TableHead> : null}
           <TableHead>Category</TableHead>
           <TableHead className="min-w-[260px]">Headline</TableHead>
-          <TableHead>Bias</TableHead>
+          <TableHead>CDA bias</TableHead>
+          <TableHead>Jev read</TableHead>
           <TableHead>Impact</TableHead>
           <TableHead className="text-right">Corrob.</TableHead>
           {NEWS_RESPONSE_WINDOWS.map((w) => (
@@ -164,6 +167,9 @@ export function NewsTable({ events, onSymbol, showSymbol = true }: { events: New
                 <BiasPill bias={e.bias} />
               </TableCell>
               <TableCell>
+                <JevNewsCell read={jev.reads[e.event_id]} envStatus={jev.env?.status} />
+              </TableCell>
+              <TableCell>
                 <Impact e={e} />
               </TableCell>
               <TableCell className="text-right">
@@ -185,6 +191,7 @@ export function NewsTable({ events, onSymbol, showSymbol = true }: { events: New
 /** Per-coin drill-down from /news/coin/{symbol} (on demand). Used in the news drawer and the coin drawer. */
 export function CoinNews({ symbol, compact = false }: { symbol: string; compact?: boolean }) {
   const q = useDataset("news-coin", { param: symbol });
+  const jev = useJevNews();
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between">
@@ -218,7 +225,7 @@ export function CoinNews({ symbol, compact = false }: { symbol: string; compact?
             ) : compact ? (
               <ul className="space-y-2">
                 {d.events.slice(0, 5).map((e) => (
-                  <CompactNewsItem key={e.event_id} e={e} />
+                  <CompactNewsItem key={e.event_id} e={e} jev={jev.reads[e.event_id]} jevStatus={jev.env?.status} />
                 ))}
               </ul>
             ) : (
@@ -232,7 +239,7 @@ export function CoinNews({ symbol, compact = false }: { symbol: string; compact?
 }
 
 /** Two-line item for narrow panels (liquidations page, coin drawer). */
-export function CompactNewsItem({ e, onSymbol }: { e: NewsEvent; onSymbol?: (s: string) => void }) {
+export function CompactNewsItem({ e, onSymbol, jev, jevStatus }: { e: NewsEvent; onSymbol?: (s: string) => void; jev?: JevNewsRead; jevStatus?: string }) {
   const now = useNow() || Date.now();
   return (
     <li className="space-y-1 border-b border-border/50 pb-2 last:border-0 last:pb-0">
@@ -247,6 +254,9 @@ export function CompactNewsItem({ e, onSymbol }: { e: NewsEvent; onSymbol?: (s: 
       </div>
       <div className="text-xs">
         <Headline e={e} clamp />
+      </div>
+      <div className="flex items-center gap-2">
+        <JevNewsCell read={jev} envStatus={jevStatus} compact />
       </div>
       {e.market_response ? (
         <div className="flex gap-3 text-[10px] text-muted-foreground">

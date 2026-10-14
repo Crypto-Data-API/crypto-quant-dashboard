@@ -10,6 +10,7 @@ import { C } from "@/lib/domain";
 import { ago, dateTime, int, num } from "@/lib/format";
 import { useDataset, useNow } from "@/lib/hooks";
 import { cn, toMs } from "@/lib/utils";
+import { useJevNews } from "@/features/jev/jev-parts";
 import { CoinNews, NewsTable, SymbolChip } from "./news-parts";
 
 const HOURS = [6, 12, 24, 72, 168];
@@ -22,6 +23,8 @@ function CatalystTape({ onSymbol }: { onSymbol: (s: string) => void }) {
   const [symbol, setSymbol] = useState("");
   const [hours, setHours] = useState(168);
   const [minImpact, setMinImpact] = useState(0.45);
+  const [jevFilter, setJevFilter] = useState<"all" | "agrees" | "disagrees" | "unclassified">("all");
+  const jev = useJevNews();
   const now = useNow() || Date.now();
   const events = q.data?.data?.events;
   const filtered = useMemo(() => {
@@ -29,8 +32,15 @@ function CatalystTape({ onSymbol }: { onSymbol: (s: string) => void }) {
     const since = now - hours * 3_600_000;
     return (events ?? [])
       .filter((e) => (!sym || e.symbol.toUpperCase() === sym) && e.impact_score >= minImpact && (toMs(e.published) ?? 0) >= since)
+      .filter((e) => {
+        if (jevFilter === "all") return true;
+        const r = jev.reads[e.event_id];
+        if (jevFilter === "unclassified") return !r;
+        return r ? (jevFilter === "agrees" ? r.agrees : !r.agrees) : false;
+      })
       .sort((a, b) => (toMs(b.published) ?? 0) - (toMs(a.published) ?? 0));
-  }, [events, symbol, hours, minImpact, now]);
+  }, [events, symbol, hours, minImpact, now, jevFilter, jev.reads]);
+  const disagreements = useMemo(() => (events ?? []).filter((e) => jev.reads[e.event_id] && !jev.reads[e.event_id]!.agrees).length, [events, jev.reads]);
 
   return (
     <Panel title="Catalyst tape" dataset="news-market-moving" env={q.data} isLoading={q.isLoading} skeletonHeight={360}>
@@ -64,6 +74,15 @@ function CatalystTape({ onSymbol }: { onSymbol: (s: string) => void }) {
                 ))}
               </NativeSelect>
             </Label>
+            <Label>
+              Jev
+              <NativeSelect value={jevFilter} onChange={(e) => setJevFilter(e.target.value as typeof jevFilter)} aria-label="Filter by Jev agreement">
+                <option value="all">All events</option>
+                <option value="agrees">Jev agrees with CDA</option>
+                <option value="disagrees">Jev disagrees ({disagreements})</option>
+                <option value="unclassified">Not classified yet</option>
+              </NativeSelect>
+            </Label>
             <span className="ml-auto text-[11px] text-muted-foreground">
               {filtered.length} of {d.count} qualified events &middot; {num(d.window_hours / 24, 0)}-day window &middot; threshold {num(d.impact_threshold, 2)} &middot; tier {d.tier_scope.replace("_", " ")}
             </span>
@@ -74,7 +93,7 @@ function CatalystTape({ onSymbol }: { onSymbol: (s: string) => void }) {
             <NewsTable events={filtered} onSymbol={onSymbol} />
           )}
           <p className="text-[10px] text-muted-foreground">
-            Only events that cleared CDA&apos;s impact threshold. Corroboration counts independent sources carrying the same symbol and category; market response is the measured move after publication (hover for OI, funding, volume and abnormality). Filters run on the cached 7-day tape, so they cost no API calls.
+            Only events that cleared CDA&apos;s impact threshold. The Jev read is TypeSafe&apos;s classifier run in the worker on each event; &quot;Jev disagrees&quot; marks events where its direction differs from the sign of CDA&apos;s bias. Corroboration counts independent sources carrying the same symbol and category; market response is the measured move after publication (hover for OI, funding, volume and abnormality). Filters run on the cached 7-day tape, so they cost no API calls.
           </p>
         </div>
       )}

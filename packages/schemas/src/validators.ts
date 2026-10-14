@@ -3,10 +3,13 @@
  * response through these. A failure is recorded on the envelope and logged, but the data is
  * still cached: validation is a drift alarm, not a gate that blanks the dashboard.
  */
-import type { z } from "zod";
+import { z } from "zod";
 import type { DatasetId } from "./datasets";
 import * as Cda from "./generated/cda";
 import * as N from "./news";
+
+/** Jev datasets are built by the worker itself, not received from CDA, so they are not validated here. */
+const workerBuilt = z.unknown();
 import * as P from "./permissive";
 
 export const VALIDATORS: Record<DatasetId, z.ZodType> = {
@@ -45,6 +48,9 @@ export const VALIDATORS: Record<DatasetId, z.ZodType> = {
   "news-pulse": N.NewsPulseResponse,
   "news-sources": N.NewsSourcesResponse,
   "news-coin": N.NewsCoinResponse,
+  "jev-news": workerBuilt,
+  "jev-squeeze": workerBuilt,
+  "jev-market-verdict": workerBuilt,
   "quant-history": Cda.QuantHistoryResponse,
   "quant-whales-history": P.WhalesHistoryResponse,
   "positioning-ladder": P.PositioningLadderResponse,
@@ -61,4 +67,5 @@ export function validateDataset(id: DatasetId, data: unknown, maxIssues = 8): { 
 export * as CdaSchemas from "./generated/cda";
 export * as PermissiveSchemas from "./permissive";
 export * as NewsSchemas from "./news";
+export { JevResponse, JevAnswer } from "./jev";
 export { StreamEvent, StreamEventStrict, DelayedStreamResponse, RecentStreamResponse } from "./stream";

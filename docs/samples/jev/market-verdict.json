@@ -1,0 +1,323 @@
+{
+  "captured_at": "2026-10-14T09:32:39.957Z",
+  "endpoint": "POST /v1/systemone",
+  "note": "inputs as of: quant-market@2026-10-14T09:21:11.084Z, market-health@2026-10-14T09:25:04.217Z, regimes@2026-10-14T09:14:59.112Z, news-pulse@2026-10-14T09:28:15.408Z, squeeze-alerts@2026-10-14T09:31:46.000Z, score-event@2026-10-14T09:14:57.163Z",
+  "http_status": 200,
+  "request_id": "req_01a139c1ba407261b26db006282e525e",
+  "request": {
+    "model": "jev-latest",
+    "state": {
+      "short_term_regime_hmm": {
+        "regime": {
+          "label": "range_low_vol",
+          "name": "Range / Low Volatility",
+          "confidence": 0.975,
+          "hours_in_regime": 6
+        },
+        "probabilities_24h": {
+          "directional": {
+            "strong_down": 0.097,
+            "mild_down": 0.2152,
+            "flat": 0.329,
+            "mild_up": 0.2436,
+            "strong_up": 0.1152,
+            "confidence": 0.0583
+          },
+          "volatility": {
+            "low": 0.3861,
+            "medium": 0.3608,
+            "high": 0.2531,
+            "confidence": 0.0142
+          },
+          "funding": {
+            "falls": 0.3045,
+            "stable": 0.4105,
+            "rises": 0.285,
+            "confidence": 0.0121
+          },
+          "liquidation_risk": {
+            "low": 0.3447,
+            "medium": 0.3213,
+            "high": 0.334,
+            "confidence": 0.0004
+          },
+          "open_interest": {
+            "contracting": 0.3122,
+            "neutral": 0.3291,
+            "expanding": 0.3587,
+            "confidence": 0.0015
+          },
+          "breadth": {
+            "contracting": 0.3122,
+            "neutral": 0.3291,
+            "expanding": 0.3587,
+            "confidence": 0.0015
+          },
+          "regime_transitions": {
+            "stays_same": 0.4324,
+            "to_squeeze": 0.2246,
+            "to_strong_trend_bull": 0.1237,
+            "to_choppy_high_vol": 0.1229,
+            "to_strong_trend_bear": 0.0778,
+            "to_vol_spike": 0.0186,
+            "confidence": 0.1702
+          }
+        },
+        "simulated_24h": {
+          "n_paths": 1000,
+          "horizon_hours": 24,
+          "cum_return_quantiles": {
+            "p5": -0.04505221469013799,
+            "p25": -0.0159744455165272,
+            "p50": 0.00046953437212397364,
+            "p75": 0.018438533668735067,
+            "p95": 0.04390812196640589
+          },
+          "p_visit_vol_spike": 0.019,
+          "p_drawdown_gt_5pct": 0.051,
+          "label_occupancy": [
+            0.06345833333333334,
+            0.04425,
+            0.6404583333333334,
+            0.09804166666666667,
+            0.005333333333333333,
+            0.14845833333333333
+          ],
+          "seed": 1991076
+        },
+        "as_of": "2026-10-14T09:21:11.084000Z"
+      },
+      "market_health": {
+        "total_score": 62,
+        "long_term_score": 77,
+        "short_term_score": 46,
+        "sentiment": "NEUTRAL",
+        "long_term_sentiment": "BULLISH",
+        "short_term_sentiment": "BEARISH",
+        "indicators": {
+          "long_short_ratio": 1.29,
+          "funding_rate": 0.0067,
+          "buy_ratio": 0.509,
+          "fear_greed_value": 58,
+          "breadth_pct": 86.2,
+          "pct_from_200ma": 15.27,
+          "cross_status": "Golden",
+          "stablecoin_change_7d": -1.63
+        },
+        "as_of": "2026-10-14T09:25:04.217302Z"
+      },
+      "long_term_cycle_regime": {
+        "phase": "Distribution / Post-Peak Deleveraging",
+        "phase_id": 10,
+        "stage": "Early distribution",
+        "directional_bias": "Short setup, then short",
+        "rationale": "Early distribution — price near highs while breadth, leadership and follow-through quietly deteriorate.",
+        "live_read": {
+          "name": "Distribution / Post-Peak Deleveraging",
+          "matches_committed": true
+        },
+        "signals": {
+          "lt": 78,
+          "st": 47,
+          "condition": "topping_out",
+          "btc_dom": 59.1,
+          "oi_change": 0,
+          "liq_24h": 38942393.471107006,
+          "long_pct": 56.2,
+          "short_pct": 43.8,
+          "vol_score": 51.7,
+          "vol_pct_compressed": 17.6,
+          "vol_pct_shock": 10.8,
+          "vol_sentiment": "normal",
+          "meme_season": false,
+          "meme_score": 34.8,
+          "security_stress": 13.3,
+          "security_band": "quiet",
+          "quant_label": "range_low_vol",
+          "quant_confidence": 0.975
+        },
+        "as_of": "2026-10-14T09:14:59.112024+00:00"
+      },
+      "news_pulse_top10": [
+        {
+          "symbol": "MARKET",
+          "news_pressure": 0.229,
+          "news_tilt": 1,
+          "event_count": 2,
+          "top_impact": 0.583,
+          "headlines": 0
+        },
+        {
+          "symbol": "BTC",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 63
+        },
+        {
+          "symbol": "ETH",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 12
+        },
+        {
+          "symbol": "SOL",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 12
+        },
+        {
+          "symbol": "AAVE",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 7
+        },
+        {
+          "symbol": "BLUR",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 4
+        },
+        {
+          "symbol": "ENS",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 4
+        },
+        {
+          "symbol": "STRK",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 4
+        },
+        {
+          "symbol": "ARB",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 3
+        },
+        {
+          "symbol": "FIL",
+          "news_pressure": 0,
+          "news_tilt": 0,
+          "event_count": 0,
+          "top_impact": 0,
+          "headlines": 3
+        }
+      ],
+      "squeeze_alerts": {
+        "active": 1,
+        "evaluated": 51,
+        "window_s": 300,
+        "alerts": [
+          {
+            "symbol": "NEAR",
+            "direction": "long_flush",
+            "severity": 0.801,
+            "triggered": true,
+            "total_liq_usd": 143598.87,
+            "spike_ratio": 21.66,
+            "oi_state": "unclear"
+          }
+        ]
+      },
+      "event_risk": {
+        "score": 54.3,
+        "band": "elevated",
+        "events_7d": 16,
+        "events_30d": 46,
+        "counts": {
+          "unlock": 31,
+          "macro_print": 7,
+          "depeg": 0
+        },
+        "unlock_subscore": 79.5,
+        "macro_subscore": 90,
+        "depeg_subscore": 0
+      }
+    },
+    "questions": {
+      "stance": {
+        "type": "choice",
+        "instructions": "Given this snapshot of the crypto market, what positioning stance does the evidence support for the next 24 hours?",
+        "criteria": {
+          "risk_on": "Evidence favours adding risk: constructive regime, supportive health and flows",
+          "risk_off": "Evidence favours reducing risk: deteriorating regime, stress, or negative catalysts",
+          "neutral": "Mixed or weak evidence: no clear edge either way"
+        }
+      },
+      "vol_expansion_24h": {
+        "type": "noul",
+        "instructions": "Is realized volatility likely to expand materially over the next 24 hours?"
+      },
+      "conviction": {
+        "type": "score",
+        "instructions": "How strong and consistent is the evidence behind the stance?",
+        "criteria": [
+          "Very low: inputs conflict or are missing",
+          "Low: weak, mostly conflicting signals",
+          "Moderate: some agreement across inputs",
+          "High: most inputs agree",
+          "Very high: inputs agree strongly and consistently"
+        ]
+      }
+    }
+  },
+  "response": {
+    "model": "jev-1.13.0",
+    "answers": {
+      "stance": {
+        "type": "choice",
+        "choice": "risk_off",
+        "confidence": 0.37,
+        "probabilities": {
+          "risk_on": 0,
+          "risk_off": 0.58,
+          "neutral": 0.42
+        }
+      },
+      "vol_expansion_24h": {
+        "type": "noul",
+        "noul": 0.15
+      },
+      "conviction": {
+        "type": "score",
+        "score": 2.16,
+        "confidence": 0.45,
+        "legend": {
+          "0": "Very low: inputs conflict or are missing",
+          "1": "Low: weak, mostly conflicting signals",
+          "2": "Moderate: some agreement across inputs",
+          "3": "High: most inputs agree",
+          "4": "Very high: inputs agree strongly and consistently"
+        },
+        "probabilities": {
+          "0": 0.03,
+          "1": 0.19,
+          "2": 0.42,
+          "3": 0.31,
+          "4": 0.05
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 2675,
+      "output_tokens": 80
+    }
+  }
+}
