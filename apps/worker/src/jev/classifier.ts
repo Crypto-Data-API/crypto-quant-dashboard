@@ -99,6 +99,9 @@ export class JevClassifier {
       return;
     }
     log.info("Jev classifier starting", { model: jev.status().model, resolvedModel: jev.status().resolvedModel });
+    // Warm start: pick up the envelopes a previous worker left in Redis, so a restart neither
+    // blanks the panels nor re-runs the 15-minute verdict early.
+    await this.o.cache.restore(["jev-news", "jev-squeeze", "jev-market-verdict"].map((id) => keys.data(id)));
     this.every(60 * SEC, 5 * SEC, () => this.guard("news", () => this.newsPass()));
     this.every(60 * SEC, 8 * SEC, () => this.guard("squeeze", () => this.squeezePass()));
     // Warm start: reuse a verdict a previous worker wrote within the interval.
