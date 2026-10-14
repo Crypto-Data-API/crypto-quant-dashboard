@@ -14,5 +14,12 @@ files; re-check them after refreshing a sample:
 pnpm --filter @cqd/schemas check-samples
 ```
 
+These files are also the data behind demo mode: the keyless worker seeds its cache from them and
+the static GitHub Pages build bundles them (see "Demo mode" in the root README). In
+`index.json`, `param` is the symbol of a per-symbol sample, `demo: false` keeps a file out of the
+demo (for example a quiet squeeze-alerts capture), and `stream: true` marks a stream capture that
+the demo replays. `check-samples` fails when a registry dataset or the stream has no demo sample,
+so add a sample with every new dataset.
+
 Known gap: no `whale_position` stream event appeared in the captured windows, so that event's
 schema follows the endpoint description only.
