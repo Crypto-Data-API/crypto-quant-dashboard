@@ -4,14 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { cycleGroup, marketRegimeState, regimeCoins } from "@/cq/adapters";
+import { Tip } from "@/components/ui/primitives";
 import { SparkView } from "@/cq/react";
 import { A, REG, regCode } from "@/cq/theme";
-import { useJevStance } from "@/features/jev/jev-status";
 import { useDataset, useMediaQuery, useNow, useWorkerStatus } from "@/lib/hooks";
 import { useLiveTape } from "@/lib/live";
 import { setUi, useUi } from "@/lib/settings";
 import { isActive, NAV, type NavId } from "./nav";
 import { SettingsPopover } from "./settings-popover";
+import { SystemBlock } from "./system-block";
 
 function BrandMark() {
   return (
@@ -127,33 +128,58 @@ const GEAR = (
   </svg>
 );
 
+const SOURCE_TAG: Record<string, string> = { delayed: "DELAYED", replay: "REPLAY" };
+
 function StreamFooter() {
   const { data } = useWorkerStatus();
   const { connection } = useLiveTape();
   const stream = data?.worker?.stream;
-  const ui = useUi();
   const hist = stream?.rateHist && stream.rateHist.length >= 2 ? stream.rateHist : null;
   const rate = stream?.eventsPerMin ?? 0;
-  const jev = useJevStance();
+  const isStatic = data?.via === "static";
+  const off = !stream || (!isStatic && connection === "closed");
+  // Anything but the live stream is named, so a delayed or replayed tape is never taken for live.
+  const tag = stream && stream.source !== "live" ? (SOURCE_TAG[stream.source] ?? "OFF") : null;
+  const tip = isStatic ? (
+    "The liquidation tape replays saved stream events in your browser; the graph is the replay's events per minute."
+  ) : stream ? (
+    <div className="space-y-0.5">
+      <div>
+        Source: {stream.source}
+        {stream.source === "delayed" ? " (keyless preview, about 31 min behind)" : ""}
+      </div>
+      <div>
+        State: {stream.state}
+        {stream.message ? `: ${stream.message}` : ""}
+      </div>
+      <div>
+        {stream.eventsPerMin} events/min, {stream.clients} browser connections
+      </div>
+    </div>
+  ) : (
+    "Stream status unknown while the worker is offline."
+  );
   return (
     <div className="flex flex-col" style={{ gap: 10, padding: "0 4px" }}>
-      <div className="flex items-center justify-between">
-        <span className="cq-kicker">STREAM</span>
-        <span className="cq-mono" style={{ fontSize: 11, color: "#c9d3df" }}>
-          {data?.via === "static" ? "replay" : connection === "closed" ? "off" : rate}
-          {data?.via === "static" ? null : <span style={{ color: "#5b6878" }}>/min</span>}
-        </span>
-      </div>
-      <div style={{ height: 34 }}>{hist ? <SparkView values={hist} color="#4c9bff" fill live label="Stream events per minute, recent minutes" /> : null}</div>
-      {ui.jev && jev ? (
-        <div className="flex items-center justify-between cq-mono" style={{ fontSize: 10.5 }} title={jev.title}>
-          <span className="cq-kicker">JEV</span>
-          <span style={{ color: "#8b98a9" }}>
-            <span style={{ color: jev.color }}>{jev.label}</span> {jev.conf}
-            {jev.extra ? <span style={{ color: "#5b6878" }}> · {jev.extra}</span> : null}
+      <Tip side="right" content={tip}>
+        <div tabIndex={0} className="flex cursor-default items-center justify-between rounded-[4px] outline-none focus-visible:ring-2 focus-visible:ring-[#4c9bff]/50">
+          <span className="cq-kicker">
+            STREAM
+            {tag ? <span style={{ color: "#4c9bff" }}> · {tag}</span> : null}
+          </span>
+          <span className="cq-mono" style={{ fontSize: 11, color: "#c9d3df" }}>
+            {off ? (
+              "off"
+            ) : (
+              <>
+                {rate}
+                <span style={{ color: "#5b6878" }}>/min</span>
+              </>
+            )}
           </span>
         </div>
-      ) : null}
+      </Tip>
+      <div style={{ height: 34 }}>{hist ? <SparkView values={hist} color="#4c9bff" fill live label="Stream events per minute, recent minutes" /> : null}</div>
       <div style={{ fontSize: 10.5, lineHeight: 1.5, color: "#4f5b6a", textWrap: "pretty" }}>Data from CryptoDataApi. The browser reads our cache; one server-side poller spends the API budget.</div>
     </div>
   );
@@ -169,7 +195,7 @@ export function Sidebar() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   return (
     <>
-      <aside className="flex flex-none flex-col overflow-hidden" style={{ width: open ? 224 : 64, background: "#080b0f", borderRight: "1px solid #131a23", transition: "width .25s ease" }} aria-label="Sidebar">
+      <aside className="flex flex-none flex-col overflow-hidden" style={{ width: open ? 224 : 64, background: "#080b0f", borderRight: "1px solid #131a23", transition: "width .25s ease", lineHeight: "normal" }} aria-label="Sidebar">
         <Link href="/" className="flex items-center" style={{ gap: 11, padding: "18px 15px 16px", borderBottom: "1px solid #111821", color: "inherit" }} aria-label="Crypto QuantDesk, overview">
           <BrandMark />
           {open ? (
@@ -214,6 +240,7 @@ export function Sidebar() {
           })}
         </nav>
         <div className="flex flex-col" style={{ padding: "12px 12px 14px", borderTop: "1px solid #111821", gap: 10 }}>
+          {open ? <SystemBlock popLeft={234} /> : null}
           {open ? <StreamFooter /> : null}
           <div className={open ? "flex" : "flex flex-col"} style={{ gap: 6 }}>
             <SideButton onClick={() => setUi({ sb: !open })} title={open ? "Hide sidebar" : "Show sidebar"}>

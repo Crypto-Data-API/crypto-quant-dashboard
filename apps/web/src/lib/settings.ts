@@ -17,9 +17,9 @@ export interface UiSettings {
   rows: number;
   /** Coin focused on Order Books (and the overview terrain) when a page opens. */
   focus: string;
-  /** Show TypeSafe Jev reads (status pill, news and squeeze dots, sidebar line). */
+  /** Show TypeSafe Jev reads (sidebar SYSTEM row, news and squeeze dots). */
   jev: boolean;
-  /** Sparklines in the header KPI strip. */
+  /** Sparklines in the KPI tiles (every page but Overview). */
   kpiSparks: boolean;
 }
 

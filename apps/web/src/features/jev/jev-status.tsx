@@ -1,7 +1,8 @@
 "use client";
 
 import type { JevMarketVerdict } from "@cqd/schemas";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { A } from "@/cq/theme";
 import { ago, dateTime, int } from "@/lib/format";
 import { useDataset, useNow, useWorkerStatus } from "@/lib/hooks";
@@ -55,12 +56,12 @@ function Bar({ parts }: { parts: Array<{ k: string; v: number; c: string }> }) {
   );
 }
 
-function JevPopover({ v, onClose, demo }: { v: JevMarketVerdict; onClose: () => void; demo: boolean }) {
+function JevPopover({ v, onClose, demo, place }: { v: JevMarketVerdict; onClose: () => void; demo: boolean; place: CSSProperties }) {
   const now = useNow() || Date.now();
   const level = Math.max(0, Math.min(4, Math.round(v.conviction.score)));
   const stance = (["risk_on", "neutral", "risk_off"] as const).map((k) => ({ k, v: Math.round((v.stance.probabilities[k] ?? 0) * 100), c: k === "neutral" ? "#3a4553" : STANCE[k]!.color }));
   return (
-    <div className="cq-pop absolute right-0 z-50" style={{ top: "calc(100% + 8px)", width: 320, padding: "14px 16px 12px" }} role="dialog" aria-label="Jev market read">
+    <div className="cq-pop z-[61]" style={{ ...place, width: 320, padding: "14px 16px 12px" }} role="dialog" aria-label="Jev market read">
       <div className="flex items-center justify-between" style={{ marginBottom: 10 }}>
         <span style={{ fontSize: 13, fontWeight: 600 }}>Jev market read</span>
         <button type="button" onClick={onClose} aria-label="Close" style={{ background: "none", border: "none", color: "#8b98a9", cursor: "pointer", fontSize: 16, lineHeight: 1, padding: "2px 4px" }}>
@@ -121,16 +122,18 @@ function JevPopover({ v, onClose, demo }: { v: JevMarketVerdict; onClose: () => 
   );
 }
 
-/** Muted status-row pill: "Jev · risk-off 62%". Opens the compact read on click. */
-export function JevPill() {
+/** Sidebar SYSTEM row: "Jev  risk-off 62%". Opens the compact read beside the sidebar. */
+export function JevRow({ popLeft }: { popLeft: number }) {
   const ui = useUi();
   const stance = useJevStance();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const pop = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
     const onDown = (e: PointerEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      const t = e.target as Node;
+      if (!ref.current?.contains(t) && !pop.current?.contains(t)) setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -144,19 +147,30 @@ export function JevPill() {
   }, [open]);
   if (!ui.jev || !stance?.verdict) return null;
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        title={stance.title}
-        className="cq-mono flex items-center whitespace-nowrap transition-colors hover:border-[#2a3748]"
-        style={{ gap: 7, height: 30, padding: "0 11px", background: "transparent", border: "1px solid #161e28", borderRadius: 8, fontSize: 11.5, color: "#5b6878", cursor: "pointer" }}
+        aria-haspopup="dialog"
+        title={stance.extra && !stance.demo ? `${stance.title}; ${stance.extra} of input today` : stance.title}
+        className="flex w-full items-center justify-between rounded-[4px] outline-none transition-colors hover:text-[#e6edf5] focus-visible:ring-2 focus-visible:ring-[#4c9bff]/50"
+        style={{ gap: 8, padding: 0, background: "none", border: "none", color: "inherit", font: "inherit", cursor: "pointer", textAlign: "left" }}
       >
-        Jev ·<span style={{ color: A(stance.color, 0.85) }}>{stance.label}</span>
-        <span style={{ color: "#8b98a9" }}>{stance.conf}</span>
+        <span>Jev</span>
+        <span style={{ whiteSpace: "nowrap" }}>
+          <span style={{ color: A(stance.color, 0.85) }}>{stance.label}</span> <span style={{ color: "#e6edf5" }}>{stance.conf}</span>
+        </span>
       </button>
-      {open ? <JevPopover v={stance.verdict} demo={stance.demo} onClose={() => setOpen(false)} /> : null}
+      {/* Portalled so the popover keeps the page's type, not the SYSTEM block's mono lines. */}
+      {open
+        ? createPortal(
+            <div ref={pop}>
+              <JevPopover v={stance.verdict} demo={stance.demo} place={{ position: "fixed", left: popLeft, bottom: 14 }} onClose={() => setOpen(false)} />
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

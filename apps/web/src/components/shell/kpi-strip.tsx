@@ -37,7 +37,7 @@ const SOURCE_ENV: Record<KpiKey, "regimes" | "health" | "volume" | "deriv" | "wh
   fg: "health",
 };
 
-/** The header KPI row: current value, change over the recorded window and its sparkline. */
+/** The KPI tiles under the page title: current value, change over the recorded window and its sparkline. */
 export function KpiStrip() {
   const ui = useUi();
   const now = useNow() || Date.now();
@@ -57,7 +57,9 @@ export function KpiStrip() {
   }, [points]);
 
   return (
-    <div className="flex overflow-x-auto overflow-y-hidden" style={{ borderBottom: "1px solid #131a23", background: "rgba(8,11,15,0.7)", scrollbarWidth: "none" }} role="list" aria-label="Market KPIs">
+    <div style={{ borderBottom: "1px solid #131a23", background: "rgba(8,11,15,0.7)", overflow: "hidden" }}>
+      {/* A wrapping grid like the design's tiles; the -1px margins tuck the last row's and column's borders under the frame. */}
+      <div className="cq-kpis" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${ui.kpiSparks ? 180 : 132}px, 1fr))`, margin: "0 -1px -1px 0" }} role="list" aria-label="Market KPIs">
       {KPI_DEFS.map((def) => {
         const v = values[def.key];
         const hist = series[def.key];
@@ -108,7 +110,7 @@ export function KpiStrip() {
               role="listitem"
               tabIndex={0}
               className="flex cursor-default items-center outline-none focus-visible:bg-[rgba(255,255,255,0.03)]"
-              style={{ flex: "1 0 auto", minWidth: ui.kpiSparks ? 168 : 120, gap: 12, padding: "12px 16px 12px 18px", borderRight: "1px solid #131a23" }}
+              style={{ flex: "1 0 auto", minWidth: ui.kpiSparks ? 168 : 120, gap: 12, padding: "12px 16px 12px 18px", borderRight: "1px solid #131a23", borderBottom: "1px solid #131a23" }}
             >
               <div className="min-w-0 flex-1">
                 <div className="cq-mono flex items-center" style={{ gap: 6, fontSize: 9.5, letterSpacing: "0.1em", color: "#5b6878", textTransform: "uppercase", whiteSpace: "nowrap" }}>
@@ -129,6 +131,7 @@ export function KpiStrip() {
           </Tip>
         );
       })}
+      </div>
     </div>
   );
 }

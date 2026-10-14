@@ -34,6 +34,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const scroll = useRef<HTMLDivElement>(null);
   useSceneLinks();
+  // Overview opens straight onto its views; other pages get the title and the KPI tiles.
+  const overview = (pathname ?? "/") === "/";
   useEffect(() => {
     scroll.current?.scrollTo({ top: 0 });
   }, [pathname]);
@@ -42,8 +44,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="flex w-full overflow-hidden" style={{ height: "100dvh", background: "#06080b", color: "#e6edf5", fontSize: 13 }}>
         <Sidebar />
         <main className="cq-main flex min-w-0 flex-1 flex-col overflow-hidden">
-          <Header />
-          <KpiStrip />
+          {overview ? null : <Header />}
+          {overview ? null : <KpiStrip />}
           <DemoBanner />
           <div ref={scroll} className="flex-1 overflow-auto" style={{ padding: "20px 22px 48px" }} id="cq-scroll">
             {children}

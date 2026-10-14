@@ -430,6 +430,16 @@
     animation: cq-pulse 1.8s ease-out infinite;
     opacity: 0.7;
   }
+  .cq-kpis {
+    display: grid;
+  }
+  @media (max-width: 719px) {
+    .cq-kpis {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+  }
 }
 
 @keyframes cq-shimmer {

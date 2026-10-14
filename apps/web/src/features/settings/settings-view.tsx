@@ -104,7 +104,7 @@ export function SettingsView() {
         <SettingRow title="Expanded sidebar" sub="Labels and badges, or a 64px icon rail" first>
           <Switch on={ui.sb} onChange={(v) => setUi({ sb: v })} label="Expanded sidebar" />
         </SettingRow>
-        <SettingRow title="KPI sparklines" sub="Recorded history beside each header KPI">
+        <SettingRow title="KPI sparklines" sub="Recorded history beside each KPI tile">
           <Switch on={ui.kpiSparks} onChange={(v) => setUi({ kpiSparks: v })} label="KPI sparklines" />
         </SettingRow>
         <SettingRow title="Auto-rotate 3D views" sub="Slow camera orbit and sway on all scenes (off reduces motion)">
@@ -131,7 +131,7 @@ export function SettingsView() {
       </Card>
 
       <Card title="Jev (TypeSafe)" sub="A second opinion from TypeSafe's classifier, run in the worker. Kept quiet in the UI.">
-        <SettingRow title="Show Jev reads" sub="Status pill, news and squeeze marks, sidebar line" first>
+        <SettingRow title="Show Jev reads" sub="Sidebar row, news and squeeze marks" first>
           <Switch on={ui.jev} onChange={(v) => setUi({ jev: v })} label="Show Jev reads" />
         </SettingRow>
         <KV k="Classifier" v={jev ? (jev.configured ? <YesNo yes yesText="on" /> : jev.enabled ? <YesNo yes={false} noText="no TYPESAFE_API_KEY" /> : <YesNo yes={false} noText="disabled (JEV_ENABLED=false)" />) : "—"} />
